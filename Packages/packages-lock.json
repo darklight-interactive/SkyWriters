@@ -4,13 +4,11 @@
       "version": "https://github.com/darklight-interactive/com.darklight.unityext.core.git",
       "depth": 0,
       "source": "git",
-      "dependencies": {
-        "com.unity.inputsystem": "1.4.3"
-      },
-      "hash": "7b0862e104c3bafe6b1f923c20b0aed649e515ae"
+      "dependencies": {},
+      "hash": "64011c5e2b4e376e0f3eba4b6e3b08e4d1f28eb6"
     },
     "com.unity.burst": {
-      "version": "1.8.11",
+      "version": "1.8.7",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -58,8 +56,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.7.0",
-      "depth": 1,
+      "version": "1.6.3",
+      "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.modules.uielements": "1.0.0"
@@ -74,7 +72,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "14.0.9",
+      "version": "14.0.8",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
@@ -85,23 +83,14 @@
       }
     },
     "com.unity.render-pipelines.universal": {
-      "version": "14.0.9",
+      "version": "14.0.8",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
-        "com.unity.burst": "1.8.9",
-        "com.unity.render-pipelines.core": "14.0.9",
-        "com.unity.shadergraph": "14.0.9",
-        "com.unity.render-pipelines.universal-config": "14.0.9"
-      }
-    },
-    "com.unity.render-pipelines.universal-config": {
-      "version": "14.0.9",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.render-pipelines.core": "14.0.9"
+        "com.unity.burst": "1.8.4",
+        "com.unity.render-pipelines.core": "14.0.8",
+        "com.unity.shadergraph": "14.0.8"
       }
     },
     "com.unity.searcher": {
@@ -112,11 +101,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "14.0.9",
+      "version": "14.0.8",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "14.0.9",
+        "com.unity.render-pipelines.core": "14.0.8",
         "com.unity.searcher": "4.9.2"
       }
     },
