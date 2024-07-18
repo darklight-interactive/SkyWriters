@@ -5,6 +5,8 @@ using UnityEngine;
 using Darklight.UnityExt.Input;
 using Darklight.UnityExt.Editor;
 using UnityEditor;
+using UnityEngine.InputSystem;
+using UnityEditor.VersionControl;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlaneController : MonoBehaviour
@@ -16,6 +18,22 @@ public class PlaneController : MonoBehaviour
 
     private float _rotationOffset;
 
+    public InputDevice InputDevice { get; private set; }
+    [SerializeField] private InputActionAsset _inputActionAsset;
+    private PlayerInput playerInput;
+
+    private void Awake()
+    {
+        playerInput = gameObject.AddComponent<PlayerInput>();
+        playerInput.actions = _inputActionAsset;
+    }
+
+    public void AssignDevice(InputDevice device)
+    {
+        InputDevice = device;
+        //playerInput.SwitchCurrentControlScheme(device);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,8 +42,11 @@ public class PlaneController : MonoBehaviour
 
 
         // Subscribe to the move input events
-        UniversalInputManager.OnMoveInput += SetMovement;
-        UniversalInputManager.OnMoveInputCanceled += ResetMovement;
+        //UniversalInputManager.OnMoveInput += SetMovement;
+        //UniversalInputManager.OnMoveInputCanceled += ResetMovement;
+        playerInput.actions["MoveInput"].performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
+        playerInput.actions["MoveInput"].canceled += ctx => ResetMovement();
+    
     }
 
     void SetMovement(Vector2 moveInput)
