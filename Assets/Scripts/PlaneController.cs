@@ -62,7 +62,7 @@ public class PlaneController : MonoBehaviour
         Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
         transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
 
-        cameraWraparound.WrapAround(transform);
+        //cameraWraparound.WrapAround(transform);
 
     }
 }
