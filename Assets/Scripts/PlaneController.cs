@@ -13,6 +13,7 @@ public class PlaneController : MonoBehaviour
 {
     PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
+    CameraWraparound cameraWraparound => FindObjectOfType<CameraWraparound>();
 
     [SerializeField, Range(0, 100)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
@@ -42,7 +43,7 @@ public class PlaneController : MonoBehaviour
 
         // Set the target rotation value based on the direction of the x input
         _rotationOffset = direction.x * -90;
-        Debug.Log($"Target Rotation: {_rotationOffset}");
+        //Debug.Log($"Target Rotation: {_rotationOffset}");
     }
 
     void ResetMovement()
@@ -60,6 +61,8 @@ public class PlaneController : MonoBehaviour
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
         transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
+
+        cameraWraparound.WrapAround(transform);
 
     }
 }
