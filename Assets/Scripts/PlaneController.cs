@@ -8,31 +8,16 @@ using UnityEditor;
 using UnityEngine.InputSystem;
 using UnityEditor.VersionControl;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PlayerInput))]
 public class PlaneController : MonoBehaviour
 {
+    PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
 
     [SerializeField, Range(0, 100)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
 
     private float _rotationOffset;
-
-    public InputDevice InputDevice { get; private set; }
-    [SerializeField] private InputActionAsset _inputActionAsset;
-    private PlayerInput playerInput;
-
-    private void Awake()
-    {
-        playerInput = gameObject.AddComponent<PlayerInput>();
-        playerInput.actions = _inputActionAsset;
-    }
-
-    public void AssignDevice(InputDevice device)
-    {
-        InputDevice = device;
-        //playerInput.SwitchCurrentControlScheme(device);
-    }
 
     // Start is called before the first frame update
     void Start()
