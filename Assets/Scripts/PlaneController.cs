@@ -13,7 +13,6 @@ public class PlaneController : MonoBehaviour
 {
     PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
-    CameraWraparound cameraWraparound => FindObjectOfType<CameraWraparound>();
 
     [SerializeField, Range(0, 100)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;

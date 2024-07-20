@@ -119,8 +119,9 @@ GameObject:
   - component: {fileID: 5303435979736915769}
   - component: {fileID: 3232412933383935399}
   - component: {fileID: 783944964808446795}
+  - component: {fileID: 7962736521655050771}
   m_Layer: 0
-  m_Name: ( plane )
+  m_Name: '[PLAYER] Plane Object'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,7 +144,7 @@ Transform:
   - {fileID: 6603558170351031745}
   - {fileID: 5966316229108913672}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5303435979736915769
 MonoBehaviour:
@@ -217,6 +218,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 4
   m_CollisionDetection: 0
+--- !u!135 &7962736521655050771
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747712956887816217}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6889179087334711628
 GameObject:
   m_ObjectHideFlags: 0
