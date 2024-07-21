@@ -38,24 +38,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Base_Scale: 0.0031
-    - _Base_Speed: 5.8
+    - _Base_Scale: 0.0004
+    - _Base_Speed: 6.52
     - _Base_Strength: 2.59
-    - _Curvature_Radius: 655.2
-    - _Emission_Strength: 0.2
-    - _Noise_Edge_1: 0.626
+    - _Curvature_Radius: 326.2
+    - _Emission_Strength: 0
+    - _Fade_Opacity: 290
+    - _Fresnel_Opacity: 0.2
+    - _Fresnel_Power: 52.31
+    - _Noise_Edge_1: 0.553
     - _Noise_Edge_2: 1
     - _Noise_Height: 0.26
     - _Noise_Power: 3.66
-    - _Noise_Scale: 0.0023
-    - _Noise_Speed: 23.3
+    - _Noise_Scale: 0.0048
+    - _Noise_Speed: 8.7
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _Noise_Remap: {r: 0, g: 1, b: -0.83, a: 1}
+    - _Noise_Remap: {r: 0, g: 1, b: -1.1, a: 1.09}
     - _Peak_Color: {r: 0.8443396, g: 0.9243936, b: 1, a: 1}
     - _Rotate_Projection: {r: 1, g: 0, b: 0, a: 90}
-    - _Valley_Color: {r: 0.43164828, g: 0.73623383, b: 0.9433962, a: 1}
+    - _Valley_Color: {r: 0.43164814, g: 0.73623383, b: 0.9433962, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5290579940890214733
 MonoBehaviour:
