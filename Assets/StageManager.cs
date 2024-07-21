@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class StageManager : MonoBehaviour
+public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     SphereCollider _collider => GetComponent<SphereCollider>();
     [SerializeField] float _stageRadius = 100;
 
-    // Start is called before the first frame update
-    void Start()
+    [Header("Objects")]
+    [SerializeField] GameObject _planePrefab;
+    [SerializeField] GameObject _cloudPrefab;
+
+    public override void Initialize()
     {
         _collider.isTrigger = true;
         _collider.radius = _stageRadius;
@@ -34,7 +38,7 @@ public class StageManager : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _stageRadius);
     }
 
-    Vector3 GetAntipodalPoint(Vector3 point)
+    public Vector3 GetAntipodalPoint(Vector3 point)
     {
         // Assuming the sphere is centered at the origin of the world space
         Vector3 center = transform.position;
@@ -42,4 +46,19 @@ public class StageManager : MonoBehaviour
         Vector3 antipodalPoint = center - direction;
         return antipodalPoint;
     }
+
+    public void GetRandomPointInStage(out Vector3 point)
+    {
+        Vector3 center = transform.position;
+        Vector3 randomDirection = Random.insideUnitSphere;
+        point = center + randomDirection * _stageRadius;
+    }
+
+    public void SpawnRandomCloud()
+    {
+        Vector3 cloudPosition;
+        GetRandomPointInStage(out cloudPosition);
+        Instantiate(_cloudPrefab, cloudPosition, Quaternion.identity);
+    }
+
 }
