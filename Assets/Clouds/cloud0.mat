@@ -24,50 +24,6 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -82,56 +38,24 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Base_Scale: 0.025
-    - _Base_Speed: 1.49
-    - _Base_Strength: 0.71
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _Displacement_Height: 0.1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
-    - _Metallic: 0
-    - _Noise_Edge_1: 0.4
-    - _Noise_Edge_2: 0.87
-    - _Noise_Height: 0.34
-    - _Noise_Power: 2
-    - _Noise_Scale: 0.01
-    - _Noise_Speed: 7.7
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
+    - _Base_Scale: 0.0031
+    - _Base_Speed: 5.8
+    - _Base_Strength: 2.59
+    - _Curvature_Radius: 655.2
+    - _Emission_Strength: 0.2
+    - _Noise_Edge_1: 0.626
+    - _Noise_Edge_2: 1
+    - _Noise_Height: 0.26
+    - _Noise_Power: 3.66
+    - _Noise_Scale: 0.0023
+    - _Noise_Speed: 23.3
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0.5
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 0
-    - _WorkflowMode: 1
-    - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Noise_Remap: {r: -0, g: 0.89, b: -0.74, a: 1}
-    - _Peak_Color: {r: 0.7307761, g: 0.8501945, b: 0.9622642, a: 1}
+    - _Noise_Remap: {r: 0, g: 1, b: -0.83, a: 1}
+    - _Peak_Color: {r: 0.8443396, g: 0.9243936, b: 1, a: 1}
     - _Rotate_Projection: {r: 1, g: 0, b: 0, a: 90}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Valley_Color: {r: 0.497775, g: 0.70316833, b: 0.8867924, a: 1}
+    - _Valley_Color: {r: 0.43164828, g: 0.73623383, b: 0.9433962, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5290579940890214733
 MonoBehaviour:
