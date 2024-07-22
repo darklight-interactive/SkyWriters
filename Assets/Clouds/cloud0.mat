@@ -56,9 +56,9 @@ Material:
     - _QueueOffset: 0
     m_Colors:
     - _Noise_Remap: {r: 0, g: 4.71, b: -1, a: 1.09}
-    - _Peak_Color: {r: 0.6179246, g: 0.7930424, b: 1, a: 1}
+    - _Peak_Color: {r: 0.6933962, g: 0.83247423, b: 1, a: 1}
     - _Rotate_Projection: {r: 1, g: 0, b: 0, a: 90}
-    - _Valley_Color: {r: 0.022249907, g: 0.6985953, b: 0.9433962, a: 1}
+    - _Valley_Color: {r: 0, g: 0.5661984, b: 0.7735849, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5290579940890214733
 MonoBehaviour:

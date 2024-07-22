@@ -14,6 +14,8 @@ public class PlaneController : MonoBehaviour
     PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
 
+    [SerializeField] Transform _planeBody;
+
     [SerializeField, Range(0, 1000)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
 
@@ -22,9 +24,9 @@ public class PlaneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Freeze the Y position of the plane
+        // Freeze the Y position of the plane at the stage's Y position
+        transform.position = new Vector3(transform.position.x, StageManager.Instance.transform.position.y, transform.position.z);
         rb.constraints = RigidbodyConstraints.FreezePositionY;
-
 
         // Subscribe to the move input events
         //UniversalInputManager.OnMoveInput += SetMovement;
@@ -57,14 +59,17 @@ public class PlaneController : MonoBehaviour
         // Set the velocity of the plane to move in the current forward direction
         rb.velocity = transform.forward * _moveSpeed;
 
-
         // Slerp the current rotation to the target rotation
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
 
-
+        // Lerp the current rotation to the target rotation
         Quaternion lerpedTargetRotation = Quaternion.Lerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
         transform.rotation = Quaternion.Slerp(currentRotation, lerpedTargetRotation, _rotationSpeed * Time.fixedDeltaTime);
+
+        // Rotate the plane body on the Z axis based on the current rotation
+        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationOffset / 2);
+        _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, _rotationSpeed * Time.fixedDeltaTime);
     }
 
 

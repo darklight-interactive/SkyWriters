@@ -257,7 +257,7 @@ PrefabInstance:
     - target: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3232412933383935399, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
@@ -269,55 +269,10 @@ PrefabInstance:
       propertyPath: m_NeverAutoSwitchControlSchemes
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailGradient.ctime0
-      value: 50720
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailGradient.key1.a
-      value: 0.6156863
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailGradient.key1.b
-      value: 0.5566038
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailGradient.key1.g
-      value: 0.5566038
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: _contrailGradient.key1.r
-      value: 0.5566038
-      objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_RootOrder
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
@@ -368,11 +323,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
