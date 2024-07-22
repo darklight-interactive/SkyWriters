@@ -38,13 +38,13 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         Gizmos.DrawWireSphere(transform.position, _stageRadius);
     }
 
-    public Vector3 GetAntipodalPoint(Vector3 point)
+    Vector3 GetAntipodalPoint(Vector3 point)
     {
-        // Assuming the sphere is centered at the origin of the world space
+        // Assuming the circle is centered at the origin of the world space on the XZ plane
         Vector3 center = transform.position;
-        Vector3 direction = point - center;
-        Vector3 antipodalPoint = center - direction;
-        return antipodalPoint;
+        Vector3 directionXZ = new Vector3(point.x - center.x, 0, point.z - center.z);
+        Vector3 antipodalPoint = center - directionXZ;
+        return new Vector3(antipodalPoint.x, point.y, antipodalPoint.z); // Keep the same Y coordinate
     }
 
     public void GetRandomPointInStage(out Vector3 point)

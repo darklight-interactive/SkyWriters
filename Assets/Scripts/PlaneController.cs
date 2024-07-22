@@ -14,7 +14,7 @@ public class PlaneController : MonoBehaviour
     PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
 
-    [SerializeField, Range(0, 100)] float _moveSpeed = 10;
+    [SerializeField, Range(0, 1000)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
 
     private float _rotationOffset;
