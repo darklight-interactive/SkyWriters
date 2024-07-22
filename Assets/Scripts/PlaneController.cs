@@ -31,7 +31,9 @@ public class PlaneController : MonoBehaviour
         //UniversalInputManager.OnMoveInputCanceled += ResetMovement;
         playerInput.actions["MoveInput"].performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
         playerInput.actions["MoveInput"].canceled += ctx => ResetMovement();
-    
+
+        CreateContrails();
+
     }
 
     void SetMovement(Vector2 moveInput)
@@ -59,9 +61,57 @@ public class PlaneController : MonoBehaviour
         // Slerp the current rotation to the target rotation
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
-        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
 
-        //cameraWraparound.WrapAround(transform);
 
+        Quaternion lerpedTargetRotation = Quaternion.Lerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
+        transform.rotation = Quaternion.Slerp(currentRotation, lerpedTargetRotation, _rotationSpeed * Time.fixedDeltaTime);
+    }
+
+
+    // ============== [[ CONTRAILS ]] ============== /// 
+
+    [Header("Contrails")]
+    [SerializeField] GameObject _contrailPrefab;
+    [SerializeField] float _contrailWingspan = 5f;
+    [SerializeField] float _contrailScale = 10f;
+    [SerializeField] Color _contrailColor = Color.white;
+
+    // Contrail particle system references
+    ParticleSystem.MainModule _leftContrail;
+    ParticleSystem.MainModule _rightContrail;
+
+    void CreateContrails()
+    {
+        // Calculate the positions of the contrails
+        Vector3 planeCenter = transform.position;
+        Vector3 leftContrailPos = planeCenter + Vector3.left * _contrailWingspan;
+        Vector3 rightContrailPos = planeCenter + Vector3.right * _contrailWingspan;
+
+        // Create the contrail game objects
+        GameObject leftContrail = Instantiate(_contrailPrefab, leftContrailPos, Quaternion.identity);
+        GameObject rightContrail = Instantiate(_contrailPrefab, rightContrailPos, Quaternion.identity);
+
+        // Set the contrail parents
+        leftContrail.transform.SetParent(transform);
+        rightContrail.transform.SetParent(transform);
+
+        // Set the contrail scales
+        leftContrail.transform.localScale = Vector3.one * _contrailScale;
+        rightContrail.transform.localScale = Vector3.one * _contrailScale;
+
+        // Save the particle system references
+        _leftContrail = leftContrail.GetComponent<ParticleSystem>().main;
+        _rightContrail = rightContrail.GetComponent<ParticleSystem>().main;
+
+        // Set the contrail colors
+        _leftContrail.startColor = _contrailColor;
+        _rightContrail.startColor = _contrailColor;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.gray;
+        Gizmos.DrawSphere(transform.position + Vector3.right * _contrailWingspan, 1f);
+        Gizmos.DrawSphere(transform.position + Vector3.left * _contrailWingspan, 1f);
     }
 }

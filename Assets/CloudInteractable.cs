@@ -22,7 +22,6 @@ public class CloudInteractable : MonoBehaviour
     {
         if (other.gameObject.GetComponent<PlaneController>())
         {
-            Debug.Log("Plane entered the cloud");
             StageManager.Instance.SpawnRandomCloud();
             Destroy(gameObject);
         }

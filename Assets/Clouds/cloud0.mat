@@ -38,27 +38,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Base_Scale: 0.0061
-    - _Base_Speed: 29.5
+    - _Base_Scale: 0.0013
+    - _Base_Speed: 5.3
     - _Base_Strength: 4.38
-    - _Curvature_Radius: 300
+    - _Curvature_Radius: 500
     - _Emission_Strength: 0.02
     - _Fade_Opacity: 290
     - _Fresnel_Opacity: 0
     - _Fresnel_Power: 52.31
-    - _Noise_Edge_1: 0.553
-    - _Noise_Edge_2: 1
-    - _Noise_Height: 0.26
+    - _Noise_Edge_1: 1
+    - _Noise_Edge_2: 0.779
+    - _Noise_Height: 1.11
     - _Noise_Power: 3.66
-    - _Noise_Scale: 0.0029
+    - _Noise_Scale: 0.0039
     - _Noise_Speed: 66.2
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _Noise_Remap: {r: 0, g: 1, b: -1.1, a: 1.09}
-    - _Peak_Color: {r: 0.504717, g: 0.75616837, b: 1, a: 1}
+    - _Noise_Remap: {r: 0, g: 4.71, b: -1, a: 1.09}
+    - _Peak_Color: {r: 0.6179246, g: 0.7930424, b: 1, a: 1}
     - _Rotate_Projection: {r: 1, g: 0, b: 0, a: 90}
-    - _Valley_Color: {r: 0.13679248, g: 0.65133184, b: 1, a: 1}
+    - _Valley_Color: {r: 0.022249907, g: 0.6985953, b: 0.9433962, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5290579940890214733
 MonoBehaviour:

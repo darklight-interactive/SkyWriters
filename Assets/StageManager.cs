@@ -32,33 +32,45 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         }
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _stageRadius);
-    }
 
+    /// <summary>
+    /// Returns the antipodal point of a given point on the circumference of the stage.
+    /// </summary>
+    /// <param name="point">
+    ///     The point on the circumference of the stage.
+    /// </param>
+    /// <returns></returns>
     Vector3 GetAntipodalPoint(Vector3 point)
     {
-        // Assuming the circle is centered at the origin of the world space on the XZ plane
-        Vector3 center = transform.position;
-        Vector3 directionXZ = new Vector3(point.x - center.x, 0, point.z - center.z);
-        Vector3 antipodalPoint = center - directionXZ;
-        return new Vector3(antipodalPoint.x, point.y, antipodalPoint.z); // Keep the same Y coordinate
+        Vector3 center = transform.position; // This transform's position is the center of the stage
+        Vector3 directionXZ = point - center; // Get the direction vector from the center to the point
+        Vector3 antipodalPoint = center - directionXZ; // Get the antipodal point by reversing the direction vector
+        return new Vector3(antipodalPoint.x, center.y, antipodalPoint.z);
     }
 
-    public void GetRandomPointInStage(out Vector3 point)
+    /// <summary>
+    /// Returns a random point within the stage.
+    /// </summary>
+    /// <returns>
+    ///     A Vector3 representing a random point within the stage.
+    ///     The y value of the vector is the same as the stage's center.
+    /// </returns>
+    public Vector3 GetRandomPosInStage()
     {
-        Vector3 center = transform.position;
-        Vector3 randomDirection = Random.insideUnitSphere;
-        point = center + randomDirection * _stageRadius;
+        Vector3 randomPoint = Random.insideUnitSphere * _stageRadius;
+        randomPoint.y = transform.position.y;
+        return randomPoint;
     }
 
     public void SpawnRandomCloud()
     {
-        Vector3 cloudPosition;
-        GetRandomPointInStage(out cloudPosition);
-        Instantiate(_cloudPrefab, cloudPosition, Quaternion.identity);
+        Instantiate(_cloudPrefab, GetRandomPosInStage(), Quaternion.identity);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _stageRadius);
     }
 
 }
