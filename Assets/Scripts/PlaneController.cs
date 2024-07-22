@@ -74,11 +74,11 @@ public class PlaneController : MonoBehaviour
     [SerializeField] GameObject _contrailPrefab;
     [SerializeField] float _contrailWingspan = 5f;
     [SerializeField] float _contrailScale = 10f;
-    [SerializeField] Color _contrailColor = Color.white;
+    [SerializeField] Gradient _contrailGradient;
 
     // Contrail particle system references
-    ParticleSystem.MainModule _leftContrail;
-    ParticleSystem.MainModule _rightContrail;
+    ParticleSystem _leftContrail;
+    ParticleSystem _rightContrail;
 
     void CreateContrails()
     {
@@ -100,12 +100,19 @@ public class PlaneController : MonoBehaviour
         rightContrail.transform.localScale = Vector3.one * _contrailScale;
 
         // Save the particle system references
-        _leftContrail = leftContrail.GetComponent<ParticleSystem>().main;
-        _rightContrail = rightContrail.GetComponent<ParticleSystem>().main;
+        _leftContrail = leftContrail.GetComponent<ParticleSystem>();
+        _rightContrail = rightContrail.GetComponent<ParticleSystem>();
 
         // Set the contrail colors
-        _leftContrail.startColor = _contrailColor;
-        _rightContrail.startColor = _contrailColor;
+        SetColorOverLifetime(_leftContrail, _contrailGradient);
+        SetColorOverLifetime(_rightContrail, _contrailGradient);
+    }
+
+    void SetColorOverLifetime(ParticleSystem ps, Gradient colorGradient)
+    {
+        ParticleSystem.ColorOverLifetimeModule colorOverLifetime = ps.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        colorOverLifetime.color = colorGradient;
     }
 
     void OnDrawGizmos()

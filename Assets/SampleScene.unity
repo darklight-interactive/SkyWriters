@@ -216,7 +216,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1920064960}
   - {fileID: 1923888864}
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -248,32 +247,62 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 277487365}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_Name
       value: '[PLAYER] Plane Object'
       objectReference: {fileID: 0}
-    - target: {fileID: 3478811649549027142, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_Time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3478811649549027142, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_PreviewTimeScale
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6102718566617458204, guid: f494ee903a152d34eac87de0685fb10a,
+    - target: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3232412933383935399, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: m_DefaultControlScheme
+      value: Gamepad
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232412933383935399, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: m_NeverAutoSwitchControlSchemes
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailGradient.ctime0
+      value: 50720
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailGradient.key1.a
+      value: 0.6156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailGradient.key1.b
+      value: 0.5566038
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailGradient.key1.g
+      value: 0.5566038
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _contrailGradient.key1.r
+      value: 0.5566038
+      objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_RootOrder
-      value: -1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
@@ -298,7 +327,7 @@ PrefabInstance:
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -500
       objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
@@ -343,16 +372,6 @@ PrefabInstance:
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6889179087334711628, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8383332065440630344, guid: f494ee903a152d34eac87de0685fb10a,
-        type: 3}
-      propertyPath: m_Time
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
