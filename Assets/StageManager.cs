@@ -3,15 +3,74 @@ using System.Collections.Generic;
 using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 
+/// <summary>
+/// Represents the colors that can be used in the game.
+/// </summary>
+public enum GameColors
+{
+    Red,
+    Green,
+    Blue,
+    Yellow,
+    Purple,
+    Orange,
+    Brown
+}
+
+[System.Serializable]
+public class CloudParticleData
+{
+    public GameColors color;
+    public Color startColor = Color.white;
+    public Color middleColor = Color.white;
+    public Color endColor = Color.white;
+
+    public CloudParticleData(Color startColor, Color middleColor, Color endColor)
+    {
+        this.startColor = startColor;
+        this.middleColor = middleColor;
+        this.endColor = endColor;
+    }
+
+    public Gradient ToGradient()
+    {
+        Gradient gradient = new Gradient();
+
+        GradientColorKey[] colorKeys = new GradientColorKey[3]
+        {
+            new GradientColorKey(startColor, 0.0f),
+            new GradientColorKey(middleColor, 0.5f),
+            new GradientColorKey(endColor, 1.0f)
+        };
+
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3]
+        {
+            new GradientAlphaKey(startColor.a, 0.0f),
+            new GradientAlphaKey(middleColor.a, 0.5f),
+            new GradientAlphaKey(endColor.a, 1.0f)
+        };
+
+        gradient.SetKeys(colorKeys, alphaKeys);
+
+        return gradient;
+    }
+}
+
 [RequireComponent(typeof(Collider))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
+    // -------------- Private Fields --------------
     SphereCollider _collider => GetComponent<SphereCollider>();
+
+    // -------------- Serialized Fields --------------
     [SerializeField] float _stageRadius = 100;
 
-    [Header("Objects")]
+    [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
     [SerializeField] GameObject _cloudPrefab;
+
+    [Header("Cloud Particle Data")]
+    public List<CloudParticleData> cloudParticleData;
 
     public override void Initialize()
     {
@@ -64,7 +123,9 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     public void SpawnRandomCloud()
     {
-        Instantiate(_cloudPrefab, GetRandomPosInStage(), Quaternion.identity);
+        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPosInStage(), Quaternion.identity);
+        CloudParticleData randomCloudData = cloudParticleData[Random.Range(0, cloudParticleData.Count)];
+        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
     }
 
     void OnDrawGizmos()
