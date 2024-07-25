@@ -8,6 +8,10 @@ public class CloudInteractable : MonoBehaviour
     SphereCollider _collider => GetComponent<SphereCollider>();
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudParticleData _cloudParticleData;
+
+    [SerializeField] float _radius = 1.0f;
+    [SerializeField] float _speed = 10.0f;
+
     public void SetCloudData(CloudParticleData cloudParticleData)
     {
         _cloudParticleData = cloudParticleData;
@@ -30,5 +34,10 @@ public class CloudInteractable : MonoBehaviour
         }
     }
 
-
+    // =================== Unity Methods ======================
+    void Update()
+    {
+        // Move the cloud to the right
+        transform.position += Vector3.right * _speed * Time.deltaTime;
+    }
 }

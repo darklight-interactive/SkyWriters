@@ -14,7 +14,8 @@ public enum GameColors
     Yellow,
     Purple,
     Orange,
-    Brown
+    Brown,
+    White
 }
 
 [System.Serializable]
@@ -76,18 +77,36 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         _collider.isTrigger = true;
         _collider.radius = _stageRadius;
+
+        StartCoroutine(CloudSpawnRoutine());
     }
 
+    IEnumerator CloudSpawnRoutine()
+    {
+        while (true)
+        {
+            float randomTime = Random.Range(1.0f, 5.0f);
+            yield return new WaitForSeconds(randomTime);
+            SpawnRandomCloud();
+        }
+    }
+
+    // On stage exit handler
     void OnTriggerExit(Collider other)
     {
+        Transform otherTransform = other.transform;
+        Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
+
+        // If the object is a plane, teleport it to the antipodal point
         if (other.gameObject.GetComponent<PlaneController>())
         {
-            Vector3 planePosition = other.transform.position;
-            Debug.Log($"Plane exited the stage at {planePosition}");
+            otherTransform.position = antipodalPoint;
+        }
 
-            Vector3 antipodalPoint = GetAntipodalPoint(planePosition);
-            other.transform.position = antipodalPoint;
-            Debug.Log($"Plane teleported to {antipodalPoint}");
+        // If the object is a cloud, destroy it
+        if (other.gameObject.GetComponent<CloudInteractable>())
+        {
+            Destroy(other.gameObject);
         }
     }
 
@@ -121,9 +140,40 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return randomPoint;
     }
 
+    public Vector3 GetRandomPosOutStage()
+    {
+        Vector3 randomPoint = GetRandomPointOutsideInnerRangeAndWithinOuterRange(_stageRadius, _stageRadius * 1.25f);
+        randomPoint.y = transform.position.y;
+        return randomPoint;
+    }
+
+    Vector3 GetRandomPointOnLeftSideOfStage()
+    {
+        Vector3 randomPoint = Random.insideUnitSphere * _stageRadius;
+        randomPoint.x = -_stageRadius;
+        randomPoint.y = transform.position.y;
+        return randomPoint;
+    }
+
+    Vector3 GetRandomPointOutsideInnerRangeAndWithinOuterRange(float innerRange, float outerRange)
+    {
+        // Generate a random angle in radians
+        float angle = Random.Range(0f, Mathf.PI * 2);
+
+        // Generate a random distance outside the inner range but within the outer range
+        float distance = Random.Range(innerRange, outerRange);
+
+        // Convert polar coordinates to Cartesian coordinates
+        float x = distance * Mathf.Cos(angle);
+        float z = distance * Mathf.Sin(angle);
+
+        // Return the point as a Vector3 (assuming y = 0 for 2D plane)
+        return new Vector3(x, 0, z);
+    }
+
     public void SpawnRandomCloud()
     {
-        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPosInStage(), Quaternion.identity);
+        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPointOnLeftSideOfStage(), Quaternion.identity);
         CloudParticleData randomCloudData = cloudParticleData[Random.Range(0, cloudParticleData.Count)];
         cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
     }
