@@ -18,8 +18,13 @@ public class PlaneController : MonoBehaviour
 
     [SerializeField, Range(0, 1000)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
+    [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
+
+
+
 
     private float _rotationOffset;
+    private float _speedOffset;
 
     // Start is called before the first frame update
     void Start()
@@ -46,18 +51,22 @@ public class PlaneController : MonoBehaviour
 
         // Set the target rotation value based on the direction of the x input
         _rotationOffset = direction.x * -90;
-        //Debug.Log($"Target Rotation: {_rotationOffset}");
+
+        // Set the speed offset based on the direction of the z input
+        // Clamp the speed offset to the speed change magnitude
+        _speedOffset = Mathf.Clamp(direction.z * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
     }
 
     void ResetMovement()
     {
         _rotationOffset = 0;
+        _speedOffset = 0;
     }
 
     void FixedUpdate()
     {
         // Set the velocity of the plane to move in the current forward direction
-        rb.velocity = transform.forward * _moveSpeed;
+        rb.velocity = transform.forward * (_moveSpeed + _speedOffset);
 
         // Slerp the current rotation to the target rotation
         Quaternion currentRotation = transform.rotation;
