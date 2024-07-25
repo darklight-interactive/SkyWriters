@@ -133,8 +133,8 @@ GameObject:
   m_Component:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
-  - component: {fileID: 277487366}
   - component: {fileID: 277487363}
+  - component: {fileID: 277487366}
   m_Layer: 0
   m_Name: Stage Manager
   m_TagString: Untagged
@@ -252,8 +252,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &277487366
-SphereCollider:
+--- !u!136 &277487366
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -270,8 +270,10 @@ SphereCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 100
+  serializedVersion: 2
+  m_Radius: 1000
+  m_Height: 4000
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &422445005
 PrefabInstance:
@@ -300,6 +302,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_NeverAutoSwitchControlSchemes
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5303435979736915769, guid: f494ee903a152d34eac87de0685fb10a,
+        type: 3}
+      propertyPath: _speedChangeMagnitude
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
         type: 3}

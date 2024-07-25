@@ -61,7 +61,7 @@ public class CloudParticleData
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     // -------------- Private Fields --------------
-    SphereCollider _collider => GetComponent<SphereCollider>();
+    CapsuleCollider _collider => GetComponent<CapsuleCollider>();
 
     // -------------- Serialized Fields --------------
     [SerializeField] float _stageRadius = 100;
