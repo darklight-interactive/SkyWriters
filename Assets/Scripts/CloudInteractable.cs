@@ -26,7 +26,26 @@ public class CloudInteractable : MonoBehaviour
         if (other.gameObject.GetComponent<PlaneController>())
         {
             StageManager.Instance.SpawnRandomCloud();
+
+            // Set the contrail color to the cloud's color
+            PlaneController planeController = other.gameObject.GetComponent<PlaneController>();
+
+            if (planeController == null)
+            {
+                Debug.LogError("PlaneController not found on the plane object.");
+                return;
+            }
+
+            if (_cloudParticleData == null)
+            {
+                Debug.LogError("CloudParticleData not set on the cloud object.");
+                Destroy(gameObject);
+                return;
+            }
+
+            planeController.CreateNewContrail(_cloudParticleData.ToGradient());
             Destroy(gameObject);
+
         }
     }
 

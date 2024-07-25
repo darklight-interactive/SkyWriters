@@ -120,6 +120,46 @@ public class PlaneController : MonoBehaviour
         colorOverLifetime.color = colorGradient;
     }
 
+    /// <summary>
+    /// Create a new contrail with the given gradient color
+    /// </summary>
+    /// <param name="gradient"></param>
+    public void CreateNewContrail(Gradient gradient)
+    {
+        // Stop the current contrails
+        _leftContrail.Stop();
+        _rightContrail.Stop();
+
+        // Start coroutine to check and destroy old contrails
+        StartCoroutine(CheckAndDestroyContrail(_leftContrail));
+        StartCoroutine(CheckAndDestroyContrail(_rightContrail));
+
+        // Instantiate and configure the new left contrail
+        _leftContrail = Instantiate(_leftContrail, _leftContrail.transform.position, _leftContrail.transform.rotation, transform);
+        _leftContrail.transform.localScale = Vector3.one * _contrailScale;
+        _leftContrail.gameObject.name = "Left Contrail";
+        SetColorOverLifetime(_leftContrail, gradient);
+
+        // Instantiate and configure the new right contrail
+        _rightContrail = Instantiate(_rightContrail, _rightContrail.transform.position, _rightContrail.transform.rotation, transform);
+        _rightContrail.transform.localScale = Vector3.one * _contrailScale;
+        _rightContrail.gameObject.name = "Right Contrail";
+        SetColorOverLifetime(_rightContrail, gradient);
+    }
+
+    private IEnumerator CheckAndDestroyContrail(ParticleSystem contrail)
+    {
+        // Wait until the particle system has no more particles
+        while (contrail.IsAlive(true))
+        {
+            yield return null;
+        }
+
+        // Destroy the particle system game object
+        Destroy(contrail.gameObject);
+    }
+
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.gray;
