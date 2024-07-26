@@ -76,7 +76,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public override void Initialize()
     {
         _collider.isTrigger = true;
-        _collider.radius = _stageRadius;
 
         StartCoroutine(CloudSpawnRoutine());
     }
@@ -91,23 +90,33 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"{other.gameObject.name} entered the stage.");
+    }
+
     // On stage exit handler
     void OnTriggerExit(Collider other)
     {
         Transform otherTransform = other.transform;
-        Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
+        Debug.Log($"{other.gameObject.name} exited the stage.");
 
         // If the object is a plane, teleport it to the antipodal point
         if (other.gameObject.GetComponent<PlaneController>())
         {
+            Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
             otherTransform.position = antipodalPoint;
+            return;
         }
 
         // If the object is a cloud, destroy it
         if (other.gameObject.GetComponent<CloudInteractable>())
         {
             Destroy(other.gameObject);
+            return;
         }
+
+        Debug.LogWarning("An object has exited the stage but it is not a plane or a cloud.");
     }
 
 
@@ -150,7 +159,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     Vector3 GetRandomPointOnLeftSideOfStage()
     {
         Vector3 randomPoint = Random.insideUnitSphere * _stageRadius;
-        randomPoint.x = -_stageRadius;
+        randomPoint.x = -_stageRadius * 1.5f;
         randomPoint.y = transform.position.y;
         return randomPoint;
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 316231922153566340}
   - component: {fileID: 7670275015513312434}
   - component: {fileID: 128118162220994703}
-  - component: {fileID: 5319076500541015002}
+  - component: {fileID: 7197200715464374080}
   m_Layer: 0
   m_Name: Cloud Interactable
   m_TagString: Untagged
@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8641012643131513367
 MonoBehaviour:
@@ -4934,7 +4934,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 50
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &5319076500541015002
+--- !u!135 &7197200715464374080
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4953,5 +4953,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.00001
+  m_Radius: 100
   m_Center: {x: 0, y: 0, z: 0}
