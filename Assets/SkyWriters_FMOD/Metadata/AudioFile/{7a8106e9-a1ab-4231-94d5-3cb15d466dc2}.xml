@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{7a8106e9-a1ab-4231-94d5-3cb15d466dc2}">
+		<property name="assetPath">
+			<value>Soundbowl inspo 1.1.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.3541458333333334</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{0ddc8a49-5571-4a1b-bf70-951f83987e61}</destination>
+		</relationship>
+	</object>
+</objects>
