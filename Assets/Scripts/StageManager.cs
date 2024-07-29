@@ -5,30 +5,14 @@ using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 using NaughtyAttributes;
 
-/// <summary>
-/// Represents the colors that can be used in the game.
-/// </summary>
-public enum GameColors
-{
-    Red,
-    Green,
-    Blue,
-    Yellow,
-    Purple,
-    Orange,
-    Brown,
-    White
-}
-
 [System.Serializable]
-public class CloudParticleData
+public class CloudGradient
 {
-    public GameColors color;
     public Color startColor = Color.white;
     public Color middleColor = Color.white;
     public Color endColor = Color.white;
 
-    public CloudParticleData(Color startColor, Color middleColor, Color endColor)
+    public CloudGradient(Color startColor, Color middleColor, Color endColor)
     {
         this.startColor = startColor;
         this.middleColor = middleColor;
@@ -59,14 +43,14 @@ public class CloudParticleData
     }
 }
 
-[ExecuteAlways, RequireComponent(typeof(Collider))]
+[ExecuteAlways]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     // -------------- Serialized Fields --------------
 
     [Header("Stage Settings")]
     [SerializeField] private float _stageRadius = 1000;
-    private float _stageDiameter => _stageRadius * 2;
+    [SerializeField] private float _spawnOffset = 100;
 
     [Header("Stage Data")]
     [SerializeField] private List<Collider> _collidersInStage;
@@ -74,7 +58,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [SerializeField] private List<CloudInteractable> _cloudsInStage;
 
     [Header("Cloud Particle Data")]
-    public List<CloudParticleData> cloudParticleData;
+    [SerializeField] private List<CloudGradient> _cloudGradients;
 
     [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
@@ -113,16 +97,23 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     void OnDrawGizmos()
     {
+        // Draw the stage radius
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _stageRadius);
+
+        // Draw the spawn offset
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _stageRadius + _spawnOffset);
     }
 
+
+    // ---------------------------------------- Public Methods ---------------------------------------- >>
 
     [Button]
     public void SpawnRandomCloud()
     {
         GameObject cloud = Instantiate(_cloudPrefab, GetRandomPointOnLeftSideOfStage(), Quaternion.identity);
-        CloudParticleData randomCloudData = cloudParticleData[Random.Range(0, cloudParticleData.Count)];
+        CloudGradient randomCloudData = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
         cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
     }
 

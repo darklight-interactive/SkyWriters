@@ -6,12 +6,12 @@ using UnityEngine;
 public class CloudInteractable : MonoBehaviour
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
-    CloudParticleData _cloudParticleData;
+    CloudGradient _cloudParticleData;
 
     [SerializeField] float _radius = 1.0f;
     [SerializeField] float _speed = 10.0f;
 
-    public void SetCloudData(CloudParticleData cloudParticleData)
+    public void SetCloudData(CloudGradient cloudParticleData)
     {
         _cloudParticleData = cloudParticleData;
         SetColorOverLifetime(_cloudParticleData.ToGradient());
@@ -57,5 +57,21 @@ public class CloudInteractable : MonoBehaviour
     {
         // Move the cloud to the right
         transform.position += Vector3.right * _speed * Time.deltaTime;
+
+        // Destroy the cloud if it goes off screen
+        if (StageManager.Instance.IsColliderInStage(GetComponent<Collider>()) == false)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                //UnityEditor.EditorApplication.delayCall += () => DestroyImmediate(gameObject);
+                DestroyImmediate(gameObject);
+#endif
+            }
+        }
     }
 }
