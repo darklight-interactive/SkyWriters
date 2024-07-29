@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider), typeof(ParticleSystem))]
+[ExecuteAlways, RequireComponent(typeof(Collider), typeof(ParticleSystem))]
 public class CloudInteractable : MonoBehaviour
 {
-    SphereCollider _collider => GetComponent<SphereCollider>();
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudParticleData _cloudParticleData;
 

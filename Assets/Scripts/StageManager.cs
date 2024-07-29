@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Darklight.UnityExt.Behaviour;
 using UnityEngine;
+using NaughtyAttributes;
 
 /// <summary>
 /// Represents the colors that can be used in the game.
@@ -57,27 +59,83 @@ public class CloudParticleData
     }
 }
 
-[RequireComponent(typeof(Collider))]
+[ExecuteAlways, RequireComponent(typeof(Collider))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
-    // -------------- Private Fields --------------
-    CapsuleCollider _collider => GetComponent<CapsuleCollider>();
-
     // -------------- Serialized Fields --------------
-    [SerializeField] float _stageRadius = 100;
+
+    [Header("Stage Settings")]
+    [SerializeField] private float _stageRadius = 1000;
+    private float _stageDiameter => _stageRadius * 2;
+
+    [Header("Stage Data")]
+    [SerializeField] private List<Collider> _collidersInStage;
+    [SerializeField] private List<PlaneController> _planesInStage;
+    [SerializeField] private List<CloudInteractable> _cloudsInStage;
+
+    [Header("Cloud Particle Data")]
+    public List<CloudParticleData> cloudParticleData;
 
     [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
     [SerializeField] GameObject _cloudPrefab;
 
-    [Header("Cloud Particle Data")]
-    public List<CloudParticleData> cloudParticleData;
-
     public override void Initialize()
     {
-        _collider.isTrigger = true;
+        //StartCoroutine(CloudSpawnRoutine());
+    }
 
-        StartCoroutine(CloudSpawnRoutine());
+    public void Update()
+    {
+        _collidersInStage = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
+        _planesInStage = new List<PlaneController>();
+        _cloudsInStage = new List<CloudInteractable>();
+
+        // Update the collider references
+        foreach (Collider collider in _collidersInStage)
+        {
+            if (collider.gameObject.GetComponent<PlaneController>())
+            {
+                if (!_planesInStage.Contains(collider.gameObject.GetComponent<PlaneController>()))
+                {
+                    _planesInStage.Add(collider.gameObject.GetComponent<PlaneController>());
+                }
+            }
+            if (collider.gameObject.GetComponent<CloudInteractable>())
+            {
+                if (!_cloudsInStage.Contains(collider.gameObject.GetComponent<CloudInteractable>()))
+                {
+                    _cloudsInStage.Add(collider.gameObject.GetComponent<CloudInteractable>());
+                }
+            }
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _stageRadius);
+    }
+
+
+    [Button]
+    public void SpawnRandomCloud()
+    {
+        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPointOnLeftSideOfStage(), Quaternion.identity);
+        CloudParticleData randomCloudData = cloudParticleData[Random.Range(0, cloudParticleData.Count)];
+        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
+    }
+
+    public bool IsColliderInStage(Collider other)
+    {
+        return _collidersInStage.Contains(other);
+    }
+
+    public void TeleportColliderToAntipodalPoint(Collider collider)
+    {
+        Transform otherTransform = collider.transform;
+        Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
+        otherTransform.position = antipodalPoint;
     }
 
     IEnumerator CloudSpawnRoutine()
@@ -90,34 +148,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        Debug.Log($"{other.gameObject.name} entered the stage.");
-    }
-
-    // On stage exit handler
-    void OnTriggerExit(Collider other)
-    {
-        Transform otherTransform = other.transform;
-        Debug.Log($"{other.gameObject.name} exited the stage.");
-
-        // If the object is a plane, teleport it to the antipodal point
-        if (other.gameObject.GetComponent<PlaneController>())
-        {
-            Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
-            otherTransform.position = antipodalPoint;
-            return;
-        }
-
-        // If the object is a cloud, destroy it
-        if (other.gameObject.GetComponent<CloudInteractable>())
-        {
-            Destroy(other.gameObject);
-            return;
-        }
-
-        Debug.LogWarning("An object has exited the stage but it is not a plane or a cloud.");
-    }
 
 
     /// <summary>
@@ -158,10 +188,10 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     Vector3 GetRandomPointOnLeftSideOfStage()
     {
-        Vector3 randomPoint = Random.insideUnitSphere * _stageRadius;
-        randomPoint.x = -_stageRadius * 1.5f;
-        randomPoint.y = transform.position.y;
-        return randomPoint;
+        float leftBound = transform.position.x - _stageRadius;
+        float upperBound = transform.position.z + _stageRadius;
+        float lowerBound = transform.position.z - _stageRadius;
+        return new Vector3(leftBound, transform.position.y, Random.Range(lowerBound, upperBound));
     }
 
     Vector3 GetRandomPointOutsideInnerRangeAndWithinOuterRange(float innerRange, float outerRange)
@@ -180,17 +210,8 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return new Vector3(x, 0, z);
     }
 
-    public void SpawnRandomCloud()
-    {
-        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPointOnLeftSideOfStage(), Quaternion.identity);
-        CloudParticleData randomCloudData = cloudParticleData[Random.Range(0, cloudParticleData.Count)];
-        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
-    }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _stageRadius);
-    }
+
+
 
 }
