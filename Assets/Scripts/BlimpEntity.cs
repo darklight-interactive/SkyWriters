@@ -10,6 +10,12 @@ public class BlimpEntity : StageEntity
 {
     [SerializeField] private float _cloudSpawnDelay = 2f;
 
+    public override void Start()
+    {
+        base.Start();
+        StartCoroutine(SpawnClouds());
+    }
+
     IEnumerator SpawnClouds()
     {
         while (true)
@@ -20,16 +26,3 @@ public class BlimpEntity : StageEntity
     }
 
 }
-
-
-#if UNITY_EDITOR
-[CustomEditor(typeof(BlimpEntity))]
-public class BlimpEntityCustomEditor : StageEntityCustomEditor
-{
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-    }
-
-}
-#endif

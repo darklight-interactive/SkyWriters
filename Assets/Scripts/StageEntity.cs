@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-[ExecuteAlways]
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
@@ -32,14 +31,29 @@ public class StageEntity : MonoBehaviour
     [SerializeField] private float _colliderRadius = 5.0f;
 
     // ---- Movement ----
-    [SerializeField, Range(0, 360)] private float _rotationDirection = 0;
+    [SerializeField, Range(-360, 360)] private float _rotationDirection = 0;
     [SerializeField] private float _moveSpeed = 10.0f;
     [SerializeField] private float _rotationSpeed = 10.0f;
 
     // ======================== [[ UNITY METHODS ]] ======================== >>
 
-    [Button]
-    public void SetEditorValues()
+    public virtual void Start() { Initialize(); }
+    public virtual void Update() { UpdateMovement(); }
+
+    public virtual void OnDrawGizmosSelected()
+    {
+        Vector3 entityPos = position;
+
+        // Get the target position from _rotationDirection using pythagorean theorem
+        Vector3 targetPos = CalculateTargetPosition(entityPos, _rotationDirection, _moveSpeed * 5);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(entityPos, targetPos);
+        Gizmos.DrawCube(targetPos, _colliderRadius * 0.5f * Vector3.one);
+    }
+
+    // ======================== [[ BASE METHODS ]] ======================== >>
+    public virtual void Initialize()
     {
         // Assign the collider settings
         _collider.height = _colliderHeight;
@@ -56,25 +70,54 @@ public class StageEntity : MonoBehaviour
         transform.rotation = Quaternion.Euler(rotation);
     }
 
-    protected virtual void SetMovement(Vector2 direction)
-    {
-        // Set the target rotation value based on the direction of the x input
-        _rotationDirection = direction.x;
-    }
-
     protected virtual void UpdateMovement()
     {
+        // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
         Vector3 thrustVelocity = transform.forward * _moveSpeed;
         _rb.velocity = thrustVelocity;
 
-        // << ROTATION >>
+        // << ROTATION >> ---------------- >>
+        // Store the current and target rotation values in Euler Angles
+        Vector3 vec3_currentRotation = transform.rotation.eulerAngles;
+        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _rotationDirection, vec3_currentRotation.z);
+
+        // Convert to Quaternions
+        Quaternion q_currentRotation = Quaternion.Euler(vec3_currentRotation);
+        Quaternion q_targetRotation = Quaternion.Euler(vec3_targetRotation);
+
         // Slerp the current rotation to the target rotation
-        Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = currentRotation * Quaternion.Euler(0, _rotationDirection, 0);
-        Quaternion lerpedRotation = Quaternion.Slerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
+        Quaternion lerpedRotation = Quaternion.Slerp(q_currentRotation, q_targetRotation, _rotationSpeed * Time.fixedDeltaTime);
+
+        // Assign the new rotation value
         transform.rotation = lerpedRotation;
     }
+
+    protected virtual void OnStageExit()
+    {
+        // Destroy the object by default
+        if (Application.isPlaying)
+        {
+            Debug.Log("Destroying " + gameObject.name);
+            Destroy(gameObject);
+        }
+    }
+
+    Vector3 CalculateTargetPosition(Vector3 center, float yRotation, float magnitude)
+    {
+        // Convert Y-axis rotation to radians
+        float radians = yRotation * Mathf.Deg2Rad;
+
+        // Calculate the direction vector components using the Pythagorean theorem (cos and sin for XZ plane)
+        float xComponent = magnitude * Mathf.Sin(radians);
+        float zComponent = magnitude * Mathf.Cos(radians);
+
+        // Add the direction components to the center point to get the final position
+        Vector3 position = new Vector3(center.x + xComponent, center.y, center.z + zComponent);
+
+        return position;
+    }
+
 }
 
 
@@ -88,6 +131,7 @@ public class StageEntityCustomEditor : Editor
     {
         _serializedObject = new SerializedObject(target);
         _script = (StageEntity)target;
+        _script.Initialize();
     }
 
     public override void OnInspectorGUI()
@@ -101,7 +145,11 @@ public class StageEntityCustomEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             _serializedObject.ApplyModifiedProperties();
-            _script.SetEditorValues(); // << Assign the new values
+
+            if (!Application.isPlaying)
+            {
+                _script.Initialize(); // << Assign the new values
+            }
         }
     }
 }

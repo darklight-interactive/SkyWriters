@@ -52,11 +52,6 @@ public class PlaneController : MonoBehaviour
         }
     }
 
-    #region ======================= [[ SPAWN ]] =======================
-
-
-    #endregion
-
     #region ======================= [[ MOVEMENT ]] =======================
     void SetMovement(Vector2 moveInput)
     {

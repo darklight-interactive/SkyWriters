@@ -13,28 +13,37 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 {
 
     // -------------- Static Fields ------------------------
+
     public static void AssignEntityToStage(StageEntity entity, float height = 1)
     {
-        float stageHeight = Instance._stageHeight + (height / 2);
-        entity.position = new Vector3(entity.position.x, height, entity.position.z);
+        float stageHeight = Instance.GetStageHeight() + (height / 2);
+        entity.position = new Vector3(entity.position.x, stageHeight, entity.position.z);
     }
 
 
     // -------------- Private Serialized Fields --------------
     [Header("Stage Settings")]
     [ShowOnly, SerializeField] float _stageHeight;
+    public float GetStageHeight()
+    {
+        _stageHeight = transform.position.y;
+        return _stageHeight;
+    }
     [ShowOnly, SerializeField] private float _stageRadius = 1000;
     [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
 
 
     [Header("Stage Data")]
-    [SerializeField] private List<Collider> _stageColliders;
-    [SerializeField] private List<Collider> _spawnAreaColliders;
-    [SerializeField] private List<PlaneController> _planesInStage;
-    [SerializeField] private List<CloudInteractable> _cloudsInStage;
+    [SerializeField] List<Collider> _stageColliders;
+    [SerializeField] List<Collider> _spawnAreaColliders;
+    [SerializeField] List<PlaneController> _planesInStage;
+    [SerializeField] List<CloudInteractable> _cloudsInStage;
 
     [Header("Cloud Data")]
-    [SerializeField] private List<CloudGradientData> _cloudGradients;
+    [SerializeField] List<CloudGradientData> _cloudGradients;
+    [SerializeField] float _cloudSpeed = 10f;
+    public float CloudSpeed => _cloudSpeed;
+
 
     [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
@@ -100,7 +109,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [Button]
     public void SpawnRandomCloud()
     {
-        Vector3 randomSpawnPos = GetRandomPointOnLeftSideOfStage();
+        Vector3 randomSpawnPos = GetRandomPosInSpawnArea();
         SpawnCloudAt(randomSpawnPos);
     }
 
@@ -148,11 +157,25 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return randomPoint;
     }
 
-    Vector3 GetRandomPointOnLeftSideOfStage()
+    public Vector3 GetRandomPosInSpawnArea()
     {
-        float leftBound = transform.position.x - _stageRadius;
-        float upperBound = transform.position.z + _stageRadius;
-        float lowerBound = transform.position.z - _stageRadius;
-        return new Vector3(leftBound, transform.position.y, Random.Range(lowerBound, upperBound));
+        Vector2 point = GetRandomPointBetweenCircles(_stageRadius, _stageRadius + _spawnRadiusOffset);
+        return new Vector3(point.x, transform.position.y, point.y);
+    }
+
+
+    Vector2 GetRandomPointBetweenCircles(float innerRadius, float outerRadius)
+    {
+        // Random angle in radians
+        float angle = Random.Range(0, Mathf.PI * 2);
+
+        // Random radius between innerRadius and outerRadius
+        float radius = Mathf.Sqrt(Random.Range(innerRadius * innerRadius, outerRadius * outerRadius));
+
+        // Convert polar coordinates to Cartesian coordinates
+        float x = radius * Mathf.Cos(angle);
+        float y = radius * Mathf.Sin(angle);
+
+        return new Vector2(x, y);
     }
 }

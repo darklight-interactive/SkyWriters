@@ -325,6 +325,7 @@ MonoBehaviour:
   - startColor: {r: 1, g: 1, b: 1, a: 1}
     middleColor: {r: 1, g: 1, b: 1, a: 1}
     endColor: {r: 1, g: 1, b: 1, a: 1}
+  _cloudSpeed: 10
   _planePrefab: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
     type: 3}
   _cloudPrefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c,
@@ -988,8 +989,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634906746}
-  m_LocalRotation: {x: 0.006170966, y: 0.7070799, z: -0.0061709792, w: 0.7070799}
-  m_LocalPosition: {x: -1013, y: -336, z: -152}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -1013, y: -350, z: -152}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1043,10 +1044,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 86.3
-  m_Height: 400
+  m_Radius: 75
+  m_Height: 300
   m_Direction: 2
-  m_Center: {x: 45.045662, y: 90.72249, z: 33.79625}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1634906750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,11 +1060,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a0c87ddb3ae1438cb590c4aa365cfee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderHeight: 400
-  _colliderRadius: 100
+  _colliderHeight: 300
+  _colliderRadius: 75
   _rotationDirection: 90
-  _moveSpeed: 100
-  _rotationSpeed: 10
+  _moveSpeed: 50
+  _rotationSpeed: 0.1
   _cloudSpawnDelay: 2
 --- !u!4 &1920064960 stripped
 Transform:

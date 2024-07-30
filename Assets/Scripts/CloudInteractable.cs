@@ -2,19 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways, RequireComponent(typeof(Collider), typeof(ParticleSystem))]
-public class CloudInteractable : MonoBehaviour
+[ExecuteAlways, RequireComponent(typeof(ParticleSystem))]
+public class CloudInteractable : StageEntity
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
-    CloudGradientData _cloudParticleData;
-
-    [SerializeField] float _radius = 1.0f;
-    [SerializeField] float _speed = 10.0f;
+    CloudGradientData _gradientData;
+    float _speed = StageManager.Instance.CloudSpeed;
 
     public void SetCloudData(CloudGradientData cloudParticleData)
     {
-        _cloudParticleData = cloudParticleData;
-        SetColorOverLifetime(_cloudParticleData.ToGradient());
+        _gradientData = cloudParticleData;
+        SetColorOverLifetime(_gradientData.ToGradient());
     }
 
     void SetColorOverLifetime(Gradient gradient)
@@ -39,37 +37,15 @@ public class CloudInteractable : MonoBehaviour
                 return;
             }
 
-            if (_cloudParticleData == null)
+            if (_gradientData == null)
             {
                 Debug.LogError("CloudParticleData not set on the cloud object.");
                 Destroy(gameObject);
                 return;
             }
 
-            planeController.CreateNewContrail(_cloudParticleData.ToGradient());
+            planeController.CreateNewContrail(_gradientData.ToGradient());
             Destroy(gameObject);
-        }
-    }
-
-    // =================== Unity Methods ======================
-    void Update()
-    {
-        // Move the cloud to the right
-        transform.position += Vector3.right * _speed * Time.deltaTime;
-
-        // Destroy the cloud if it goes off screen
-        if (StageManager.Instance.IsColliderInStage(GetComponent<Collider>()) == false)
-        {
-            if (Application.isPlaying)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(gameObject);
-#endif
-            }
         }
     }
 }
