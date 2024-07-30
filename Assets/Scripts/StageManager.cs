@@ -7,8 +7,6 @@ using NaughtyAttributes;
 using Darklight.UnityExt.Editor;
 
 
-
-[ExecuteAlways]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
 
@@ -29,7 +27,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         _stageHeight = transform.position.y;
         return _stageHeight;
     }
-    [ShowOnly, SerializeField] private float _stageRadius = 1000;
+    [SerializeField] private float _stageRadius = 1000;
     [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
 
 
@@ -52,6 +50,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public override void Initialize()
     {
         _stageHeight = transform.position.y;
+        //StartCoroutine(SpawnCloudRoutine(2f));
     }
 
     public void Update()
@@ -112,6 +111,16 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         Vector3 randomSpawnPos = GetRandomPosInSpawnArea();
         SpawnCloudAt(randomSpawnPos);
     }
+
+    IEnumerator SpawnCloudRoutine(float delay)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(delay);
+            SpawnRandomCloud();
+        }
+    }
+
 
     #endregion
 

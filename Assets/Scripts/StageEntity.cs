@@ -26,8 +26,8 @@ public class StageEntity : MonoBehaviour
 
     // ==== Private Properties ================================= ))
     StageManager _stageManager => StageManager.Instance;
-    Rigidbody _rb => GetComponent<Rigidbody>();
-    CapsuleCollider _collider => GetComponent<CapsuleCollider>();
+    protected Rigidbody _rb => GetComponent<Rigidbody>();
+    protected CapsuleCollider _collider => GetComponent<CapsuleCollider>();
 
 
     // ==== Serialized Fields ================================== >>
@@ -37,7 +37,7 @@ public class StageEntity : MonoBehaviour
     [SerializeField] protected float _colliderRadius = 5.0f;
 
     // ---- Movement ----
-    [SerializeField, Range(-360, 360)] private float _rotationDirection = 0;
+    [SerializeField, Range(-360, 360)] private float _targetRotation = 0;
     [SerializeField] private float _moveSpeed = 10.0f;
     [SerializeField] private float _rotationSpeed = 10.0f;
 
@@ -56,7 +56,7 @@ public class StageEntity : MonoBehaviour
         Vector3 entityPos = currentPosition;
 
         // Get the target position from _rotationDirection using pythagorean theorem
-        Vector3 targetPos = CalculateTargetPosition(entityPos, _rotationDirection, _moveSpeed * 5);
+        Vector3 targetPos = CalculateTargetPosition(entityPos, _targetRotation, _moveSpeed * 5);
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(entityPos, targetPos);
@@ -77,7 +77,7 @@ public class StageEntity : MonoBehaviour
 
         // Assign the rotation value
         Vector3 rotation = transform.rotation.eulerAngles;
-        rotation.y = _rotationDirection;
+        rotation.y = _targetRotation;
         transform.rotation = Quaternion.Euler(rotation);
 
         // Destroy this object after the lifespan
@@ -97,7 +97,7 @@ public class StageEntity : MonoBehaviour
         // << ROTATION >> ---------------- >>
         // Store the current and target rotation values in Euler Angles
         Vector3 vec3_currentRotation = transform.rotation.eulerAngles;
-        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _rotationDirection, vec3_currentRotation.z);
+        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _targetRotation, vec3_currentRotation.z);
 
         // Convert to Quaternions
         Quaternion q_currentRotation = Quaternion.Euler(vec3_currentRotation);

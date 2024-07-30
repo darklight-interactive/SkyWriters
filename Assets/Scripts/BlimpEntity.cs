@@ -14,7 +14,7 @@ public class BlimpEntity : StageEntity
     {
         get
         {
-            Vector3 output = CalculateTargetPosition(currentPosition, -90, _colliderHeight);
+            Vector3 output = transform.position + (transform.forward * _colliderHeight * -1);
             return output;
         }
     }
@@ -23,6 +23,16 @@ public class BlimpEntity : StageEntity
     {
         base.Start();
         StartCoroutine(SpawnExhaustClouds());
+    }
+
+    public void FixedUpdate()
+    {
+        // Check if the plane is out of bounds
+        if (StageManager.Instance.IsColliderInStage(_collider) == false)
+        {
+            Vector3 newSpawnPoint = StageManager.Instance.GetAntipodalPoint(this.transform.position);
+            this.transform.position = newSpawnPoint;
+        }
     }
 
     IEnumerator SpawnExhaustClouds()

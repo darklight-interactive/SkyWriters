@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8641012643131513367}
   - component: {fileID: 316231922153566340}
   - component: {fileID: 7670275015513312434}
-  - component: {fileID: 128118162220994703}
   - component: {fileID: 8617047698032842873}
   - component: {fileID: 5069445420879061551}
   m_Layer: 8
@@ -30,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3186196175442933025}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.255201, y: 0, z: 0}
+  m_LocalPosition: {x: 20.255201, y: -450, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -49,11 +48,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae538db5d0b104c17a93ddf3d8fd2dfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderHeight: 10
-  _colliderRadius: 5
-  _rotationDirection: 0
+  _colliderHeight: 100
+  _colliderRadius: 100
+  _targetRotation: 0
   _moveSpeed: 10
   _rotationSpeed: 10
+  _lifeSpan: 20
 --- !u!198 &316231922153566340
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -127,7 +127,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -308,7 +308,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 100
       minScalar: 25
       maxCurve:
         serializedVersion: 2
@@ -2722,7 +2722,7 @@ ParticleSystem:
     magnitude:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4975,27 +4975,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!135 &128118162220994703
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3186196175442933025}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 50
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &8617047698032842873
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5006,17 +4985,17 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 5
-  m_Height: 10
+  m_Radius: 100
+  m_Height: 100
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5069445420879061551
