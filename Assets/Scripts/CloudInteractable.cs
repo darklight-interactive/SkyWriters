@@ -7,7 +7,6 @@ public class CloudInteractable : StageEntity
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudGradientData _gradientData;
-    float _speed = StageManager.Instance.CloudSpeed;
 
     public void SetCloudData(CloudGradientData cloudParticleData)
     {

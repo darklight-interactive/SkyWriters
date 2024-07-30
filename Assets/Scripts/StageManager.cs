@@ -17,7 +17,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public static void AssignEntityToStage(StageEntity entity, float height = 1)
     {
         float stageHeight = Instance.GetStageHeight() + (height / 2);
-        entity.position = new Vector3(entity.position.x, stageHeight, entity.position.z);
+        entity.currentPosition = new Vector3(entity.currentPosition.x, stageHeight, entity.currentPosition.z);
     }
 
 

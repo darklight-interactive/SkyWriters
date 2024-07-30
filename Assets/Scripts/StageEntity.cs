@@ -11,10 +11,16 @@ public class StageEntity : MonoBehaviour
 {
 
     // ==== Public Properties ================================== ))
-    public Vector3 position
+    public Vector3 currentPosition
     {
         get => transform.position;
         set => transform.position = value;
+    }
+
+    public Vector3 currentRotation
+    {
+        get => transform.rotation.eulerAngles;
+        set => transform.rotation = Quaternion.Euler(value);
     }
 
 
@@ -27,13 +33,18 @@ public class StageEntity : MonoBehaviour
     // ==== Serialized Fields ================================== >>
 
     // ---- Collider ----
-    [SerializeField] private float _colliderHeight = 10.0f;
-    [SerializeField] private float _colliderRadius = 5.0f;
+    [SerializeField] protected float _colliderHeight = 10.0f;
+    [SerializeField] protected float _colliderRadius = 5.0f;
 
     // ---- Movement ----
     [SerializeField, Range(-360, 360)] private float _rotationDirection = 0;
     [SerializeField] private float _moveSpeed = 10.0f;
     [SerializeField] private float _rotationSpeed = 10.0f;
+
+    // ---- Gameplay ----
+
+    [Tooltip("The lifespan of the object in seconds. Set to 0 to disable.")]
+    [SerializeField] private float _lifeSpan = 5.0f;
 
     // ======================== [[ UNITY METHODS ]] ======================== >>
 
@@ -42,7 +53,7 @@ public class StageEntity : MonoBehaviour
 
     public virtual void OnDrawGizmosSelected()
     {
-        Vector3 entityPos = position;
+        Vector3 entityPos = currentPosition;
 
         // Get the target position from _rotationDirection using pythagorean theorem
         Vector3 targetPos = CalculateTargetPosition(entityPos, _rotationDirection, _moveSpeed * 5);
@@ -68,6 +79,12 @@ public class StageEntity : MonoBehaviour
         Vector3 rotation = transform.rotation.eulerAngles;
         rotation.y = _rotationDirection;
         transform.rotation = Quaternion.Euler(rotation);
+
+        // Destroy this object after the lifespan
+        if (Application.isPlaying && _lifeSpan > 0)
+        {
+            Destroy(gameObject, _lifeSpan);
+        }
     }
 
     protected virtual void UpdateMovement()
@@ -103,7 +120,7 @@ public class StageEntity : MonoBehaviour
         }
     }
 
-    Vector3 CalculateTargetPosition(Vector3 center, float yRotation, float magnitude)
+    protected Vector3 CalculateTargetPosition(Vector3 center, float yRotation, float magnitude)
     {
         // Convert Y-axis rotation to radians
         float radians = yRotation * Mathf.Deg2Rad;

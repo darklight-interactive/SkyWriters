@@ -1063,9 +1063,11 @@ MonoBehaviour:
   _colliderHeight: 300
   _colliderRadius: 75
   _rotationDirection: 90
-  _moveSpeed: 50
+  _moveSpeed: 100
   _rotationSpeed: 0.1
-  _cloudSpawnDelay: 2
+  _lifeSpan: 999
+  _cloudSpawnDelay: 5
+  _cloudDeathDelay: 1
 --- !u!4 &1920064960 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6553888113221373407, guid: f494ee903a152d34eac87de0685fb10a,
@@ -1087,9 +1089,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6809513760409802986, guid: a4ebc9b50f7cf15409d6334f556a3afe,
         type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809513760409802986, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
       propertyPath: CollisionModule.m_Planes.Array.data[0]
       value: 
       objectReference: {fileID: 1920064960}
+    - target: {fileID: 6809513760409802986, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.b
+      value: 0.8867924
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809513760409802986, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.g
+      value: 0.83464193
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809513760409802986, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 0.7654859
+      objectReference: {fileID: 0}
     - target: {fileID: 7272883665023594307, guid: a4ebc9b50f7cf15409d6334f556a3afe,
         type: 3}
       propertyPath: m_RootOrder
