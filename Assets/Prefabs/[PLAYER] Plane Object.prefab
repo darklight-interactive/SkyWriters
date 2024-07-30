@@ -260,9 +260,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9574d8c16b6804c36847e22a256031a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _planeBody: {fileID: 5831562902396000746}
+  _colliderHeight: 10
+  _colliderRadius: 5
   _moveSpeed: 400
   _rotationSpeed: 10
+  _rotationTargetAngle: 0
+  _lifeSpan: -1
+  _planeBody: {fileID: 5831562902396000746}
   _speedChangeMagnitude: 200
   _contrailPrefab: {fileID: 1532563846836532694, guid: a26fa1afeec522f4b95c6c36e154fbcb,
     type: 3}

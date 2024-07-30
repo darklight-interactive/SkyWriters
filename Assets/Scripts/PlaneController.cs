@@ -8,28 +8,18 @@ using UnityEditor;
 using UnityEngine.InputSystem;
 using UnityEditor.VersionControl;
 
-[RequireComponent(typeof(Rigidbody), typeof(PlayerInput))]
-public class PlaneController : MonoBehaviour
+[RequireComponent(typeof(PlayerInput))]
+public class PlaneController : StageEntity
 {
     PlayerInput playerInput => GetComponent<PlayerInput>();
-    Rigidbody rb => GetComponent<Rigidbody>();
-    new Collider collider => GetComponent<Collider>();
 
     [SerializeField] Transform _planeBody;
 
-    [SerializeField, Range(0, 1000)] float _moveSpeed = 10;
-    [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
 
-    private float _rotationOffset;
-    private float _speedOffset;
-
-    // Start is called before the first frame update
-    void Start()
+    public override void Initialize()
     {
-        // Freeze the Y position of the plane at the stage's Y position
-        transform.position = new Vector3(transform.position.x, StageManager.Instance.transform.position.y, transform.position.z);
-        rb.constraints = RigidbodyConstraints.FreezePositionY;
+        base.Initialize();
 
         // Subscribe to the move input events
         //UniversalInputManager.OnMoveInput += SetMovement;
@@ -40,55 +30,34 @@ public class PlaneController : MonoBehaviour
         CreateContrails();
     }
 
-    void FixedUpdate()
-    {
-        UpdateMovement();
-
-        // Check if the plane is out of bounds
-        if (StageManager.Instance.IsColliderInStage(this.collider) == false)
-        {
-            Vector3 newSpawnPoint = StageManager.Instance.GetAntipodalPoint(this.transform.position);
-            this.transform.position = newSpawnPoint;
-        }
-    }
-
     #region ======================= [[ MOVEMENT ]] =======================
     void SetMovement(Vector2 moveInput)
     {
-        // Store the move direction on the XZ plane
-        Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
-        rb.velocity = direction * _moveSpeed;
-
         // Set the target rotation value based on the direction of the x input
-        _rotationOffset = direction.x * -90;
+        _rotationTargetAngle = moveInput.x * -90;
 
         // Set the speed offset based on the direction of the z input
         // Clamp the speed offset to the speed change magnitude
-        _speedOffset = Mathf.Clamp(direction.z * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
+        _moveSpeedOffset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
     }
 
-    void UpdateMovement()
+    protected override void UpdateMovement()
     {
         // Set the velocity of the plane to move in the current forward direction
-        rb.velocity = transform.forward * (_moveSpeed + _speedOffset);
+        _rb.velocity = transform.forward * (_moveSpeed + _moveSpeedOffset);
 
-        // Slerp the current rotation to the target rotation
+        // Get the target rotation based on the current rotation and the rotation offset
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
+        Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationTargetAngle, currentRotation.eulerAngles.z);
 
         // Lerp the current rotation to the target rotation
         Quaternion lerpedTargetRotation = Quaternion.Lerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
         transform.rotation = Quaternion.Slerp(currentRotation, lerpedTargetRotation, _rotationSpeed * Time.fixedDeltaTime);
 
         // Rotate the plane body on the Z axis based on the current rotation
-        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationOffset / 2);
+        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationTargetAngle / 2);
         _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, _rotationSpeed * Time.fixedDeltaTime);
-    }
-
-    void ResetMovement()
-    {
-        _rotationOffset = 0;
-        _speedOffset = 0;
     }
     #endregion
 

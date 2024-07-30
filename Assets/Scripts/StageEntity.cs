@@ -30,6 +30,7 @@ public class StageEntity : MonoBehaviour
     protected CapsuleCollider _collider => GetComponent<CapsuleCollider>();
 
 
+
     // ==== Serialized Fields ================================== >>
 
     // ---- Collider ----
@@ -37,26 +38,36 @@ public class StageEntity : MonoBehaviour
     [SerializeField] protected float _colliderRadius = 5.0f;
 
     // ---- Movement ----
-    [SerializeField, Range(-360, 360)] private float _targetRotation = 0;
-    [SerializeField] private float _moveSpeed = 10.0f;
-    [SerializeField] private float _rotationSpeed = 10.0f;
+    [SerializeField] protected float _moveSpeed = 10.0f;
+    [SerializeField] protected float _rotationSpeed = 10.0f;
+    [SerializeField, Range(-360, 360)] protected float _rotationTargetAngle = 0;
+    protected float _moveSpeedOffset = 0;
+
 
     // ---- Gameplay ----
 
     [Tooltip("The lifespan of the object in seconds. Set to 0 to disable.")]
-    [SerializeField] private float _lifeSpan = 5.0f;
+    [SerializeField] private float _lifeSpan = -1f;
 
     // ======================== [[ UNITY METHODS ]] ======================== >>
 
     public virtual void Start() { Initialize(); }
-    public virtual void Update() { UpdateMovement(); }
+    public virtual void FixedUpdate()
+    {
+        UpdateMovement();
 
+        // Check if the object is out of bounds
+        if (!_stageManager.IsColliderInStage(_collider))
+        {
+            OnStageExit();
+        }
+    }
     public virtual void OnDrawGizmosSelected()
     {
         Vector3 entityPos = currentPosition;
 
         // Get the target position from _rotationDirection using pythagorean theorem
-        Vector3 targetPos = CalculateTargetPosition(entityPos, _targetRotation, _moveSpeed * 5);
+        Vector3 targetPos = CalculateTargetPosition(entityPos, _rotationTargetAngle, _moveSpeed * 5);
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(entityPos, targetPos);
@@ -64,6 +75,10 @@ public class StageEntity : MonoBehaviour
     }
 
     // ======================== [[ BASE METHODS ]] ======================== >>
+
+    /// <summary>
+    /// Initialize the object with the given settings & assign the entity to the stage
+    /// </summary>
     public virtual void Initialize()
     {
         // Assign the collider settings
@@ -77,7 +92,7 @@ public class StageEntity : MonoBehaviour
 
         // Assign the rotation value
         Vector3 rotation = transform.rotation.eulerAngles;
-        rotation.y = _targetRotation;
+        rotation.y = _rotationTargetAngle;
         transform.rotation = Quaternion.Euler(rotation);
 
         // Destroy this object after the lifespan
@@ -91,13 +106,13 @@ public class StageEntity : MonoBehaviour
     {
         // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
-        Vector3 thrustVelocity = transform.forward * _moveSpeed;
+        Vector3 thrustVelocity = transform.forward * (_moveSpeed + _moveSpeedOffset);
         _rb.velocity = thrustVelocity;
 
         // << ROTATION >> ---------------- >>
         // Store the current and target rotation values in Euler Angles
         Vector3 vec3_currentRotation = transform.rotation.eulerAngles;
-        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _targetRotation, vec3_currentRotation.z);
+        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _rotationTargetAngle, vec3_currentRotation.z);
 
         // Convert to Quaternions
         Quaternion q_currentRotation = Quaternion.Euler(vec3_currentRotation);
@@ -108,6 +123,12 @@ public class StageEntity : MonoBehaviour
 
         // Assign the new rotation value
         transform.rotation = lerpedRotation;
+    }
+
+    protected virtual void ResetMovement()
+    {
+        _moveSpeedOffset = 0;
+        _rotationTargetAngle = 0;
     }
 
     protected virtual void OnStageExit()
