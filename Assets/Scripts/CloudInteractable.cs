@@ -6,12 +6,12 @@ using UnityEngine;
 public class CloudInteractable : MonoBehaviour
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
-    CloudGradient _cloudParticleData;
+    CloudGradientData _cloudParticleData;
 
     [SerializeField] float _radius = 1.0f;
     [SerializeField] float _speed = 10.0f;
 
-    public void SetCloudData(CloudGradient cloudParticleData)
+    public void SetCloudData(CloudGradientData cloudParticleData)
     {
         _cloudParticleData = cloudParticleData;
         SetColorOverLifetime(_cloudParticleData.ToGradient());
@@ -48,7 +48,6 @@ public class CloudInteractable : MonoBehaviour
 
             planeController.CreateNewContrail(_cloudParticleData.ToGradient());
             Destroy(gameObject);
-
         }
     }
 
@@ -68,7 +67,6 @@ public class CloudInteractable : MonoBehaviour
             else
             {
 #if UNITY_EDITOR
-                //UnityEditor.EditorApplication.delayCall += () => DestroyImmediate(gameObject);
                 DestroyImmediate(gameObject);
 #endif
             }

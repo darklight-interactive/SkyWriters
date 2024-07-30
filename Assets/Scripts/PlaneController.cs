@@ -13,15 +13,13 @@ public class PlaneController : MonoBehaviour
 {
     PlayerInput playerInput => GetComponent<PlayerInput>();
     Rigidbody rb => GetComponent<Rigidbody>();
+    new Collider collider => GetComponent<Collider>();
 
     [SerializeField] Transform _planeBody;
 
     [SerializeField, Range(0, 1000)] float _moveSpeed = 10;
     [SerializeField, Range(0, 100)] float _rotationSpeed = 10;
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
-
-
-
 
     private float _rotationOffset;
     private float _speedOffset;
@@ -40,9 +38,26 @@ public class PlaneController : MonoBehaviour
         playerInput.actions["MoveInput"].canceled += ctx => ResetMovement();
 
         CreateContrails();
-
     }
 
+    void FixedUpdate()
+    {
+        UpdateMovement();
+
+        // Check if the plane is out of bounds
+        if (StageManager.Instance.IsColliderInStage(this.collider) == false)
+        {
+            Vector3 newSpawnPoint = StageManager.Instance.GetAntipodalPoint(this.transform.position);
+            this.transform.position = newSpawnPoint;
+        }
+    }
+
+    #region ======================= [[ SPAWN ]] =======================
+
+
+    #endregion
+
+    #region ======================= [[ MOVEMENT ]] =======================
     void SetMovement(Vector2 moveInput)
     {
         // Store the move direction on the XZ plane
@@ -57,13 +72,7 @@ public class PlaneController : MonoBehaviour
         _speedOffset = Mathf.Clamp(direction.z * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
     }
 
-    void ResetMovement()
-    {
-        _rotationOffset = 0;
-        _speedOffset = 0;
-    }
-
-    void FixedUpdate()
+    void UpdateMovement()
     {
         // Set the velocity of the plane to move in the current forward direction
         rb.velocity = transform.forward * (_moveSpeed + _speedOffset);
@@ -81,8 +90,14 @@ public class PlaneController : MonoBehaviour
         _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, _rotationSpeed * Time.fixedDeltaTime);
     }
 
+    void ResetMovement()
+    {
+        _rotationOffset = 0;
+        _speedOffset = 0;
+    }
+    #endregion
 
-    // ============== [[ CONTRAILS ]] ============== /// 
+    #region ======================= [[ CONTRAILS ]] ============== 
 
     [Header("Contrails")]
     [SerializeField] GameObject _contrailPrefab;
@@ -167,7 +182,7 @@ public class PlaneController : MonoBehaviour
         // Destroy the particle system game object
         Destroy(contrail.gameObject);
     }
-
+    #endregion 
 
     void OnDrawGizmos()
     {

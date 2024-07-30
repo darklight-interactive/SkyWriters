@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7670275015513312434}
   - component: {fileID: 128118162220994703}
   - component: {fileID: 7197200715464374080}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cloud Interactable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3186196175442933025}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20.255201, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 1
-  _speed: 100
+  _speed: 10
 --- !u!198 &316231922153566340
 ParticleSystem:
   m_ObjectHideFlags: 0

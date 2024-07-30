@@ -4,61 +4,37 @@ using System.Linq;
 using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 using NaughtyAttributes;
+using Darklight.UnityExt.Editor;
 
-[System.Serializable]
-public class CloudGradient
-{
-    public Color startColor = Color.white;
-    public Color middleColor = Color.white;
-    public Color endColor = Color.white;
 
-    public CloudGradient(Color startColor, Color middleColor, Color endColor)
-    {
-        this.startColor = startColor;
-        this.middleColor = middleColor;
-        this.endColor = endColor;
-    }
-
-    public Gradient ToGradient()
-    {
-        Gradient gradient = new Gradient();
-
-        GradientColorKey[] colorKeys = new GradientColorKey[3]
-        {
-            new GradientColorKey(startColor, 0.0f),
-            new GradientColorKey(middleColor, 0.5f),
-            new GradientColorKey(endColor, 1.0f)
-        };
-
-        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3]
-        {
-            new GradientAlphaKey(startColor.a, 0.0f),
-            new GradientAlphaKey(middleColor.a, 0.5f),
-            new GradientAlphaKey(endColor.a, 1.0f)
-        };
-
-        gradient.SetKeys(colorKeys, alphaKeys);
-
-        return gradient;
-    }
-}
 
 [ExecuteAlways]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
-    // -------------- Serialized Fields --------------
 
+    // -------------- Static Fields ------------------------
+    public static void AssignEntityToStage(StageEntity entity, float height = 1)
+    {
+        float stageHeight = Instance._stageHeight + (height / 2);
+        entity.position = new Vector3(entity.position.x, height, entity.position.z);
+    }
+
+
+    // -------------- Private Serialized Fields --------------
     [Header("Stage Settings")]
-    [SerializeField] private float _stageRadius = 1000;
-    [SerializeField] private float _spawnOffset = 100;
+    [ShowOnly, SerializeField] float _stageHeight;
+    [ShowOnly, SerializeField] private float _stageRadius = 1000;
+    [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
+
 
     [Header("Stage Data")]
-    [SerializeField] private List<Collider> _collidersInStage;
+    [SerializeField] private List<Collider> _stageColliders;
+    [SerializeField] private List<Collider> _spawnAreaColliders;
     [SerializeField] private List<PlaneController> _planesInStage;
     [SerializeField] private List<CloudInteractable> _cloudsInStage;
 
-    [Header("Cloud Particle Data")]
-    [SerializeField] private List<CloudGradient> _cloudGradients;
+    [Header("Cloud Data")]
+    [SerializeField] private List<CloudGradientData> _cloudGradients;
 
     [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
@@ -66,18 +42,22 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     public override void Initialize()
     {
-        //StartCoroutine(CloudSpawnRoutine());
+        _stageHeight = transform.position.y;
     }
 
     public void Update()
     {
-        _collidersInStage = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
+        _stageColliders = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
+        _spawnAreaColliders = Physics.OverlapSphere(transform.position, _stageRadius + _spawnRadiusOffset).ToList();
+
         _planesInStage = new List<PlaneController>();
         _cloudsInStage = new List<CloudInteractable>();
 
         // Update the collider references
-        foreach (Collider collider in _collidersInStage)
+        foreach (Collider collider in _spawnAreaColliders)
         {
+            PlaneController planeController = collider.gameObject.GetComponent<PlaneController>();
+
             if (collider.gameObject.GetComponent<PlaneController>())
             {
                 if (!_planesInStage.Contains(collider.gameObject.GetComponent<PlaneController>()))
@@ -85,6 +65,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
                     _planesInStage.Add(collider.gameObject.GetComponent<PlaneController>());
                 }
             }
+
             if (collider.gameObject.GetComponent<CloudInteractable>())
             {
                 if (!_cloudsInStage.Contains(collider.gameObject.GetComponent<CloudInteractable>()))
@@ -103,43 +84,40 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
         // Draw the spawn offset
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _stageRadius + _spawnOffset);
+        Gizmos.DrawWireSphere(transform.position, _stageRadius + _spawnRadiusOffset);
     }
 
 
-    // ---------------------------------------- Public Methods ---------------------------------------- >>
+    #region ================= [[ CLOUD MANAGEMENT ]] ================= >>
+
+    public void SpawnCloudAt(Vector3 position)
+    {
+        GameObject cloud = Instantiate(_cloudPrefab, position, Quaternion.identity);
+        CloudGradientData randomCloudData = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
+        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
+    }
 
     [Button]
     public void SpawnRandomCloud()
     {
-        GameObject cloud = Instantiate(_cloudPrefab, GetRandomPointOnLeftSideOfStage(), Quaternion.identity);
-        CloudGradient randomCloudData = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
-        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
+        Vector3 randomSpawnPos = GetRandomPointOnLeftSideOfStage();
+        SpawnCloudAt(randomSpawnPos);
     }
+
+    #endregion
+
+
+    // ---------------------------------------- Public Methods ---------------------------------------- >>
 
     public bool IsColliderInStage(Collider other)
     {
-        return _collidersInStage.Contains(other);
+        return _stageColliders.Contains(other);
     }
 
-    public void TeleportColliderToAntipodalPoint(Collider collider)
+    public bool IsColliderInSpawnArea(Collider other)
     {
-        Transform otherTransform = collider.transform;
-        Vector3 antipodalPoint = GetAntipodalPoint(otherTransform.position);
-        otherTransform.position = antipodalPoint;
+        return _spawnAreaColliders.Contains(other);
     }
-
-    IEnumerator CloudSpawnRoutine()
-    {
-        while (true)
-        {
-            float randomTime = Random.Range(1.0f, 5.0f);
-            yield return new WaitForSeconds(randomTime);
-            SpawnRandomCloud();
-        }
-    }
-
-
 
     /// <summary>
     /// Returns the antipodal point of a given point on the circumference of the stage.
@@ -148,7 +126,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     ///     The point on the circumference of the stage.
     /// </param>
     /// <returns></returns>
-    Vector3 GetAntipodalPoint(Vector3 point)
+    public Vector3 GetAntipodalPoint(Vector3 point)
     {
         Vector3 center = transform.position; // This transform's position is the center of the stage
         Vector3 directionXZ = point - center; // Get the direction vector from the center to the point
@@ -170,13 +148,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return randomPoint;
     }
 
-    public Vector3 GetRandomPosOutStage()
-    {
-        Vector3 randomPoint = GetRandomPointOutsideInnerRangeAndWithinOuterRange(_stageRadius, _stageRadius * 1.25f);
-        randomPoint.y = transform.position.y;
-        return randomPoint;
-    }
-
     Vector3 GetRandomPointOnLeftSideOfStage()
     {
         float leftBound = transform.position.x - _stageRadius;
@@ -184,25 +155,4 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         float lowerBound = transform.position.z - _stageRadius;
         return new Vector3(leftBound, transform.position.y, Random.Range(lowerBound, upperBound));
     }
-
-    Vector3 GetRandomPointOutsideInnerRangeAndWithinOuterRange(float innerRange, float outerRange)
-    {
-        // Generate a random angle in radians
-        float angle = Random.Range(0f, Mathf.PI * 2);
-
-        // Generate a random distance outside the inner range but within the outer range
-        float distance = Random.Range(innerRange, outerRange);
-
-        // Convert polar coordinates to Cartesian coordinates
-        float x = distance * Mathf.Cos(angle);
-        float z = distance * Mathf.Sin(angle);
-
-        // Return the point as a Vector3 (assuming y = 0 for 2D plane)
-        return new Vector3(x, 0, z);
-    }
-
-
-
-
-
 }
