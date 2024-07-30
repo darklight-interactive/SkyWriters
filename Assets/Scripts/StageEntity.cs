@@ -17,21 +17,19 @@ public class StageEntity : MonoBehaviour
         set => transform.position = value;
     }
 
-    public Vector3 currentRotation
+    public Quaternion currentRotation
     {
-        get => transform.rotation.eulerAngles;
-        set => transform.rotation = Quaternion.Euler(value);
+        get => transform.rotation;
+        set => transform.rotation = currentRotation;
     }
 
 
-    // ==== Private Properties ================================= ))
-    StageManager _stageManager => StageManager.Instance;
+    // ==== Protected Properties ================================= ))
+    protected StageManager _stageManager => StageManager.Instance;
     protected Rigidbody _rb => GetComponent<Rigidbody>();
     protected CapsuleCollider _collider => GetComponent<CapsuleCollider>();
 
-
-
-    // ==== Serialized Fields ================================== >>
+    [SerializeField] protected bool _respawnOnExit = true;
 
     // ---- Collider ----
     [SerializeField] protected float _colliderHeight = 10.0f;
@@ -39,10 +37,12 @@ public class StageEntity : MonoBehaviour
 
     // ---- Movement ----
     [SerializeField] protected float _moveSpeed = 10.0f;
-    [SerializeField] protected float _rotationSpeed = 10.0f;
-    [SerializeField, Range(-360, 360)] protected float _rotationTargetAngle = 0;
-    protected float _moveSpeedOffset = 0;
+    [SerializeField] protected float _moveSpeedAmplifier = 0;
 
+    // ---- Rotation ----
+    [SerializeField] protected float _rotationSpeed = 10.0f;
+    [SerializeField, Range(-360, 360)] protected float _rotationAngle = 0;
+    protected float _target_rotationAngle = 0;
 
     // ---- Gameplay ----
 
@@ -59,19 +59,24 @@ public class StageEntity : MonoBehaviour
         // Check if the object is out of bounds
         if (!_stageManager.IsColliderInStage(_collider))
         {
-            OnStageExit();
+            OnStageExit(_respawnOnExit);
         }
     }
-    public virtual void OnDrawGizmosSelected()
+    public virtual void OnDrawGizmos()
     {
         Vector3 entityPos = currentPosition;
 
         // Get the target position from _rotationDirection using pythagorean theorem
-        Vector3 targetPos = CalculateTargetPosition(entityPos, _rotationTargetAngle, _moveSpeed * 5);
+        Vector3 targetPos = CalculateTargetPosition(entityPos, _target_rotationAngle, _moveSpeed * 2);
 
+        // Draw the target position and the line to it
         Gizmos.color = Color.red;
         Gizmos.DrawLine(entityPos, targetPos);
         Gizmos.DrawCube(targetPos, _colliderRadius * 0.5f * Vector3.one);
+
+        // Draw the current velocity
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(entityPos, entityPos + _rb.velocity);
     }
 
     // ======================== [[ BASE METHODS ]] ======================== >>
@@ -92,7 +97,7 @@ public class StageEntity : MonoBehaviour
 
         // Assign the rotation value
         Vector3 rotation = transform.rotation.eulerAngles;
-        rotation.y = _rotationTargetAngle;
+        rotation.y = _rotationAngle;
         transform.rotation = Quaternion.Euler(rotation);
 
         // Destroy this object after the lifespan
@@ -106,33 +111,42 @@ public class StageEntity : MonoBehaviour
     {
         // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
-        Vector3 thrustVelocity = transform.forward * (_moveSpeed + _moveSpeedOffset);
+        Vector3 thrustVelocity = transform.forward * (_moveSpeed + _moveSpeedAmplifier);
         _rb.velocity = thrustVelocity;
 
         // << ROTATION >> ---------------- >>
         // Store the current and target rotation values in Euler Angles
-        Vector3 vec3_currentRotation = transform.rotation.eulerAngles;
-        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _rotationTargetAngle, vec3_currentRotation.z);
+        Vector3 vec3_currentRotation = currentRotation.eulerAngles;
+        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _target_rotationAngle, vec3_currentRotation.z);
 
         // Convert to Quaternions
-        Quaternion q_currentRotation = Quaternion.Euler(vec3_currentRotation);
+        Quaternion q_currentRotation = currentRotation;
         Quaternion q_targetRotation = Quaternion.Euler(vec3_targetRotation);
 
         // Slerp the current rotation to the target rotation
-        Quaternion lerpedRotation = Quaternion.Slerp(q_currentRotation, q_targetRotation, _rotationSpeed * Time.fixedDeltaTime);
-
-        // Assign the new rotation value
-        transform.rotation = lerpedRotation;
+        transform.rotation = Quaternion.Slerp(q_currentRotation, q_targetRotation, _rotationSpeed * Time.fixedDeltaTime);
     }
 
     protected virtual void ResetMovement()
     {
-        _moveSpeedOffset = 0;
-        _rotationTargetAngle = 0;
+        _moveSpeedAmplifier = 0;
+
+        // Set the target rotation to the current rotation
+        _target_rotationAngle = currentRotation.eulerAngles.y;
     }
 
-    protected virtual void OnStageExit()
+    /// <summary>
+    /// Called when the object is out of bounds
+    /// </summary>
+    protected virtual void OnStageExit(bool respawn)
     {
+        if (respawn)
+        {
+            Vector3 antipodalPoint = StageManager.Instance.GetAntipodalPoint(currentPosition);
+            transform.position = antipodalPoint;
+            return;
+        }
+
         // Destroy the object by default
         if (Application.isPlaying)
         {

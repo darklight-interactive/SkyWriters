@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteAlways, RequireComponent(typeof(ParticleSystem))]
-public class CloudInteractable : StageEntity
+public class CloudEntity : StageEntity
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudGradientData _gradientData;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        // Remove the cloud object if it is out of bounds
+        _respawnOnExit = false;
+    }
 
     public void SetCloudData(CloudGradientData cloudParticleData)
     {

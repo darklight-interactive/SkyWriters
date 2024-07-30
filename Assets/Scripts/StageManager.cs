@@ -35,7 +35,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [SerializeField] List<Collider> _stageColliders;
     [SerializeField] List<Collider> _spawnAreaColliders;
     [SerializeField] List<PlaneController> _planesInStage;
-    [SerializeField] List<CloudInteractable> _cloudsInStage;
+    [SerializeField] List<CloudEntity> _cloudsInStage;
 
     [Header("Cloud Data")]
     [SerializeField] List<CloudGradientData> _cloudGradients;
@@ -59,7 +59,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         _spawnAreaColliders = Physics.OverlapSphere(transform.position, _stageRadius + _spawnRadiusOffset).ToList();
 
         _planesInStage = new List<PlaneController>();
-        _cloudsInStage = new List<CloudInteractable>();
+        _cloudsInStage = new List<CloudEntity>();
 
         // Update the collider references
         foreach (Collider collider in _spawnAreaColliders)
@@ -74,11 +74,11 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
                 }
             }
 
-            if (collider.gameObject.GetComponent<CloudInteractable>())
+            if (collider.gameObject.GetComponent<CloudEntity>())
             {
-                if (!_cloudsInStage.Contains(collider.gameObject.GetComponent<CloudInteractable>()))
+                if (!_cloudsInStage.Contains(collider.gameObject.GetComponent<CloudEntity>()))
                 {
-                    _cloudsInStage.Add(collider.gameObject.GetComponent<CloudInteractable>());
+                    _cloudsInStage.Add(collider.gameObject.GetComponent<CloudEntity>());
                 }
             }
         }
@@ -102,7 +102,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         GameObject cloud = Instantiate(_cloudPrefab, position, Quaternion.identity);
         CloudGradientData randomCloudData = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
-        cloud.GetComponent<CloudInteractable>().SetCloudData(randomCloudData);
+        cloud.GetComponent<CloudEntity>().SetCloudData(randomCloudData);
     }
 
     [Button]

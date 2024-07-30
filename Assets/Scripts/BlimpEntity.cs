@@ -25,16 +25,6 @@ public class BlimpEntity : StageEntity
         StartCoroutine(SpawnExhaustClouds());
     }
 
-    public void FixedUpdate()
-    {
-        // Check if the plane is out of bounds
-        if (StageManager.Instance.IsColliderInStage(_collider) == false)
-        {
-            Vector3 newSpawnPoint = StageManager.Instance.GetAntipodalPoint(this.transform.position);
-            this.transform.position = newSpawnPoint;
-        }
-    }
-
     IEnumerator SpawnExhaustClouds()
     {
         while (true)
@@ -44,9 +34,9 @@ public class BlimpEntity : StageEntity
         }
     }
 
-    public override void OnDrawGizmosSelected()
+    public override void OnDrawGizmos()
     {
-        base.OnDrawGizmosSelected();
+        base.OnDrawGizmos();
 
         Gizmos.color = Color.white;
         Gizmos.DrawSphere(_exhaustPosition, _colliderRadius * 0.5f);
