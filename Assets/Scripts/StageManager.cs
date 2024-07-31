@@ -12,29 +12,35 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 [RequireComponent(typeof(PlayerInputManager))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     public enum AreaType { ALL, STAGE, SPAWN_AREA }
 
     // -------------- Static Methods ------------------------
-    public static float StageHeight => Instance.transform.position.y;
-
-    /// <summary>
-    /// Assigns an entity to the stage.
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <param name="col_height"></param>
-    public static void AssignEntityToStage(StageEntity entity)
+    public static Vector3 StageCenter => Instance.transform.position;
+    public static float StageRadius => Instance._stageRadius;
+    public static float SpawnRadiusOffset => Instance._spawnRadiusOffset;
+    public static List<Vector3> CalculatePointsInCircle(Vector3 center, float radius, int count, Vector3 direction)
     {
-        StageEntity.Data data = entity.data;
-        float entityHeight = StageHeight + (data.colliderHeight * 0.5f);
-        entity.transform.position = new Vector3(entity.transform.position.x, entityHeight, entity.transform.position.z);
+        List<Vector3> points = new List<Vector3>();
+
+        // Foreach step in the circle, calculate the points
+        float angleStep = 360.0f / count;
+        for (int i = 0; i < count; i++)
+        {
+            float angle = i * angleStep;
+            Vector3 newPoint = center + Quaternion.AngleAxis(angle, direction) * Vector3.right * radius;
+            points.Add(newPoint);
+        }
+        return points;
     }
 
     // -------------- Properties ------------------------
-
-    // << Player Input Manager >>
     PlayerInputManager _playerInputManager => GetComponent<PlayerInputManager>();
     List<PlayerInputData> _playerInputs = new List<PlayerInputData>();
 
@@ -42,6 +48,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [SerializeField] int _maxPlayers = 4;
     [SerializeField] float _stageRadius = 1000;
     [SerializeField, Range(10, 1000)] float _spawnRadiusOffset = 100;
+    [SerializeField, Range(0, 360)] float _windDirection = 0;
 
     [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
@@ -59,22 +66,31 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     #region ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
     {
-        _playerInputManager.onPlayerJoined += OnPlayerJoined;
-        _playerInputManager.onPlayerLeft += OnPlayerLeft;
-
-        SpawnEntitiesRandomly_InStage<CloudEntity>(10);
+        if (Application.isPlaying)
+        {
+            _playerInputManager.onPlayerJoined += OnPlayerJoined;
+            _playerInputManager.onPlayerLeft += OnPlayerLeft;
+        }
     }
 
     void OnDrawGizmos()
     {
         // Draw the stage radius
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _stageRadius);
+        StageGizmos.DrawCircle(transform.position, _stageRadius, Vector3.up, Color.green);
 
-        // Draw the spawn offset
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _stageRadius + _spawnRadiusOffset);
+        // Draw the spawn area
+        StageGizmos.DrawCircle(transform.position, _stageRadius + _spawnRadiusOffset, Vector3.up, Color.yellow);
+
+        // Draw the wind direction
+        Gizmos.color = Color.white;
+        Vector3 windDir = Quaternion.AngleAxis(_windDirection, Vector3.up) * Vector3.forward;
+        Gizmos.DrawLine(transform.position, transform.position + windDir * _stageRadius);
     }
+
+
+
+
+
     #endregion
 
 
@@ -244,6 +260,12 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     }
     #endregion
 
+    #region (( ---- Wind Handling ---- ))
+
+
+
+    #endregion
+
     #endregion
 
     #region ================= [[ PLAYER MANAGEMENT ]] ================= >>
@@ -372,4 +394,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
         return new Vector2(x, y);
     }
+
 }
+

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5229654e1180d604db28b89035391066, type: 3}
   m_Name: PlanePreset
   m_EditorClassIdentifier: 
-  type: 0
-  respawnOnExit: 0
-  colliderHeight: 0
-  colliderRadius: 0
-  moveSpeed: 0
-  rotationSpeed: 0
-  lifeSpan: 0
+  _type: 1
+  _colliderHeight: 10
+  _colliderRadius: 3.5
+  _moveSpeed: 200
+  _rotationSpeed: 1.5
+  _respawnOnExit: 1
+  _lifeSpan: -1

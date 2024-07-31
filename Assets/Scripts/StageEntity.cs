@@ -136,7 +136,7 @@ public class StageEntity : MonoBehaviour
         col.center = Vector3.zero;
 
         // Assign the height of the object to the stage height
-        StageManager.AssignEntityToStage(this);
+        //StageManager.AssignEntityToStage(this);
 
         // Destroy this object after the lifespan
         if (Application.isPlaying && data.lifeSpan > 0)
