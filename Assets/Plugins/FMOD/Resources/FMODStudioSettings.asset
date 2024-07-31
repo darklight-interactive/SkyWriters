@@ -524,10 +524,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   switchSettingsMigration: 1
-  HasSourceProject: 0
-  HasPlatforms: 0
-  sourceProjectPath: 
-  sourceBankPath: Assets/SkyWriters_FMOD/FMOD_Builds/Desktop
+  HasSourceProject: 1
+  HasPlatforms: 1
+  sourceProjectPath: Assets/SkyWriters_FMOD/SkyWriters_FMOD.fspro
+  sourceBankPath: Assets/SkyWriters_FMOD/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
@@ -548,12 +548,8 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks:
-  - Master
-  Banks:
-  - Ambience
-  - Music
-  - SFX
+  MasterBanks: []
+  Banks: []
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
