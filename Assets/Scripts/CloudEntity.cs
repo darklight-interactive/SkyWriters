@@ -8,7 +8,7 @@ public class CloudEntity : StageEntity
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudGradientData _gradientData;
 
-    public override void Initialize(EntityType entityType = EntityType.CLOUD)
+    public override void Initialize(Type entityType = Type.CLOUD)
     {
         base.Initialize();
 
@@ -16,7 +16,7 @@ public class CloudEntity : StageEntity
         _respawnOnExit = false;
     }
 
-    public void SetCloudData(CloudGradientData cloudParticleData)
+    public void SetCloudGradient(CloudGradientData cloudParticleData)
     {
         _gradientData = cloudParticleData;
         SetColorOverLifetime(_gradientData.ToGradient());
@@ -31,12 +31,12 @@ public class CloudEntity : StageEntity
     // ================== Unity Events ==================
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<PlaneController>())
+        if (other.gameObject.GetComponent<PlaneEntity>())
         {
-            StageManager.Instance.SpawnRandomCloud();
+            _stageManager.SpawnEntityRandomly_InStage<CloudEntity>();
 
             // Set the contrail color to the cloud's color
-            PlaneController planeController = other.gameObject.GetComponent<PlaneController>();
+            PlaneEntity planeController = other.gameObject.GetComponent<PlaneEntity>();
 
             if (planeController == null)
             {

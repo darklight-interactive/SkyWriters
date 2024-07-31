@@ -25,7 +25,7 @@ public class BlimpEntity : StageEntity
         StartCoroutine(SpawnExhaustClouds());
     }
 
-    public override void Initialize(EntityType type = EntityType.BLIMP)
+    public override void Initialize(Type type = Type.BLIMP)
     {
         base.Initialize(type);
     }

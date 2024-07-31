@@ -8,19 +8,20 @@ using UnityEditor;
 using UnityEngine.InputSystem;
 using UnityEditor.VersionControl;
 
-public class PlaneController : StageEntity
+public class PlaneEntity : StageEntity
 {
-    [SerializeField] PlayerInput _playerInput;
+    [SerializeField] StagePlayerData _playerInputData;
+    [ShowOnly, SerializeField] bool _isAutopilot = true;
+    public bool IsAutopilot => _isAutopilot;
     [SerializeField] Transform _planeBody;
-
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
 
-    public override void Initialize(EntityType entityType = EntityType.PLANE)
+    public override void Initialize(Type entityType = Type.PLANE)
     {
         base.Initialize();
-        entityTypeKey = EntityType.PLANE;
+        _typeKey = Type.PLANE;
 
-        if (_playerInput == null)
+        if (_playerInputData == null)
         {
             ActivateAutopilot();
         }
@@ -32,24 +33,6 @@ public class PlaneController : StageEntity
         }
     }
 
-    public void AssignPlayerInput(PlayerInput input)
-    {
-        _playerInput = input;
-        DeactivateAutopilot();
-    }
-
-    public void ActivateAutopilot()
-    {
-        _playerInput = null;
-        _autopilotRoutine = StartCoroutine(AutopilotRoutine());
-    }
-
-    public void DeactivateAutopilot()
-    {
-        StopCoroutine(_autopilotRoutine);
-        _autopilotRoutine = null;
-    }
-
     public override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
@@ -59,10 +42,20 @@ public class PlaneController : StageEntity
         Gizmos.DrawSphere(transform.position + Vector3.left * _contrailWingspan, 1f);
     }
 
-    public void OnDestroy()
+    #region ======================= [[ INPUT HANDLING ]] =======================
+
+    public void AssignPlayerInput(StagePlayerData input)
     {
-        StopCoroutine(_autopilotRoutine);
+        _playerInputData = input;
+        DeactivateAutopilot();
+
+        Debug.Log($"Player input assigned to plane: {_playerInputData.GetInfo()}", this);
+
+
     }
+
+    #endregion
+
 
     #region ======================= [[ MOVEMENT CONTROLLER ]] =======================
     void ApplyMovementInput(Vector2 moveInput)
@@ -78,9 +71,9 @@ public class PlaneController : StageEntity
 
     protected override void UpdateMovement()
     {
-        if (_playerInput)
+        if (_playerInputData != null && !_isAutopilot)
         {
-            Vector2 moveInput = _playerInput.actions["MoveInput"].ReadValue<Vector2>();
+            Vector2 moveInput = _playerInputData.ReadMoveInput();
             ApplyMovementInput(moveInput);
         }
 
@@ -111,6 +104,25 @@ public class PlaneController : StageEntity
             ApplyMovementInput(new Vector2(1, 1));
         }
     }
+
+    public void ActivateAutopilot()
+    {
+        if (_isAutopilot) return;
+        _isAutopilot = true;
+        _autopilotRoutine = StartCoroutine(AutopilotRoutine());
+    }
+
+    public void DeactivateAutopilot()
+    {
+        if (!_isAutopilot) return;
+        if (_autopilotRoutine != null)
+        {
+            StopCoroutine(_autopilotRoutine);
+            _autopilotRoutine = null;
+        }
+        _isAutopilot = false;
+    }
+
     #endregion
 
 

@@ -9,11 +9,9 @@ using UnityEditor;
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
-    public enum EntityType { NULL, PLANE, CLOUD, BLIMP }
-    public static EntityType entityTypeKey;
-
-
     // ==== Public Properties ================================== ))
+    public enum Type { NULL, PLANE, CLOUD, BLIMP }
+
     public Vector3 currentPosition
     {
         get => transform.position;
@@ -32,6 +30,11 @@ public class StageEntity : MonoBehaviour
     protected Rigidbody _rb => GetComponent<Rigidbody>();
     protected CapsuleCollider _collider => GetComponent<CapsuleCollider>();
 
+    // ---- Entity Type ----
+    [SerializeField, ShowOnly] protected Type _typeKey = Type.NULL;
+    [SerializeField, ShowOnly] protected int _entityId = -1;
+
+    // ---- Spawn ----
     [SerializeField] protected bool _respawnOnExit = true;
 
     // ---- Collider ----
@@ -60,11 +63,12 @@ public class StageEntity : MonoBehaviour
         UpdateMovement();
 
         // Check if the object is out of bounds
-        if (!_stageManager.IsColliderInStage(_collider))
+        if (!_stageManager.IsColliderInArea(_collider, StageManager.AreaType.STAGE))
         {
             OnStageExit(_respawnOnExit);
         }
     }
+
     public virtual void OnDrawGizmos()
     {
         Vector3 entityPos = currentPosition;
@@ -87,10 +91,11 @@ public class StageEntity : MonoBehaviour
     /// <summary>
     /// Initialize the object with the given settings & assign the entity to the stage
     /// </summary>
-    public virtual void Initialize(EntityType type = EntityType.NULL)
+    public virtual void Initialize(Type type = Type.NULL)
     {
         // Confirm default type key
-        entityTypeKey = type;
+        _typeKey = type;
+
 
         // Assign the collider settings
         _collider.height = _colliderHeight;

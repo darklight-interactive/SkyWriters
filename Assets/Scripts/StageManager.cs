@@ -1,109 +1,72 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Darklight.UnityExt.Behaviour;
-using UnityEngine;
-using NaughtyAttributes;
-using Darklight.UnityExt.Editor;
-using UnityEngine.InputSystem;
 
+using Darklight.UnityExt.Behaviour;
+using Darklight.UnityExt.Editor;
+using JetBrains.Annotations;
+using NaughtyAttributes;
+
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(PlayerInputManager))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
+    public enum AreaType { ALL, STAGE, SPAWN_AREA }
 
-    // -------------- Static Fields ------------------------
-    public static void AssignEntityToStage(StageEntity entity, float height = 1)
+    // -------------- Static Methods ------------------------
+    public static float StageHeight => Instance.transform.position.y;
+
+    /// <summary>
+    /// Assigns an entity to the stage.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="col_height"></param>
+    public static void AssignEntityToStage(StageEntity entity, float col_height = 1)
     {
-        float stageHeight = Instance.GetStageHeight() + (height / 2);
+        float stageHeight = StageHeight + (col_height / 2);
         entity.currentPosition = new Vector3(entity.currentPosition.x, stageHeight, entity.currentPosition.z);
     }
 
-    // -------------- Private Serialized Fields --------------
-    private PlayerInputManager _playerInputManager;
-    private List<PlayerInput> _playerInputs = new List<PlayerInput>();
 
+    // -------------- Properties ------------------------
 
-    [Header("Stage Settings")]
-    [ShowOnly, SerializeField] float _stageHeight;
-    public float GetStageHeight()
-    {
-        _stageHeight = transform.position.y;
-        return _stageHeight;
-    }
-    [SerializeField] private float _stageRadius = 1000;
-    [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
-
+    // << Player Input Manager >>
+    PlayerInputManager _playerInputManager => GetComponent<PlayerInputManager>();
+    int _maxPlayers = 4;
+    List<StagePlayerData> _playerInputs = new List<StagePlayerData>();
 
     [Header("Stage Data")]
-    [SerializeField] List<Collider> _stageColliders;
-    [SerializeField] List<Collider> _spawnAreaColliders;
-    [SerializeField] List<PlaneController> _planesInStage;
-    [SerializeField] List<CloudEntity> _cloudsInStage;
+    [SerializeField] private float _stageRadius = 1000;
+    [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
 
     [Header("Cloud Data")]
     [SerializeField] List<CloudGradientData> _cloudGradients;
     [SerializeField] float _cloudSpeed = 10f;
     public float CloudSpeed => _cloudSpeed;
 
-
     [Header("Prefabs")]
     [SerializeField] GameObject _planePrefab;
     [SerializeField] GameObject _cloudPrefab;
 
+
+
+    #region ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
     {
-        _stageHeight = transform.position.y;
-        //StartCoroutine(SpawnCloudRoutine(2f));
+        _playerInputManager.onPlayerJoined += OnPlayerJoined;
+        _playerInputManager.onPlayerLeft += OnPlayerLeft;
 
-        _playerInputManager = GetComponent<PlayerInputManager>();
-    }
-
-    public void OnPlayerJoined(PlayerInput playerInput)
-    {
-        if (_playerInputs.Contains(playerInput)) { return; }
-        _playerInputs.Add(playerInput);
-
-
-        GameObject plane = Instantiate(_planePrefab, GetRandomPosInSpawnArea(), Quaternion.identity);
-        PlaneController planeController = plane.GetComponent<PlaneController>();
-        planeController.AssignPlayerInput(playerInput);
-    }
-
-    public void OnPlayerLeft(PlayerInput playerInput)
-    {
-
+        SpawnEntitiesRandomly_InStage<CloudEntity>(10);
     }
 
     public void Update()
     {
-        _stageColliders = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
-        _spawnAreaColliders = Physics.OverlapSphere(transform.position, _stageRadius + _spawnRadiusOffset).ToList();
-
-        _planesInStage = new List<PlaneController>();
-        _cloudsInStage = new List<CloudEntity>();
-
-        // Update the collider references
-        foreach (Collider collider in _spawnAreaColliders)
-        {
-            PlaneController planeController = collider.gameObject.GetComponent<PlaneController>();
-
-            if (collider.gameObject.GetComponent<PlaneController>())
-            {
-                if (!_planesInStage.Contains(collider.gameObject.GetComponent<PlaneController>()))
-                {
-                    _planesInStage.Add(collider.gameObject.GetComponent<PlaneController>());
-                }
-            }
-
-            if (collider.gameObject.GetComponent<CloudEntity>())
-            {
-                if (!_cloudsInStage.Contains(collider.gameObject.GetComponent<CloudEntity>()))
-                {
-                    _cloudsInStage.Add(collider.gameObject.GetComponent<CloudEntity>());
-                }
-            }
-        }
+        //_stageColliders = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
+        //_spawnAreaColliders = Physics.OverlapSphere(transform.position, _stageRadius + _spawnRadiusOffset).ToList();
     }
 
     void OnDrawGizmos()
@@ -116,48 +79,253 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, _stageRadius + _spawnRadiusOffset);
     }
+    #endregion
 
 
-    #region ================= [[ CLOUD MANAGEMENT ]] ================= >>
+    #region ================= [[ STAGE MANAGEMENT ]] ================= >>
 
-    public void SpawnCloudAt(Vector3 position)
+    #region (( ---- Collider Handling ---- ))
+    /// <summary>
+    /// Returns an array of colliders within a given radius.
+    /// </summary>
+    /// <param name="radius"></param>
+    /// <returns></returns>
+    Collider[] GetCollidersInRadius(float radius)
     {
-        GameObject cloud = Instantiate(_cloudPrefab, position, Quaternion.identity);
-        CloudGradientData randomCloudData = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
-        cloud.GetComponent<CloudEntity>().SetCloudData(randomCloudData);
+        return Physics.OverlapSphere(transform.position, radius);
     }
 
-    [Button]
-    public void SpawnRandomCloud()
+    /// <summary>
+    /// Returns an array of colliders within a given area type.
+    /// This the main method to get colliders, each in their respective area style.      
+    /// </summary>
+    /// <param name="areaType"></param>
+    /// <returns></returns>
+    Collider[] GetCollidersInAreaType(AreaType areaType)
     {
-        Vector3 randomSpawnPos = GetRandomPosInSpawnArea();
-        SpawnCloudAt(randomSpawnPos);
-    }
-
-    IEnumerator SpawnCloudRoutine(float delay)
-    {
-        while (true)
+        switch (areaType)
         {
-            yield return new WaitForSeconds(delay);
-            SpawnRandomCloud();
+            case AreaType.ALL:
+                return FindObjectsByType<Collider>(FindObjectsSortMode.InstanceID);
+            case AreaType.STAGE:
+                return GetCollidersInRadius(_stageRadius);
+            case AreaType.SPAWN_AREA:
+                return GetCollidersInRadius(_stageRadius + _spawnRadiusOffset);
+            default:
+                return null;
         }
     }
 
+    /// <summary>
+    /// Returns a Dictionary of colliders by their area type.   
+    /// </summary>
+    /// <returns></returns>
+    Dictionary<AreaType, List<Collider>> GetCollidersByArea()
+    {
+        Dictionary<AreaType, List<Collider>> _collidersByArea = new Dictionary<AreaType, List<Collider>>();
+        foreach (AreaType areaType in Enum.GetValues(typeof(AreaType)))
+        {
+            _collidersByArea.Add(areaType, GetCollidersInAreaType(areaType).ToList());
+        }
+        return _collidersByArea;
+    }
+
+    /// <summary>
+    /// Checks if a collider is within a given area type.
+    /// </summary>
+    /// <param name="collider">
+    ///     The collider to check.
+    /// </param>
+    /// <param name="areaType">
+    ///     The area type to check.
+    /// </param>
+    /// <returns></returns>
+    public bool IsColliderInArea(Collider collider, AreaType areaType)
+    {
+        return GetCollidersInAreaType(areaType).Contains(collider);
+    }
+    #endregion
+
+
+    #region (( ---- Entity Handling ---- ))
+
+    /// <summary>
+    /// Spawns an entity of the given type at the given position.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The data type of StageEntity to spawn.
+    /// </typeparam>
+    /// <param name="position">
+    ///     The position to spawn the entity at.
+    /// </param>
+    /// <returns>
+    ///     The spawned entity data.
+    /// </returns>
+    public T SpawnEntity<T>(Vector3 position) where T : StageEntity
+    {
+        StageEntity.Type type = GetEnumTypeFromSubclass<T>();
+        GameObject prefab = GetEntityPrefab(type);
+        return Instantiate(prefab, position, Quaternion.identity).GetComponent<T>();
+    }
+
+    /// <summary>
+    /// Spawns an entity of the given type at a random position within the stage.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The data type of StageEntity to spawn.
+    /// </typeparam>
+    /// <returns>
+    ///     The spawned entity data.
+    /// </returns>
+    public T SpawnEntityRandomly_InStage<T>() where T : StageEntity
+    {
+        return SpawnEntity<T>(GetRandomPosInStage());
+    }
+
+    public List<T> SpawnEntitiesRandomly_InStage<T>(int count) where T : StageEntity
+    {
+        if (count <= 0)
+        {
+            Debug.LogError($"{Prefix} Cannot spawn 0 or less entities.", this);
+            return null;
+        }
+
+        List<T> entities = new List<T>();
+        for (int i = 0; i < count; i++)
+        {
+            T newEntity = SpawnEntityRandomly_InStage<T>();
+            entities.Add(newEntity);
+        }
+        return entities;
+    }
+
+    public List<T> GetAllEntitiesOfType<T>() where T : StageEntity
+    {
+        return FindObjectsByType<T>(FindObjectsSortMode.InstanceID).ToList();
+    }
+    GameObject GetEntityPrefab(StageEntity.Type entityType)
+    {
+        switch (entityType)
+        {
+            case StageEntity.Type.PLANE:
+                return _planePrefab;
+            case StageEntity.Type.CLOUD:
+                return _cloudPrefab;
+            default:
+                return null;
+        }
+    }
+
+    StageEntity.Type GetEnumTypeFromSubclass<T>() where T : StageEntity
+    {
+        Type entityType = typeof(T);
+        Type stageEntityType = typeof(StageEntity);
+        if (!entityType.IsSubclassOf(stageEntityType))
+        {
+            Debug.LogError($"Type {entityType} is not a subclass of StageEntity.");
+            return StageEntity.Type.NULL;
+        }
+
+        switch (entityType)
+        {
+            case Type planeType when planeType == typeof(PlaneEntity):
+                return StageEntity.Type.PLANE;
+            case Type cloudType when cloudType == typeof(CloudEntity):
+                return StageEntity.Type.CLOUD;
+            case Type blimpType when blimpType == typeof(BlimpEntity):
+                return StageEntity.Type.BLIMP;
+            default:
+                return StageEntity.Type.NULL;
+        }
+    }
+
+    public CloudEntity SpawnCloudAt(Vector3 position)
+    {
+        CloudGradientData gradient = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
+
+        CloudEntity newCloud = SpawnEntity<CloudEntity>(position);
+        newCloud.GetComponent<CloudEntity>().SetCloudGradient(gradient);
+        return newCloud;
+    }
+    #endregion
+
+    #endregion
+
+    #region ================= [[ PLAYER MANAGEMENT ]] ================= >>
+
+    /// <summary>
+    /// Called when a player joins the game.
+    /// This method is called by the PlayerInputManager event : onPlayerJoined.
+    /// </summary>
+    /// <param name="playerInput">
+    ///     The PlayerInput object of the player that joined.
+    /// </param>
+    void OnPlayerJoined(PlayerInput playerInput)
+    {
+        // Create temp data and apply base checks
+        StagePlayerData playerInputData = new StagePlayerData(playerInput);
+
+        // Check if the max players are reached        
+        if (_playerInputs.Count >= _maxPlayers)
+        {
+            Debug.Log($"Max players reached! >> Cannot connect [ {playerInputData.GetInfo()} ]");
+            return;
+        }
+
+        // Check if the player is already connected
+        if (_playerInputs.Any(p => p.deviceId == playerInputData.deviceId))
+        {
+            Debug.Log($"{playerInputData.GetInfo()} is already connected!");
+            return;
+        }
+
+        // Add the player to the list
+        _playerInputs.Add(playerInputData);
+        AssignPlayerToPlane(playerInputData);
+    }
+
+    /// <summary>
+    /// Called when a player leaves the game.
+    /// This method is called by the PlayerInputManager event : onPlayerLeft.
+    /// </summary>
+    /// <param name="playerInput">
+    ///     The PlayerInput object of the player that left.
+    /// </param>
+    public void OnPlayerLeft(PlayerInput playerInput)
+    {
+        // Create temp data and apply base checks
+        StagePlayerData playerInputData = new StagePlayerData(playerInput);
+        Debug.Log($"{playerInputData.GetInfo()} left the game!");
+    }
+
+    public PlaneEntity AssignPlayerToPlane(StagePlayerData playerInputData)
+    {
+        PlaneEntity newPlane = null;
+
+        // Find the first available plane
+        List<PlaneEntity> planes = GetAllEntitiesOfType<PlaneEntity>();
+        foreach (PlaneEntity plane in planes)
+        {
+            if (plane.IsAutopilot)
+            {
+                newPlane = plane;
+                newPlane.AssignPlayerInput(playerInputData);
+                break;
+            }
+        }
+
+        return newPlane;
+    }
 
     #endregion
 
 
+
+
+
     // ---------------------------------------- Public Methods ---------------------------------------- >>
 
-    public bool IsColliderInStage(Collider other)
-    {
-        return _stageColliders.Contains(other);
-    }
 
-    public bool IsColliderInSpawnArea(Collider other)
-    {
-        return _spawnAreaColliders.Contains(other);
-    }
 
     /// <summary>
     /// Returns the antipodal point of a given point on the circumference of the stage.
