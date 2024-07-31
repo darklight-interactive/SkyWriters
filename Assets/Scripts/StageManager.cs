@@ -5,21 +5,25 @@ using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 using NaughtyAttributes;
 using Darklight.UnityExt.Editor;
+using UnityEngine.InputSystem;
 
 
+[RequireComponent(typeof(PlayerInputManager))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
 
     // -------------- Static Fields ------------------------
-
     public static void AssignEntityToStage(StageEntity entity, float height = 1)
     {
         float stageHeight = Instance.GetStageHeight() + (height / 2);
         entity.currentPosition = new Vector3(entity.currentPosition.x, stageHeight, entity.currentPosition.z);
     }
 
-
     // -------------- Private Serialized Fields --------------
+    private PlayerInputManager _playerInputManager;
+    private List<PlayerInput> _playerInputs = new List<PlayerInput>();
+
+
     [Header("Stage Settings")]
     [ShowOnly, SerializeField] float _stageHeight;
     public float GetStageHeight()
@@ -51,6 +55,24 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         _stageHeight = transform.position.y;
         //StartCoroutine(SpawnCloudRoutine(2f));
+
+        _playerInputManager = GetComponent<PlayerInputManager>();
+    }
+
+    public void OnPlayerJoined(PlayerInput playerInput)
+    {
+        if (_playerInputs.Contains(playerInput)) { return; }
+        _playerInputs.Add(playerInput);
+
+
+        GameObject plane = Instantiate(_planePrefab, GetRandomPosInSpawnArea(), Quaternion.identity);
+        PlaneController planeController = plane.GetComponent<PlaneController>();
+        planeController.AssignPlayerInput(playerInput);
+    }
+
+    public void OnPlayerLeft(PlayerInput playerInput)
+    {
+
     }
 
     public void Update()

@@ -8,58 +8,111 @@ using UnityEditor;
 using UnityEngine.InputSystem;
 using UnityEditor.VersionControl;
 
-[RequireComponent(typeof(PlayerInput))]
 public class PlaneController : StageEntity
 {
-    PlayerInput playerInput => GetComponent<PlayerInput>();
-
+    [SerializeField] PlayerInput _playerInput;
     [SerializeField] Transform _planeBody;
 
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
 
-    public override void Initialize()
+    public override void Initialize(EntityType entityType = EntityType.PLANE)
     {
         base.Initialize();
+        entityTypeKey = EntityType.PLANE;
 
-        // Subscribe to the move input events
-        //UniversalInputManager.OnMoveInput += SetMovement;
-        //UniversalInputManager.OnMoveInputCanceled += ResetMovement;
-        playerInput.actions["MoveInput"].performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
-        playerInput.actions["MoveInput"].canceled += ctx => ResetMovement();
+        if (_playerInput == null)
+        {
+            ActivateAutopilot();
+        }
 
-        CreateContrails();
+        // If the contrails are not set, create them
+        if (Application.isPlaying)
+        {
+            CreateContrails();
+        }
     }
 
-    #region ======================= [[ MOVEMENT ]] =======================
-    void SetMovement(Vector2 moveInput)
+    public void AssignPlayerInput(PlayerInput input)
+    {
+        _playerInput = input;
+        DeactivateAutopilot();
+    }
+
+    public void ActivateAutopilot()
+    {
+        _playerInput = null;
+        _autopilotRoutine = StartCoroutine(AutopilotRoutine());
+    }
+
+    public void DeactivateAutopilot()
+    {
+        StopCoroutine(_autopilotRoutine);
+        _autopilotRoutine = null;
+    }
+
+    public override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+
+        Gizmos.color = Color.gray;
+        Gizmos.DrawSphere(transform.position + Vector3.right * _contrailWingspan, 1f);
+        Gizmos.DrawSphere(transform.position + Vector3.left * _contrailWingspan, 1f);
+    }
+
+    public void OnDestroy()
+    {
+        StopCoroutine(_autopilotRoutine);
+    }
+
+    #region ======================= [[ MOVEMENT CONTROLLER ]] =======================
+    void ApplyMovementInput(Vector2 moveInput)
     {
         // Set the target rotation value based on the direction of the x input
-        _rotationTargetAngle = moveInput.x * -90;
+        float horz_inputDirection = moveInput.x * -90;
+        _target_rotationAngle = currentRotation.eulerAngles.y + horz_inputDirection;
 
         // Set the speed offset based on the direction of the z input
         // Clamp the speed offset to the speed change magnitude
-        _moveSpeedOffset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
+        _moveSpeedAmplifier = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
     }
 
     protected override void UpdateMovement()
     {
-        // Set the velocity of the plane to move in the current forward direction
-        _rb.velocity = transform.forward * (_moveSpeed + _moveSpeedOffset);
+        if (_playerInput)
+        {
+            Vector2 moveInput = _playerInput.actions["MoveInput"].ReadValue<Vector2>();
+            ApplyMovementInput(moveInput);
+        }
 
-        // Get the target rotation based on the current rotation and the rotation offset
-        Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationOffset, currentRotation.eulerAngles.z);
-        Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles.x, currentRotation.eulerAngles.y + _rotationTargetAngle, currentRotation.eulerAngles.z);
-
-        // Lerp the current rotation to the target rotation
-        Quaternion lerpedTargetRotation = Quaternion.Lerp(currentRotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
-        transform.rotation = Quaternion.Slerp(currentRotation, lerpedTargetRotation, _rotationSpeed * Time.fixedDeltaTime);
+        base.UpdateMovement();
 
         // Rotate the plane body on the Z axis based on the current rotation
-        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationTargetAngle / 2);
+        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationAngle / 2);
         _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, _rotationSpeed * Time.fixedDeltaTime);
     }
+
+    protected override void ResetMovement()
+    {
+        base.ResetMovement();
+    }
+
     #endregion
+
+    #region ======================= [[ AUTOPILOT CONTROL ROUTINE ]] =======================
+    private Coroutine _autopilotRoutine;
+    public IEnumerator AutopilotRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            ApplyMovementInput(new Vector2(0.5f, 0));
+
+            yield return new WaitForSeconds(1f);
+            ApplyMovementInput(new Vector2(1, 1));
+        }
+    }
+    #endregion
+
 
     #region ======================= [[ CONTRAILS ]] ============== 
 
@@ -73,7 +126,7 @@ public class PlaneController : StageEntity
     ParticleSystem _leftContrail;
     ParticleSystem _rightContrail;
 
-    void CreateContrails()
+    void CreateContrails(bool destroyOld = false)
     {
         // Calculate the positions of the contrails
         Vector3 planeCenter = transform.position;
@@ -146,12 +199,6 @@ public class PlaneController : StageEntity
         // Destroy the particle system game object
         Destroy(contrail.gameObject);
     }
-    #endregion 
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.gray;
-        Gizmos.DrawSphere(transform.position + Vector3.right * _contrailWingspan, 1f);
-        Gizmos.DrawSphere(transform.position + Vector3.left * _contrailWingspan, 1f);
-    }
+    #endregion 
 }

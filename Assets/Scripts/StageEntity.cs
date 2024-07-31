@@ -9,6 +9,9 @@ using UnityEditor;
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
+    public enum EntityType { NULL, PLANE, CLOUD, BLIMP }
+    public static EntityType entityTypeKey;
+
 
     // ==== Public Properties ================================== ))
     public Vector3 currentPosition
@@ -84,8 +87,11 @@ public class StageEntity : MonoBehaviour
     /// <summary>
     /// Initialize the object with the given settings & assign the entity to the stage
     /// </summary>
-    public virtual void Initialize()
+    public virtual void Initialize(EntityType type = EntityType.NULL)
     {
+        // Confirm default type key
+        entityTypeKey = type;
+
         // Assign the collider settings
         _collider.height = _colliderHeight;
         _collider.radius = _colliderRadius;

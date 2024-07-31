@@ -8,7 +8,7 @@ public class CloudEntity : StageEntity
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
     CloudGradientData _gradientData;
 
-    public override void Initialize()
+    public override void Initialize(EntityType entityType = EntityType.CLOUD)
     {
         base.Initialize();
 
