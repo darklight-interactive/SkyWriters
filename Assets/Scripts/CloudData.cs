@@ -1,13 +1,13 @@
 using UnityEngine;
 
 [System.Serializable]
-public class CloudGradientData
+public class CloudData
 {
     public Color startColor = Color.white;
     public Color middleColor = Color.white;
     public Color endColor = Color.white;
 
-    public CloudGradientData(Color startColor, Color middleColor, Color endColor)
+    public CloudData(Color startColor, Color middleColor, Color endColor)
     {
         this.startColor = startColor;
         this.middleColor = middleColor;

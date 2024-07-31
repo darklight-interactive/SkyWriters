@@ -8,13 +8,14 @@ using UnityEditor;
 
 public class BlimpEntity : StageEntity
 {
+    [Header("Blimp Settings")]
     [SerializeField] private float _cloudSpawnDelay = 2f;
     [SerializeField] private float _cloudDeathDelay = 1f;
     private Vector3 _exhaustPosition
     {
         get
         {
-            Vector3 output = transform.position + (transform.forward * _colliderHeight * -1);
+            Vector3 output = transform.position + (transform.forward * data.colliderHeight * -1);
             return output;
         }
     }
@@ -23,11 +24,6 @@ public class BlimpEntity : StageEntity
     {
         base.Start();
         StartCoroutine(SpawnExhaustClouds());
-    }
-
-    public override void Initialize(Type type = Type.BLIMP)
-    {
-        base.Initialize(type);
     }
 
     IEnumerator SpawnExhaustClouds()
@@ -44,7 +40,7 @@ public class BlimpEntity : StageEntity
         base.OnDrawGizmos();
 
         Gizmos.color = Color.white;
-        Gizmos.DrawSphere(_exhaustPosition, _colliderRadius * 0.5f);
+        Gizmos.DrawSphere(_exhaustPosition, data.colliderRadius * 0.5f);
     }
 
 }

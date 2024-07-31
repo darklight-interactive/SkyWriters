@@ -10,17 +10,15 @@ using UnityEditor.VersionControl;
 
 public class PlaneEntity : StageEntity
 {
-    [SerializeField] StagePlayerData _playerInputData;
+    [SerializeField] PlayerInputData _playerInputData;
     [ShowOnly, SerializeField] bool _isAutopilot = true;
     public bool IsAutopilot => _isAutopilot;
     [SerializeField] Transform _planeBody;
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
 
-    public override void Initialize(Type entityType = Type.PLANE)
+    public override void Initialize()
     {
         base.Initialize();
-        _typeKey = Type.PLANE;
-
         if (_playerInputData == null)
         {
             ActivateAutopilot();
@@ -44,7 +42,7 @@ public class PlaneEntity : StageEntity
 
     #region ======================= [[ INPUT HANDLING ]] =======================
 
-    public void AssignPlayerInput(StagePlayerData input)
+    public void AssignPlayerInput(PlayerInputData input)
     {
         _playerInputData = input;
         DeactivateAutopilot();
@@ -62,11 +60,11 @@ public class PlaneEntity : StageEntity
     {
         // Set the target rotation value based on the direction of the x input
         float horz_inputDirection = moveInput.x * -90;
-        _target_rotationAngle = currentRotation.eulerAngles.y + horz_inputDirection;
+        _target_rotAngle = currentRotation.eulerAngles.y + horz_inputDirection;
 
         // Set the speed offset based on the direction of the z input
         // Clamp the speed offset to the speed change magnitude
-        _moveSpeedAmplifier = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
+        _curr_moveSpeed_offset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
     }
 
     protected override void UpdateMovement()
@@ -80,8 +78,8 @@ public class PlaneEntity : StageEntity
         base.UpdateMovement();
 
         // Rotate the plane body on the Z axis based on the current rotation
-        Quaternion targetZRotation = Quaternion.Euler(0, 0, _rotationAngle / 2);
-        _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, _rotationSpeed * Time.fixedDeltaTime);
+        Quaternion targetZRotation = Quaternion.Euler(0, 0, _curr_rotAngle / 2);
+        _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, data.rotationSpeed * Time.fixedDeltaTime);
     }
 
     protected override void ResetMovement()

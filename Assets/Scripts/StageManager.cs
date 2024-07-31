@@ -25,34 +25,36 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="col_height"></param>
-    public static void AssignEntityToStage(StageEntity entity, float col_height = 1)
+    public static void AssignEntityToStage(StageEntity entity)
     {
-        float stageHeight = StageHeight + (col_height / 2);
-        entity.currentPosition = new Vector3(entity.currentPosition.x, stageHeight, entity.currentPosition.z);
+        StageEntity.Data data = entity.data;
+        float entityHeight = StageHeight + (data.colliderHeight * 0.5f);
+        entity.transform.position = new Vector3(entity.transform.position.x, entityHeight, entity.transform.position.z);
     }
-
 
     // -------------- Properties ------------------------
 
     // << Player Input Manager >>
     PlayerInputManager _playerInputManager => GetComponent<PlayerInputManager>();
-    int _maxPlayers = 4;
-    List<StagePlayerData> _playerInputs = new List<StagePlayerData>();
+    List<PlayerInputData> _playerInputs = new List<PlayerInputData>();
 
-    [Header("Stage Data")]
-    [SerializeField] private float _stageRadius = 1000;
-    [SerializeField, Range(10, 1000)] private float _spawnRadiusOffset = 100;
+    [Header("Stage Settings")]
+    [SerializeField] int _maxPlayers = 4;
+    [SerializeField] float _stageRadius = 1000;
+    [SerializeField, Range(10, 1000)] float _spawnRadiusOffset = 100;
 
-    [Header("Cloud Data")]
-    [SerializeField] List<CloudGradientData> _cloudGradients;
-    [SerializeField] float _cloudSpeed = 10f;
-    public float CloudSpeed => _cloudSpeed;
-
-    [Header("Prefabs")]
-    [SerializeField] GameObject _planePrefab;
+    [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
+    [Expandable, SerializeField] StageEntityPreset _cloudPreset;
+    [SerializeField] List<CloudData> _cloudGradients;
 
+    [Header("Plane Settings")]
+    [SerializeField] GameObject _planePrefab;
+    [Expandable, SerializeField] StageEntityPreset _planePreset;
 
+    [Header("Blimp Settings")]
+    [SerializeField] GameObject _blimpPrefab;
+    [Expandable, SerializeField] StageEntityPreset _blimpPreset;
 
     #region ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
@@ -61,12 +63,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         _playerInputManager.onPlayerLeft += OnPlayerLeft;
 
         SpawnEntitiesRandomly_InStage<CloudEntity>(10);
-    }
-
-    public void Update()
-    {
-        //_stageColliders = Physics.OverlapSphere(transform.position, _stageRadius).ToList();
-        //_spawnAreaColliders = Physics.OverlapSphere(transform.position, _stageRadius + _spawnRadiusOffset).ToList();
     }
 
     void OnDrawGizmos()
@@ -145,7 +141,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return GetCollidersInAreaType(areaType).Contains(collider);
     }
     #endregion
-
 
     #region (( ---- Entity Handling ---- ))
 
@@ -241,7 +236,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     public CloudEntity SpawnCloudAt(Vector3 position)
     {
-        CloudGradientData gradient = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
+        CloudData gradient = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
 
         CloudEntity newCloud = SpawnEntity<CloudEntity>(position);
         newCloud.GetComponent<CloudEntity>().SetCloudGradient(gradient);
@@ -263,7 +258,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     void OnPlayerJoined(PlayerInput playerInput)
     {
         // Create temp data and apply base checks
-        StagePlayerData playerInputData = new StagePlayerData(playerInput);
+        PlayerInputData playerInputData = new PlayerInputData(playerInput);
 
         // Check if the max players are reached        
         if (_playerInputs.Count >= _maxPlayers)
@@ -294,26 +289,26 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public void OnPlayerLeft(PlayerInput playerInput)
     {
         // Create temp data and apply base checks
-        StagePlayerData playerInputData = new StagePlayerData(playerInput);
+        PlayerInputData playerInputData = new PlayerInputData(playerInput);
         Debug.Log($"{playerInputData.GetInfo()} left the game!");
     }
 
-    public PlaneEntity AssignPlayerToPlane(StagePlayerData playerInputData)
+    public PlaneEntity AssignPlayerToPlane(PlayerInputData playerInputData)
     {
-        PlaneEntity newPlane = null;
-
         // Find the first available plane
         List<PlaneEntity> planes = GetAllEntitiesOfType<PlaneEntity>();
         foreach (PlaneEntity plane in planes)
         {
             if (plane.IsAutopilot)
             {
-                newPlane = plane;
-                newPlane.AssignPlayerInput(playerInputData);
-                break;
+                plane.AssignPlayerInput(playerInputData);
+                return plane;
             }
         }
 
+        // If no planes are available, spawn a new one
+        PlaneEntity newPlane = SpawnEntityRandomly_InStage<PlaneEntity>();
+        newPlane.AssignPlayerInput(playerInputData);
         return newPlane;
     }
 

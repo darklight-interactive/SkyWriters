@@ -5079,7 +5079,7 @@ GameObject:
   - component: {fileID: 783944964808446795}
   - component: {fileID: 7384500800503127253}
   m_Layer: 6
-  m_Name: DefaultPlane
+  m_Name: '[ENTITY] Plane'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5093,7 +5093,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747712956887816217}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -495, z: 0}
+  m_LocalPosition: {x: 0, y: -500, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -5119,14 +5119,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9574d8c16b6804c36847e22a256031a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _respawnOnExit: 1
-  _colliderHeight: 10
-  _colliderRadius: 4
-  _moveSpeed: 200
-  _moveSpeedAmplifier: 0
-  _rotationSpeed: 5
-  _rotationAngle: 0
-  _lifeSpan: -1
+  _preset: {fileID: 11400000, guid: d99ff3677e54338429e1927519aaec4d, type: 2}
+  _curr_moveSpeed: 0
+  _curr_moveSpeed_offset: 0
+  _curr_rotSpeed: 0
+  _curr_rotAngle: 0
+  _target_rotAngle: 0
   _isAutopilot: 1
   _planeBody: {fileID: 5831562902396000746}
   _speedChangeMagnitude: 200
@@ -5210,8 +5208,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4
-  m_Height: 10
+  m_Radius: 0
+  m_Height: 0
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2745530695539199642

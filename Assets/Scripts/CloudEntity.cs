@@ -6,17 +6,9 @@ using UnityEngine;
 public class CloudEntity : StageEntity
 {
     ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
-    CloudGradientData _gradientData;
+    CloudData _gradientData;
 
-    public override void Initialize(Type entityType = Type.CLOUD)
-    {
-        base.Initialize();
-
-        // Remove the cloud object if it is out of bounds
-        _respawnOnExit = false;
-    }
-
-    public void SetCloudGradient(CloudGradientData cloudParticleData)
+    public void SetCloudGradient(CloudData cloudParticleData)
     {
         _gradientData = cloudParticleData;
         SetColorOverLifetime(_gradientData.ToGradient());
@@ -33,7 +25,7 @@ public class CloudEntity : StageEntity
     {
         if (other.gameObject.GetComponent<PlaneEntity>())
         {
-            _stageManager.SpawnEntityRandomly_InStage<CloudEntity>();
+            stageManager.SpawnEntityRandomly_InStage<CloudEntity>();
 
             // Set the contrail color to the cloud's color
             PlaneEntity planeController = other.gameObject.GetComponent<PlaneEntity>();
