@@ -1,15 +1,21 @@
 using Darklight.UnityExt.Editor;
 using NaughtyAttributes;
 using UnityEngine;
+using Darklight.UnityExt.Behaviour;
+using System.Collections;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+[ExecuteAlways]
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
     public enum Type { NULL, PLANE, CLOUD, BLIMP }
+    public enum State { NULL, SPAWN, GAME, DESPAWN }
     public class Data
     {
         public int entityId { get; private set; } = -1;
@@ -41,6 +47,96 @@ public class StageEntity : MonoBehaviour
             this.lifeSpan = lifeSpan;
         }
     }
+    public class StateMachine : FiniteStateMachine<State>
+    {
+        public StageEntity entity { get; private set; }
+        public StateMachine(StageEntity entity)
+        {
+            this.entity = entity;
+
+            AddState(new SpawnState(this, State.SPAWN));
+            AddState(new GameState(this, State.GAME));
+            AddState(new DespawnState(this, State.DESPAWN));
+
+            GoToState(State.SPAWN);
+        }
+
+        public void GoToStateWithDelay(State state, float delay)
+        {
+            entity.StartCoroutine(StateChangeRoutine(state, delay));
+        }
+
+        IEnumerator StateChangeRoutine(State state, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            GoToState(state);
+        }
+
+        class SpawnState : FiniteState<State>
+        {
+            StageEntity entity;
+            public SpawnState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
+            {
+                entity = stateMachine.entity;
+            }
+
+            public override void Enter() { }
+            public override void Execute()
+            {
+                // Check if the entity has entered the stage bounds
+                if (!entity.IsInSpawnBounds() && entity.IsInStageBounds())
+                {
+                    entity.stateMachine.GoToStateWithDelay(State.GAME, 1);
+                }
+            }
+            public override void Exit() { }
+        }
+
+        class GameState : FiniteState<State>
+        {
+            StageEntity entity;
+            public GameState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
+            {
+                entity = stateMachine.entity;
+            }
+
+            public override void Enter() { }
+            public override void Execute()
+            {
+                // Check if the entity has exited the stage bounds
+                if (entity.IsInSpawnBounds() && !entity.IsInStageBounds())
+                {
+                    entity.stateMachine.GoToState(State.DESPAWN);
+                }
+            }
+
+            public override void Exit() { }
+        }
+
+        class DespawnState : FiniteState<State>
+        {
+            StageEntity entity;
+            public DespawnState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
+            {
+                entity = stateMachine.entity;
+            }
+            public override void Enter()
+            {
+                // Call the OnStageExit method of the entity
+                bool respawn = entity.data.respawnOnExit;
+                entity.OnStageExit(respawn);
+
+                // If the entity is set to respawn, go back to the spawn state
+                if (respawn)
+                {
+                    entity.stateMachine.GoToState(State.SPAWN);
+                }
+            }
+
+            public override void Execute() { }
+            public override void Exit() { }
+        }
+    }
 
     // ==== Public Properties ================================== ))
     public Vector3 currentPosition
@@ -65,6 +161,26 @@ public class StageEntity : MonoBehaviour
         }
     }
 
+    public StageEntityPreset preset
+    {
+        get => _preset;
+        set => LoadPreset(value);
+    }
+
+    public StateMachine stateMachine
+    {
+        get
+        {
+            if (_stateMachine == null)
+            {
+                _stateMachine = new StateMachine(this);
+            }
+            return _stateMachine;
+        }
+    }
+
+    // ==== Private Properties =================================  ))
+    StateMachine _stateMachine;
 
     // ==== Protected Properties ================================= ))
     protected StageManager stageManager => StageManager.Instance;
@@ -74,17 +190,27 @@ public class StageEntity : MonoBehaviour
 
     // ==== Serialized Fields =================================== ))
     [Expandable, SerializeField] protected StageEntityPreset _preset;
-
-    [Space(10), HorizontalLine(), Header("Live Data")]
-    [SerializeField, ShowOnly] protected float _curr_moveSpeed_offset; // The current offset value for the movement speed
-    [SerializeField, ShowOnly] protected float _curr_rotAngle; // The current rotation angle of the entity
-    [SerializeField, ShowOnly] protected float _target_rotAngle;
     private void LoadPreset(StageEntityPreset preset)
     {
         if (preset == null) return;
         _preset = preset;
     }
 
+    [Space(10), HorizontalLine(), Header("Live Data")]
+    [SerializeField, ShowOnly] protected State _currentState;
+    [SerializeField, ShowOnly] protected float _curr_moveSpeed;
+    [SerializeField, ShowOnly] protected float _curr_moveSpeed_offset; // The current offset value for the movement speed
+    [SerializeField, ShowOnly] protected float _curr_rotAngle; // The current rotation angle of the entity
+    [SerializeField, ShowOnly] protected float _target_rotAngle;
+    public void SetTargetRotation(float angle, bool instant = false)
+    {
+        _target_rotAngle = angle;
+
+        if (instant)
+        {
+            _curr_rotAngle = angle;
+        }
+    }
 
     // ======================== [[ UNITY METHODS ]] ======================== >>
 
@@ -93,11 +219,8 @@ public class StageEntity : MonoBehaviour
     {
         UpdateMovement();
 
-        // Check if the object is out of bounds
-        if (!stageManager.IsColliderInArea(col, StageManager.AreaType.STAGE))
-        {
-            OnStageExit(data.respawnOnExit);
-        }
+        // Update the state machine
+        _stateMachine.Step();
     }
 
     public virtual void OnDrawGizmos()
@@ -129,14 +252,22 @@ public class StageEntity : MonoBehaviour
         // Load the preset data
         if (_preset != null) { LoadPreset(_preset); }
 
+        // Create the state machine
+        _stateMachine = new StateMachine(this);
+        _currentState = _stateMachine.CurrentState;
+        _stateMachine.OnStateChanged += (state) =>
+        {
+            _currentState = state;
+        };
+
+
         // Assign the collider settings
         col.height = data.colliderHeight;
         col.radius = data.colliderRadius;
         col.direction = 2; // Set to the Z axis , inline with the forward direction of the object
         col.center = Vector3.zero;
 
-        // Assign the height of the object to the stage height
-        //StageManager.AssignEntityToStage(this);
+
 
         // Destroy this object after the lifespan
         if (Application.isPlaying && data.lifeSpan > 0)
@@ -173,6 +304,16 @@ public class StageEntity : MonoBehaviour
         _target_rotAngle = currentRotation.eulerAngles.y;
     }
 
+    protected bool IsInStageBounds()
+    {
+        return stageManager.IsColliderInArea(col, StageManager.AreaType.STAGE);
+    }
+
+    protected bool IsInSpawnBounds()
+    {
+        return stageManager.IsColliderInArea(col, StageManager.AreaType.SPAWN_AREA);
+    }
+
     /// <summary>
     /// Called when the object is out of bounds
     /// </summary>
@@ -207,6 +348,7 @@ public class StageEntity : MonoBehaviour
 
         return position;
     }
+
 
 }
 

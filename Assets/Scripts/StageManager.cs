@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Darklight.UnityExt.Behaviour;
-using Darklight.UnityExt.Editor;
-using JetBrains.Annotations;
 using NaughtyAttributes;
 
 using UnityEngine;
@@ -25,6 +23,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public static Vector3 StageCenter => Instance.transform.position;
     public static float StageRadius => Instance._stageRadius;
     public static float SpawnRadiusOffset => Instance._spawnRadiusOffset;
+    public static float WindDirection => Instance._windDirection;
     public static List<Vector3> CalculatePointsInCircle(Vector3 center, float radius, int count, Vector3 direction)
     {
         List<Vector3> points = new List<Vector3>();
@@ -71,6 +70,8 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
             _playerInputManager.onPlayerJoined += OnPlayerJoined;
             _playerInputManager.onPlayerLeft += OnPlayerLeft;
         }
+
+        SpawnManager.Instance.Initialize();
     }
 
     void OnDrawGizmos()
@@ -86,11 +87,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         Vector3 windDir = Quaternion.AngleAxis(_windDirection, Vector3.up) * Vector3.forward;
         Gizmos.DrawLine(transform.position, transform.position + windDir * _stageRadius);
     }
-
-
-
-
-
     #endregion
 
 
@@ -122,7 +118,12 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
             case AreaType.STAGE:
                 return GetCollidersInRadius(_stageRadius);
             case AreaType.SPAWN_AREA:
-                return GetCollidersInRadius(_stageRadius + _spawnRadiusOffset);
+
+                // Since the stage is inside the spawn area, we need to exclude the stage colliders from the spawn area
+                List<Collider> stage = GetCollidersInRadius(_stageRadius).ToList();
+                List<Collider> spawnArea = GetCollidersInRadius(_stageRadius + _spawnRadiusOffset).ToList();
+                return spawnArea.Except(stage).ToArray();
+
             default:
                 return null;
         }
@@ -176,7 +177,9 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         StageEntity.Type type = GetEnumTypeFromSubclass<T>();
         GameObject prefab = GetEntityPrefab(type);
-        return Instantiate(prefab, position, Quaternion.identity).GetComponent<T>();
+        T entity = Instantiate(prefab, position, Quaternion.identity).GetComponent<T>();
+        entity.preset = GetStageEntityPreset(type);
+        return entity;
     }
 
     /// <summary>
@@ -214,6 +217,22 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         return FindObjectsByType<T>(FindObjectsSortMode.InstanceID).ToList();
     }
+
+    StageEntityPreset GetStageEntityPreset(StageEntity.Type entityType)
+    {
+        switch (entityType)
+        {
+            case StageEntity.Type.PLANE:
+                return _planePreset;
+            case StageEntity.Type.CLOUD:
+                return _cloudPreset;
+            case StageEntity.Type.BLIMP:
+                return _blimpPreset;
+            default:
+                return null;
+        }
+    }
+
     GameObject GetEntityPrefab(StageEntity.Type entityType)
     {
         switch (entityType)
@@ -258,12 +277,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         newCloud.GetComponent<CloudEntity>().SetCloudGradient(gradient);
         return newCloud;
     }
-    #endregion
-
-    #region (( ---- Wind Handling ---- ))
-
-
-
     #endregion
 
     #endregion
@@ -397,3 +410,31 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
 }
 
+#if UNITY_EDITOR
+[CustomEditor(typeof(StageManager))]
+public class StageManagerCustomEditor : Editor
+{
+    SerializedObject _serializedObject;
+    StageManager _script;
+    private void OnEnable()
+    {
+        _serializedObject = new SerializedObject(target);
+        _script = (StageManager)target;
+        _script.Awake();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        _serializedObject.Update();
+
+        EditorGUI.BeginChangeCheck();
+
+        base.OnInspectorGUI();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            _serializedObject.ApplyModifiedProperties();
+        }
+    }
+}
+#endif
