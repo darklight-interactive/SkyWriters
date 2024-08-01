@@ -68,6 +68,19 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
             oldWindEntryPoint?.GoToState(SpawnPoint.State.WAITING);
         }
         _windEntryPoint?.GoToState(SpawnPoint.State.SPAWNING);
+
+
+        List<SpawnPoint> entry_neighbors = GetSpawnPointNeighbors(_windEntryPoint.index, 4);
+        foreach (SpawnPoint neighbor in entry_neighbors)
+        {
+            neighbor.GoToState(SpawnPoint.State.SPAWNING);
+        }
+
+        List<SpawnPoint> exit_neighbors = GetSpawnPointNeighbors(_windExitPoint.index, 4);
+        foreach (SpawnPoint neighbor in exit_neighbors)
+        {
+            neighbor.GoToState(SpawnPoint.State.DISABLED);
+        }
     }
 
     void OnDrawGizmos()
@@ -125,6 +138,21 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         return GetClosestSpawnPointTo(targetPosition);
     }
 
+    public SpawnPoint GetRandomSpawnPointOfState(SpawnPoint.State state)
+    {
+        List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+        foreach (SpawnPoint spawnPoint in _spawnPoints)
+        {
+            if (spawnPoint.CurrentState == state)
+            {
+                spawnPoints.Add(spawnPoint);
+            }
+        }
+
+        if (spawnPoints.Count == 0) return null;
+        return spawnPoints[Random.Range(0, spawnPoints.Count)];
+    }
+
     void CreateSpawnPoints()
     {
         Vector3 _stageCenter = StageManager.StageCenter;
@@ -139,9 +167,22 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         _spawnPoints.Clear();
         for (int i = 0; i < _spawnPointCount; i++)
         {
-            SpawnPoint spawnPoint = new SpawnPoint(positions[i]);
+            SpawnPoint spawnPoint = new SpawnPoint(i, positions[i]);
             _spawnPoints.Add(spawnPoint);
         }
+    }
+
+    List<SpawnPoint> GetSpawnPointNeighbors(int index, int count)
+    {
+        List<SpawnPoint> neighbors = new List<SpawnPoint>();
+        for (int i = 0; i < count; i++)
+        {
+            int rightNeighborIndex = (index + i) % _spawnPoints.Count;
+            int leftNeighborIndex = (index - i) % _spawnPoints.Count;
+            neighbors.Add(_spawnPoints[rightNeighborIndex]);
+            neighbors.Add(_spawnPoints[leftNeighborIndex]);
+        }
+        return neighbors;
     }
 
     public void BeginSpawnRoutine()
@@ -169,7 +210,9 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         {
             yield return new WaitForSeconds(_tickSpeed);
 
-            Debug.Log($"{Prefix} Spawn Routine Tick");
+
+
+
             Vector3 spawnPosition = _windEntryPoint.position;
             CloudEntity newCloud = StageManager.Instance.SpawnEntity<CloudEntity>(spawnPosition);
             newCloud.SetTargetRotation(StageManager.WindDirection, true);

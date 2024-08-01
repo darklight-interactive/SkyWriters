@@ -32,19 +32,24 @@ public class StageEntity : MonoBehaviour
         public float moveSpeed { get; private set; } = 10;
         public float rotationSpeed { get; private set; } = 5;
 
+        // ---- Stats ----
+        public float windResistance { get; private set; } = 0.2f;
+
         // ---- Gameplay ----
         public float lifeSpan { get; private set; } = -1;
 
         public Data() { }
-        public Data(Type type, bool respawnOnExit, float colliderHeight, float colliderRadius, float moveSpeed, float rotationSpeed, float lifeSpan)
+        public Data(StageEntityPreset preset)
         {
-            this.type = type;
-            this.respawnOnExit = respawnOnExit;
-            this.colliderHeight = colliderHeight;
-            this.colliderRadius = colliderRadius;
-            this.moveSpeed = moveSpeed;
-            this.rotationSpeed = rotationSpeed;
-            this.lifeSpan = lifeSpan;
+            entityId = preset.GetInstanceID();
+            type = preset.type;
+            colliderHeight = preset.colliderHeight;
+            colliderRadius = preset.colliderRadius;
+            moveSpeed = preset.moveSpeed;
+            rotationSpeed = preset.rotationSpeed;
+            windResistance = preset.windResistance;
+            respawnOnExit = preset.respawnOnExit;
+            lifeSpan = preset.lifeSpan;
         }
     }
     public class StateMachine : FiniteStateMachine<State>
@@ -155,9 +160,12 @@ public class StageEntity : MonoBehaviour
     {
         get
         {
-            if (_preset != null)
-                return _preset.ToData();
-            return new Data();
+            if (_data == null)
+            {
+                if (_preset != null) { _data = new Data(_preset); }
+                else { _data = new Data(); }
+            }
+            return _data;
         }
     }
 
@@ -181,6 +189,7 @@ public class StageEntity : MonoBehaviour
 
     // ==== Private Properties =================================  ))
     StateMachine _stateMachine;
+    Data _data;
 
     // ==== Protected Properties ================================= ))
     protected StageManager stageManager => StageManager.Instance;
@@ -194,6 +203,7 @@ public class StageEntity : MonoBehaviour
     {
         if (preset == null) return;
         _preset = preset;
+        _data = new Data(preset);
     }
 
     [Space(10), HorizontalLine(), Header("Live Data")]
@@ -281,7 +291,19 @@ public class StageEntity : MonoBehaviour
         // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
         Vector3 thrustVelocity = transform.forward * (data.moveSpeed + _curr_moveSpeed_offset);
-        rb.velocity = thrustVelocity;
+
+        // Calculate the current wind velocity
+        float windDirection = StageManager.WindDirection;
+        float windIntensity = StageManager.WindIntensity;
+        float windResistance = data.windResistance;
+
+        // Calculate the Quaternion for the wind direction
+        Vector3 windVelocity = Quaternion.AngleAxis(windDirection, Vector3.up) * Vector3.forward;
+        windVelocity *= windIntensity; // Multiply by the wind intensity
+        windVelocity -= (windVelocity * windResistance); // Subtract the wind resistance
+
+        // Assign the calculated velocity to the rigidbody
+        rb.velocity = thrustVelocity + windVelocity;
 
         // << ROTATION >> ---------------- >>
         // Store the current and target rotation values in Euler Angles

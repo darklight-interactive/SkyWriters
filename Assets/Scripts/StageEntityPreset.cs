@@ -15,14 +15,21 @@ public class StageEntityPreset : ScriptableObject
     [SerializeField, Range(0, 1000)] float _moveSpeed;
     [SerializeField, Range(0, 10)] float _rotationSpeed;
 
+    [Header("--- Stats ---")]
+    [SerializeField, Range(0, 1)] float _windResistance;
+
     [Header("--- Gameplay ---")]
     [SerializeField] bool _respawnOnExit;
     [SerializeField, Range(-1, 999)] float _lifeSpan;
 
-    public StageEntity.Data ToData()
-    {
-        StageEntity.Data data = new StageEntity.Data(_type, _respawnOnExit, _colliderHeight, _colliderRadius, _moveSpeed, _rotationSpeed, _lifeSpan);
+    // ----------------- Getters -----------------
+    public StageEntity.Type type => _type;
+    public float colliderHeight => _colliderHeight;
+    public float colliderRadius => _colliderRadius;
+    public float moveSpeed => _moveSpeed;
+    public float rotationSpeed => _rotationSpeed;
+    public float windResistance => _windResistance;
+    public bool respawnOnExit => _respawnOnExit;
+    public float lifeSpan => _lifeSpan;
 
-        return data;
-    }
 }

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5229654e1180d604db28b89035391066, type: 3}
   m_Name: CloudPreset
   m_EditorClassIdentifier: 
-  type: 2
-  respawnOnExit: 0
-  colliderHeight: 0
-  colliderRadius: 0
-  moveSpeed: 0
-  rotationSpeed: 0
-  lifeSpan: 0
+  _type: 2
+  _colliderHeight: 25
+  _colliderRadius: 25
+  _moveSpeed: 215
+  _rotationSpeed: 2
+  _respawnOnExit: 0
+  _lifeSpan: 60

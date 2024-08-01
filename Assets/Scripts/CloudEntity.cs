@@ -25,8 +25,6 @@ public class CloudEntity : StageEntity
     {
         if (other.gameObject.GetComponent<PlaneEntity>())
         {
-            stageManager.SpawnEntityRandomly_InStage<CloudEntity>();
-
             // Set the contrail color to the cloud's color
             PlaneEntity planeController = other.gameObject.GetComponent<PlaneEntity>();
 

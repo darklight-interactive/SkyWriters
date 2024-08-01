@@ -49,9 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _preset: {fileID: 0}
-  _curr_moveSpeed: 0
   _curr_moveSpeed_offset: 0
-  _curr_rotSpeed: 0
   _curr_rotAngle: 0
   _target_rotAngle: 0
 --- !u!198 &316231922153566340
@@ -4994,8 +4992,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
-  m_Height: 1
+  m_Radius: 5
+  m_Height: 10
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5069445420879061551

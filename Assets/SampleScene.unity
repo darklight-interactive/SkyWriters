@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
+  - component: {fileID: 277487366}
   - component: {fileID: 277487363}
   m_Layer: 0
   m_Name: Stage Manager
@@ -225,6 +226,7 @@ MonoBehaviour:
   _maxPlayers: 4
   _stageRadius: 1120
   _spawnRadiusOffset: 500
+  _windDirection: 163
   _cloudPrefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c,
     type: 3}
   _cloudPreset: {fileID: 11400000, guid: 35ff75f662a8c024485a3e4cf3909dda, type: 2}
@@ -238,9 +240,9 @@ MonoBehaviour:
   - startColor: {r: 1, g: 0.7718435, b: 0.5424528, a: 1}
     middleColor: {r: 1, g: 0.8312694, b: 0.5803922, a: 1}
     endColor: {r: 1, g: 0.8496941, b: 0.48627448, a: 1}
-  _planePreset: {fileID: 11400000, guid: d99ff3677e54338429e1927519aaec4d, type: 2}
   _planePrefab: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
     type: 3}
+  _planePreset: {fileID: 11400000, guid: d99ff3677e54338429e1927519aaec4d, type: 2}
   _blimpPrefab: {fileID: 8834439335552323763, guid: ffd8c3e49c864434b85329848d826291,
     type: 3}
   _blimpPreset: {fileID: 11400000, guid: 2ebf92378d4842b41b142ea9eb8233be, type: 2}
@@ -261,6 +263,69 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &277487366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277487362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 444c37e08a16f8844b749589de28c446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawnRoutineActive: 0
+  _tickSpeed: 2
+  _spawnPointCount: 20
+  _gizmoSize: 50
+  _spawnPoints:
+  - _currentState: 1
+    _position: {x: 1370, y: -500, z: 0}
+  - _currentState: 1
+    _position: {x: 1302.9474, y: -500, z: -423.35333}
+  - _currentState: 1
+    _position: {x: 1108.3533, y: -500, z: -805.26587}
+  - _currentState: 1
+    _position: {x: 805.2656, y: -500, z: -1108.3534}
+  - _currentState: 0
+    _position: {x: 423.3533, y: -500, z: -1302.9475}
+  - _currentState: 1
+    _position: {x: 0.00008165836, y: -500, z: -1369.9999}
+  - _currentState: 1
+    _position: {x: -423.35355, y: -500, z: -1302.9474}
+  - _currentState: 1
+    _position: {x: -805.2658, y: -500, z: -1108.3534}
+  - _currentState: 1
+    _position: {x: -1108.3534, y: -500, z: -805.2658}
+  - _currentState: 1
+    _position: {x: -1302.9475, y: -500, z: -423.35336}
+  - _currentState: 1
+    _position: {x: -1370, y: -500, z: 0.0001197692}
+  - _currentState: 1
+    _position: {x: -1302.9473, y: -500, z: 423.35355}
+  - _currentState: 1
+    _position: {x: -1108.353, y: -500, z: 805.2662}
+  - _currentState: 1
+    _position: {x: -805.2661, y: -500, z: 1108.3531}
+  - _currentState: 2
+    _position: {x: -423.35336, y: -500, z: 1302.9473}
+  - _currentState: 1
+    _position: {x: 0.00008165836, y: -500, z: 1369.9999}
+  - _currentState: 1
+    _position: {x: 423.35355, y: -500, z: 1302.9474}
+  - _currentState: 1
+    _position: {x: 805.2661, y: -500, z: 1108.353}
+  - _currentState: 1
+    _position: {x: 1108.3533, y: -500, z: 805.26587}
+  - _currentState: 1
+    _position: {x: 1302.9475, y: -500, z: 423.35324}
+  _windEntryPoint:
+    _currentState: 2
+    _position: {x: -423.35336, y: -500, z: 1302.9473}
+  _windExitPoint:
+    _currentState: 0
+    _position: {x: 423.3533, y: -500, z: -1302.9475}
 --- !u!1001 &767988637
 PrefabInstance:
   m_ObjectHideFlags: 0
