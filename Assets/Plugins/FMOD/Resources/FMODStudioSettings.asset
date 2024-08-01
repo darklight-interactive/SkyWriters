@@ -524,10 +524,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   switchSettingsMigration: 1
-  HasSourceProject: 1
-  HasPlatforms: 1
+  HasSourceProject: 0
+  HasPlatforms: 0
   sourceProjectPath: Assets/SkyWriters_FMOD/SkyWriters_FMOD.fspro
-  sourceBankPath: Assets/SkyWriters_FMOD/Build
+  sourceBankPath: SkyWriters_FMOD/Build/Desktop
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
