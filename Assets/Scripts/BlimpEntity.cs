@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Darklight.UnityExt.Behaviour;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -8,9 +10,7 @@ using UnityEditor;
 
 public class BlimpEntity : StageEntity
 {
-    [Header("Blimp Settings")]
-    [SerializeField] private float _cloudSpawnDelay = 2f;
-    [SerializeField] private float _cloudDeathDelay = 1f;
+    private float _cloudSpawnDelay = 10f;
     private Vector3 _exhaustPosition
     {
         get
@@ -19,6 +19,28 @@ public class BlimpEntity : StageEntity
             return output;
         }
     }
+
+    public class BlimpStateMachine : StateMachine
+    {
+        public BlimpStateMachine(StageEntity entity) : base(entity)
+        {
+            this.entity = entity; // set the entity in the base class
+
+            possibleStates = new Dictionary<State, FiniteState<State>>();
+            AddState(new BlimpSpawnState(this, State.SPAWN));
+        }
+    }
+
+    public class BlimpSpawnState : StateMachine.SpawnState
+    {
+        public BlimpSpawnState(StageEntity.StateMachine stateMachine, State stateType) : base(stateMachine, stateType) { }
+        public override void Enter()
+        {
+            base.Enter();
+        }
+    }
+
+
 
     public override void Start()
     {

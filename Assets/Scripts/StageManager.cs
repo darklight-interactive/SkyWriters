@@ -24,6 +24,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     public static float StageRadius => Instance._stageRadius;
     public static float SpawnRadiusOffset => Instance._spawnRadiusOffset;
     public static float WindDirection => Instance._windDirection;
+    public static float WindIntensity => Instance._windIntensity;
     public static List<Vector3> CalculatePointsInCircle(Vector3 center, float radius, int count, Vector3 direction)
     {
         List<Vector3> points = new List<Vector3>();
@@ -47,7 +48,10 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [SerializeField] int _maxPlayers = 4;
     [SerializeField] float _stageRadius = 1000;
     [SerializeField, Range(10, 1000)] float _spawnRadiusOffset = 100;
+
+    [Header("Environment Settings")]
     [SerializeField, Range(0, 360)] float _windDirection = 0;
+    [SerializeField, Range(0, 1000)] float _windIntensity = 10;
 
     [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
@@ -241,6 +245,8 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
                 return _planePrefab;
             case StageEntity.Type.CLOUD:
                 return _cloudPrefab;
+            case StageEntity.Type.BLIMP:
+                return _blimpPrefab;
             default:
                 return null;
         }

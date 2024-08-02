@@ -17,5 +17,6 @@ MonoBehaviour:
   _colliderRadius: 50
   _moveSpeed: 50
   _rotationSpeed: 5
+  _windResistance: 0.5
   _respawnOnExit: 0
   _lifeSpan: -1

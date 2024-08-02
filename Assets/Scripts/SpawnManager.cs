@@ -30,6 +30,7 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
     [SerializeField, Range(1, 10)] float _tickSpeed = 2;
 
     [SerializeField, Range(4, 24)] int _spawnPointCount = 8;
+    [SerializeField, Range(0, 5)] int _spawnEntryWidthMultiplier = 2;
     [SerializeField, Range(0, 100)] float _gizmoSize = 10;
     [SerializeField] List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
 
@@ -39,10 +40,8 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
     void OnValidate()
     {
         Initialize();
-
     }
 
-    [Button]
     public override void Initialize()
     {
         CreateSpawnPoints();
@@ -50,25 +49,55 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
 
     void Update()
     {
-        SpawnPoint oldWindExitPoint = _windExitPoint;
-        SpawnPoint oldWindEntryPoint = _windEntryPoint;
+        // Cache the wind direction and opposite direction to avoid recalculating
+        float windDirection = StageManager.WindDirection;
+        float oppositeWindDirection = windDirection + 180;
 
-        // Get the spawn point in the direction of the wind
-        _windExitPoint = GetClosestSpawnPointInDirection(StageManager.WindDirection);
-        if (oldWindExitPoint.position != _windExitPoint.position)
-        {
-            oldWindExitPoint?.GoToState(SpawnPoint.State.WAITING);
-        }
-        _windExitPoint?.GoToState(SpawnPoint.State.DISABLED);
+        // Get the spawn points
+        SpawnPoint newWindExitPoint = GetClosestSpawnPointInDirection(windDirection);
+        SpawnPoint newWindEntryPoint = GetClosestSpawnPointInDirection(oppositeWindDirection);
 
-        // Get the opposite spawn point to the wind exit point
-        _windEntryPoint = GetClosestSpawnPointInDirection(StageManager.WindDirection + 180);
-        if (oldWindEntryPoint.position != _windEntryPoint.position)
+        // Update wind exit point only if it has changed
+        if (_windExitPoint.position != newWindExitPoint.position)
         {
-            oldWindEntryPoint?.GoToState(SpawnPoint.State.WAITING);
+            _windExitPoint?.GoToState(SpawnPoint.State.WAITING);
+            newWindExitPoint?.GoToState(SpawnPoint.State.DISABLED);
+            _windExitPoint = newWindExitPoint;
         }
-        _windEntryPoint?.GoToState(SpawnPoint.State.SPAWNING);
+
+        // Update wind entry point only if it has changed
+        if (_windEntryPoint.position != newWindEntryPoint.position)
+        {
+            _windEntryPoint?.GoToState(SpawnPoint.State.WAITING);
+            newWindEntryPoint?.GoToState(SpawnPoint.State.SPAWNING);
+            _windEntryPoint = newWindEntryPoint;
+        }
+
+        List<SpawnPoint> remainder = new List<SpawnPoint>(_spawnPoints);
+        List<SpawnPoint> entryNeighbors = GetSpawnPointNeighbors(_windEntryPoint.index, _spawnEntryWidthMultiplier);
+        List<SpawnPoint> exitNeighbors = GetSpawnPointNeighbors(_windExitPoint.index, _spawnEntryWidthMultiplier);
+        foreach (SpawnPoint neighbor in entryNeighbors)
+        {
+            neighbor.GoToState(SpawnPoint.State.SPAWNING);
+        }
+
+        foreach (SpawnPoint neighbor in exitNeighbors)
+        {
+            neighbor.GoToState(SpawnPoint.State.DISABLED);
+        }
+
+
+        // Apply the waiting state to the remaining spawn points
+        remainder.Remove(_windEntryPoint);
+        remainder.Remove(_windExitPoint);
+        remainder.RemoveAll(entryNeighbors.Contains);
+        remainder.RemoveAll(exitNeighbors.Contains);
+        foreach (SpawnPoint point in remainder)
+        {
+            point.GoToState(SpawnPoint.State.WAITING);
+        }
     }
+
 
     void OnDrawGizmos()
     {
@@ -125,6 +154,21 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         return GetClosestSpawnPointTo(targetPosition);
     }
 
+    public SpawnPoint GetRandomSpawnPointOfState(SpawnPoint.State state)
+    {
+        List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+        foreach (SpawnPoint spawnPoint in _spawnPoints)
+        {
+            if (spawnPoint.CurrentState == state)
+            {
+                spawnPoints.Add(spawnPoint);
+            }
+        }
+
+        if (spawnPoints.Count == 0) return null;
+        return spawnPoints[Random.Range(0, spawnPoints.Count)];
+    }
+
     void CreateSpawnPoints()
     {
         Vector3 _stageCenter = StageManager.StageCenter;
@@ -139,9 +183,59 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         _spawnPoints.Clear();
         for (int i = 0; i < _spawnPointCount; i++)
         {
-            SpawnPoint spawnPoint = new SpawnPoint(positions[i]);
+            SpawnPoint spawnPoint = new SpawnPoint(i, positions[i]);
             _spawnPoints.Add(spawnPoint);
         }
+
+        Debug.Log($"{Prefix} Created {_spawnPointCount} Spawn Points");
+    }
+
+    List<SpawnPoint> GetSpawnPointNeighbors(int index, int count)
+    {
+        List<SpawnPoint> neighbors = new List<SpawnPoint>();
+        for (int i = 1; i < count; i++)
+        {
+            int rightNeighborIndex = (index + i) % _spawnPoints.Count;
+            if (rightNeighborIndex < _spawnPoints.Count && rightNeighborIndex >= 0)
+            {
+                neighbors.Add(_spawnPoints[rightNeighborIndex]);
+            }
+
+            int leftNeighborIndex = (index - i) % _spawnPoints.Count;
+            if (leftNeighborIndex < _spawnPoints.Count && leftNeighborIndex >= 0)
+            {
+                try
+                {
+                    neighbors.Add(_spawnPoints[leftNeighborIndex]);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.Log($"{Prefix} : leftNeighborIndex ({leftNeighborIndex}) Error: {e.Message}");
+                }
+            }
+
+        }
+        return neighbors;
+    }
+
+    List<SpawnPoint> GetAvailableSpawnPoints()
+    {
+        List<SpawnPoint> availableSpawnPoints = new List<SpawnPoint>();
+        foreach (SpawnPoint spawnPoint in _spawnPoints)
+        {
+            if (spawnPoint.CurrentState == SpawnPoint.State.SPAWNING)
+            {
+                availableSpawnPoints.Add(spawnPoint);
+            }
+        }
+        return availableSpawnPoints;
+    }
+
+    SpawnPoint GetRandomAvailableSpawnPoint()
+    {
+        List<SpawnPoint> availableSpawnPoints = GetAvailableSpawnPoints();
+        if (availableSpawnPoints.Count == 0) return null;
+        return availableSpawnPoints[Random.Range(0, availableSpawnPoints.Count)];
     }
 
     public void BeginSpawnRoutine()
@@ -164,15 +258,35 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
     IEnumerator SpawnRoutine()
     {
         Debug.Log($"{Prefix} Spawn Routine Started");
+        int tickCount = 0;
+
+        // Create planes
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 randSpawnPosition = GetRandomAvailableSpawnPoint().position;
+            PlaneEntity newPlane = StageManager.Instance.SpawnEntity<PlaneEntity>(randSpawnPosition);
+            newPlane.SetTargetRotation(StageManager.WindDirection, true);
+
+            yield return new WaitForSeconds(0.5f);
+        }
 
         while (_spawnRoutineActive)
         {
             yield return new WaitForSeconds(_tickSpeed);
+            tickCount++;
 
-            Debug.Log($"{Prefix} Spawn Routine Tick");
-            Vector3 spawnPosition = _windEntryPoint.position;
-            CloudEntity newCloud = StageManager.Instance.SpawnEntity<CloudEntity>(spawnPosition);
+            Vector3 randSpawnPosition = GetRandomAvailableSpawnPoint().position;
+
+            /*
+            CloudEntity newCloud = StageManager.Instance.SpawnEntity<CloudEntity>(randSpawnPosition);
             newCloud.SetTargetRotation(StageManager.WindDirection, true);
+            */
+
+            if (tickCount % 3 == 0)
+            {
+                BlimpEntity newBlimp = StageManager.Instance.SpawnEntity<BlimpEntity>(randSpawnPosition);
+                newBlimp.SetTargetRotation(StageManager.WindDirection, true);
+            }
         }
     }
 
@@ -197,6 +311,11 @@ public class SpawnManagerCustomEditor : Editor
         _serializedObject.Update();
         EditorGUI.BeginChangeCheck();
 
+        if (GUILayout.Button("Initialize"))
+        {
+            _script.Initialize();
+        }
+
         DrawDefaultInspector();
 
         if (GUILayout.Button("Toggle Spawn Routine"))
@@ -215,7 +334,6 @@ public class SpawnManagerCustomEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             _serializedObject.ApplyModifiedProperties();
-            _script.Initialize();
         }
     }
 }
