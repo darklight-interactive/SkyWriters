@@ -337,6 +337,9 @@ public class StageEntity : MonoBehaviour
 
         // Slerp the current rotation to the target rotation
         transform.rotation = Quaternion.Slerp(q_currentRotation, q_targetRotation, data.rotationSpeed * Time.fixedDeltaTime);
+
+	// Update the current rotation angle
+	_curr_rotAngle = currentRotation.eulerAngles.y;
     }
 
     protected virtual void ResetMovement()

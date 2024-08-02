@@ -74,8 +74,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
             _playerInputManager.onPlayerJoined += OnPlayerJoined;
             _playerInputManager.onPlayerLeft += OnPlayerLeft;
         }
-
-        SpawnManager.Instance.Initialize();
     }
 
     void OnDrawGizmos()

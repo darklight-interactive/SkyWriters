@@ -78,8 +78,8 @@ public class PlaneEntity : StageEntity
         base.UpdateMovement();
 
         // Rotate the plane body on the Z axis based on the current rotation
-        Quaternion targetZRotation = Quaternion.Euler(0, 0, _curr_rotAngle / 2);
-        _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, data.rotationSpeed * Time.fixedDeltaTime);
+        //Quaternion targetZRotation = Quaternion.Euler(0, 0, _curr_rotAngle / 2);
+        //_planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, data.rotationSpeed * Time.fixedDeltaTime);
     }
 
     protected override void ResetMovement()

@@ -37,14 +37,13 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
     [SerializeField] private SpawnPoint _windEntryPoint; // Opposite of the wind direction angle
     [SerializeField] private SpawnPoint _windExitPoint; // In the direction of the wind direction angle
 
-    void OnValidate()
-    {
-        Initialize();
-    }
-
     public override void Initialize()
     {
         CreateSpawnPoints();
+
+	if (Application.isPlaying)
+		BeginSpawnRoutine();
+
     }
 
     void Update()
@@ -240,6 +239,8 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
 
     public void BeginSpawnRoutine()
     {
+	if (_spawnRoutineActive) return;
+
         _spawnRoutineActive = true;
         _spawnRoutine = StartCoroutine(SpawnRoutine());
     }
@@ -259,6 +260,8 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
     {
         Debug.Log($"{Prefix} Spawn Routine Started");
         int tickCount = 0;
+
+	yield return new WaitForSeconds(1);
 
         // Create planes
         for (int i = 0; i < 3; i++)
