@@ -54,7 +54,8 @@ public class StageEntity : MonoBehaviour
     }
     public class StateMachine : FiniteStateMachine<State>
     {
-        public StageEntity entity { get; private set; }
+        public StageEntity entity { get; protected set; }
+        public StateMachine() { }
         public StateMachine(StageEntity entity)
         {
             this.entity = entity;
@@ -77,7 +78,13 @@ public class StageEntity : MonoBehaviour
             GoToState(state);
         }
 
-        class SpawnState : FiniteState<State>
+
+
+        /// <summary>
+        /// This is the basic state for the entity when it is spawned.
+        /// The entity will remain in this state until it enters the stage bounds.
+        /// </summary>
+        public class SpawnState : FiniteState<State>
         {
             StageEntity entity;
             public SpawnState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
@@ -93,11 +100,17 @@ public class StageEntity : MonoBehaviour
                 {
                     entity.stateMachine.GoToStateWithDelay(State.GAME, 1);
                 }
+
+                // Check if the entity is in the game bounds
+                if (!entity.IsInStageBounds() && !entity.IsInSpawnBounds())
+                {
+                    entity.stateMachine.GoToState(State.DESPAWN);
+                }
             }
             public override void Exit() { }
         }
 
-        class GameState : FiniteState<State>
+        public class GameState : FiniteState<State>
         {
             StageEntity entity;
             public GameState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
@@ -113,12 +126,19 @@ public class StageEntity : MonoBehaviour
                 {
                     entity.stateMachine.GoToState(State.DESPAWN);
                 }
+
+
+                // Check if the entity is in the game bounds
+                if (!entity.IsInStageBounds() && !entity.IsInSpawnBounds())
+                {
+                    entity.stateMachine.GoToState(State.DESPAWN);
+                }
             }
 
             public override void Exit() { }
         }
 
-        class DespawnState : FiniteState<State>
+        public class DespawnState : FiniteState<State>
         {
             StageEntity entity;
             public DespawnState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
@@ -219,6 +239,7 @@ public class StageEntity : MonoBehaviour
         if (instant)
         {
             _curr_rotAngle = angle;
+            SetRotation(angle);
         }
     }
 
@@ -324,6 +345,11 @@ public class StageEntity : MonoBehaviour
 
         // Set the target rotation to the current rotation
         _target_rotAngle = currentRotation.eulerAngles.y;
+    }
+
+    protected void SetRotation(float angle)
+    {
+        transform.rotation = Quaternion.Euler(0, angle, 0);
     }
 
     protected bool IsInStageBounds()

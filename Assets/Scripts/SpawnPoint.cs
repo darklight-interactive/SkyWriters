@@ -11,12 +11,14 @@ public class SpawnPoint : FiniteStateMachine<SpawnPoint.State>
     public int index => _index;
     [SerializeField, ShowOnly] Vector3 _position;
     public Vector3 position => _position;
-    public SpawnPoint(int index, Vector3 position)
+    public SpawnPoint(int index, Vector3 position) : base()
     {
         this._index = index;
         this._position = position;
 
+
         // Add the states tp the FSM
+        this.possibleStates = new();
         AddState(new DisabledState(this, State.DISABLED));
         AddState(new WaitingState(this, State.WAITING));
         AddState(new SpawningState(this, State.SPAWNING));
@@ -50,7 +52,7 @@ public class SpawnPoint : FiniteStateMachine<SpawnPoint.State>
         }
     }
 
-    class DisabledState : FiniteState<State>
+    public class DisabledState : FiniteState<State>
     {
         public DisabledState(FiniteStateMachine<State> stateMachine, State stateType) : base(stateMachine, stateType) { }
         public override void Enter() { }
@@ -58,7 +60,7 @@ public class SpawnPoint : FiniteStateMachine<SpawnPoint.State>
         public override void Exit() { }
     }
 
-    class WaitingState : FiniteState<State>
+    public class WaitingState : FiniteState<State>
     {
         public WaitingState(FiniteStateMachine<State> stateMachine, State stateType) : base(stateMachine, stateType) { }
         public override void Enter() { }
@@ -66,7 +68,7 @@ public class SpawnPoint : FiniteStateMachine<SpawnPoint.State>
         public override void Exit() { }
     }
 
-    class SpawningState : FiniteState<State>
+    public class SpawningState : FiniteState<State>
     {
         public SpawningState(FiniteStateMachine<State> stateMachine, State stateType) : base(stateMachine, stateType) { }
         public override void Enter() { }
@@ -74,7 +76,7 @@ public class SpawnPoint : FiniteStateMachine<SpawnPoint.State>
         public override void Exit() { }
     }
 
-    class CountdownState : FiniteState<State>
+    public class CountdownState : FiniteState<State>
     {
         public CountdownState(FiniteStateMachine<State> stateMachine, State stateType) : base(stateMachine, stateType) { }
         public override void Enter() { }

@@ -245,6 +245,8 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
                 return _planePrefab;
             case StageEntity.Type.CLOUD:
                 return _cloudPrefab;
+            case StageEntity.Type.BLIMP:
+                return _blimpPrefab;
             default:
                 return null;
         }

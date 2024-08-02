@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: CloudPreset
   m_EditorClassIdentifier: 
   _type: 2
-  _colliderHeight: 25
-  _colliderRadius: 25
-  _moveSpeed: 215
+  _colliderHeight: 100
+  _colliderRadius: 100
+  _moveSpeed: 0
   _rotationSpeed: 2
+  _windResistance: 0
   _respawnOnExit: 0
   _lifeSpan: 60
