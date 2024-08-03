@@ -529,7 +529,7 @@ MonoBehaviour:
   sourceProjectPath: Assets/SkyWriters_FMOD/SkyWriters_FMOD.fspro
   sourceBankPath: Assets/SkyWriters_FMOD/Build
   sourceBankPathUnformatted: 
-  BankRefreshCooldown: 5
+  BankRefreshCooldown: 1
   ShowBankRefreshWindow: 1
   AutomaticEventLoading: 1
   BankLoadType: 0
@@ -562,7 +562,7 @@ MonoBehaviour:
   EnableErrorCallback: 0
   SharedLibraryUpdateStage: 0
   SharedLibraryTimeSinceStart: 0
-  CurrentVersion: 131618
+  CurrentVersion: 131619
   HideSetupWizard: 1
   LastEventReferenceScanVersion: 131618
   Platforms:

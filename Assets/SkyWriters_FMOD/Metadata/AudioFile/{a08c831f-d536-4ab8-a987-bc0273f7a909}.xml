@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{a08c831f-d536-4ab8-a987-bc0273f7a909}">
+		<property name="assetPath">
+			<value>Voice/VoiceChord2.1.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.4752291666666666</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{91de10ad-dbe1-4a3c-89c3-35b5d460dbf8}</destination>
+		</relationship>
+	</object>
+</objects>
