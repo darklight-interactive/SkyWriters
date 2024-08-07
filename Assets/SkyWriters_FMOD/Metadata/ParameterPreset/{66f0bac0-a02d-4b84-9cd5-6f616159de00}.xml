@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{66f0bac0-a02d-4b84-9cd5-6f616159de00}">
+		<property name="name">
+			<value>FadeInAudio</value>
+		</property>
+		<relationship name="folder">
+			<destination>{203b425d-d5b8-42b9-9e4c-722407f761b6}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d1e17d0b-af43-4c1d-a72e-bab54e51ff4b}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d1e17d0b-af43-4c1d-a72e-bab54e51ff4b}">
+		<property name="maximum">
+			<value>10</value>
+		</property>
+		<property name="initialValue">
+			<value>2</value>
+		</property>
+	</object>
+</objects>
