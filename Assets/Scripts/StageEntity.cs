@@ -251,7 +251,7 @@ public class StageEntity : MonoBehaviour
         UpdateMovement();
 
         // Update the state machine
-        _stateMachine.Step();
+        if (_stateMachine != null) _stateMachine.Step();
     }
 
     public virtual void OnDrawGizmos()
@@ -414,7 +414,6 @@ public class StageEntityCustomEditor : Editor
     {
         _serializedObject = new SerializedObject(target);
         _script = (StageEntity)target;
-        _script.Initialize();
     }
 
     public override void OnInspectorGUI()

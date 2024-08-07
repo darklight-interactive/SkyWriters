@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startInteraction:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 38700374
+      Data2: 1273113075
+      Data3: 154705818
+      Data4: -1198232280
+    Path: event:/VoiceTemp
   continuedInteraction:
     Guid:
       Data1: 0

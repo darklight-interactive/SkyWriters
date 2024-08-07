@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.26792946, g: 0.463935, b: 0.61439043, a: 1}
+  m_IndirectSpecularColor: {r: 0.26793307, g: 0.46431145, b: 0.6133213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -134,9 +134,9 @@ GameObject:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
   - component: {fileID: 277487366}
+  - component: {fileID: 277487367}
   - component: {fileID: 277487363}
   - component: {fileID: 277487368}
-  - component: {fileID: 277487367}
   m_Layer: 0
   m_Name: Stage Manager
   m_TagString: Untagged
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d620b189a3a813944a252893278e5428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxPlayers: 4
+  _maxPlayers: 8
   _stageRadius: 1120
   _spawnRadiusOffset: 500
   _windDirection: 200
@@ -281,7 +281,7 @@ MonoBehaviour:
   _spawnRoutineActive: 0
   _tickSpeed: 2
   _spawnPointCount: 20
-  _spawnEntryWidthMultiplier: 4
+  _spawnEntryWidthMultiplier: 2
   _gizmoSize: 50
   _spawnPoints:
   - _currentState: 1
@@ -293,25 +293,25 @@ MonoBehaviour:
   - _currentState: 1
     _index: 2
     _position: {x: 1108.353, y: -500, z: -805.2661}
-  - _currentState: 0
+  - _currentState: 1
     _index: 3
     _position: {x: 805.2654, y: -500, z: -1108.3536}
-  - _currentState: 0
+  - _currentState: 1
     _index: 4
     _position: {x: 423.35306, y: -500, z: -1302.9478}
   - _currentState: 0
     _index: 5
     _position: {x: -0.00016248226, y: -500, z: -1370.0001}
-  - _currentState: 0
+  - _currentState: 1
     _index: 6
     _position: {x: -423.3538, y: -500, z: -1302.9476}
   - _currentState: 0
     _index: 7
     _position: {x: -805.26605, y: -500, z: -1108.3536}
-  - _currentState: 0
+  - _currentState: 1
     _index: 8
     _position: {x: -1108.3536, y: -500, z: -805.26605}
-  - _currentState: 0
+  - _currentState: 1
     _index: 9
     _position: {x: -1302.9478, y: -500, z: -423.3536}
   - _currentState: 1
@@ -323,25 +323,25 @@ MonoBehaviour:
   - _currentState: 1
     _index: 12
     _position: {x: -1108.3533, y: -500, z: 805.2659}
-  - _currentState: 2
+  - _currentState: 1
     _index: 13
     _position: {x: -805.26636, y: -500, z: 1108.3529}
-  - _currentState: 2
+  - _currentState: 1
     _index: 14
     _position: {x: -423.3536, y: -500, z: 1302.947}
   - _currentState: 2
     _index: 15
     _position: {x: -0.00016248226, y: -500, z: 1369.9996}
-  - _currentState: 2
+  - _currentState: 1
     _index: 16
     _position: {x: 423.3533, y: -500, z: 1302.9471}
   - _currentState: 2
     _index: 17
     _position: {x: 805.26587, y: -500, z: 1108.3528}
-  - _currentState: 2
+  - _currentState: 1
     _index: 18
     _position: {x: 1108.353, y: -500, z: 805.2656}
-  - _currentState: 2
+  - _currentState: 1
     _index: 19
     _position: {x: 1302.9473, y: -500, z: 423.353}
   _windEntryPoint:
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5ab19d5b9883de4bb5eb829f907fb06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundMusic: {fileID: 0}
+  backgroundMusic: {fileID: 11400000, guid: e12247a1cd92d429ba5c39388437b526, type: 2}
   generalSFX: {fileID: 11400000, guid: 55ec670cd93c6ac4b8e204eacf12131f, type: 2}
   busListOk: 66
   systemIsOk: 66
@@ -398,7 +398,7 @@ MonoBehaviour:
   AllowFadeout: 1
   TriggerOnce: 0
   Preload: 0
-  AllowNonRigidbodyDoppler: 0
+  NonRigidbodyVelocity: 0
   Params: []
   OverrideAttenuation: 0
   OverrideMinDistance: -1
@@ -1102,8 +1102,8 @@ GameObject:
   m_Component:
   - component: {fileID: 773662974}
   - component: {fileID: 773662971}
-  - component: {fileID: 773662973}
   - component: {fileID: 773662972}
+  - component: {fileID: 773662975}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1206,14 +1206,6 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
---- !u!81 &773662973
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773662970}
-  m_Enabled: 1
 --- !u!4 &773662974
 Transform:
   m_ObjectHideFlags: 0
@@ -1229,6 +1221,19 @@ Transform:
   m_Father: {fileID: 800653251}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &773662975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773662970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attenuationObject: {fileID: 0}
 --- !u!1 &800653249
 GameObject:
   m_ObjectHideFlags: 0

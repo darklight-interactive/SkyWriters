@@ -222,6 +222,8 @@ GameObject:
   - component: {fileID: 5303435979736915769}
   - component: {fileID: 783944964808446795}
   - component: {fileID: 7384500800503127253}
+  - component: {fileID: 8705611143611370969}
+  - component: {fileID: 4903962422912929031}
   m_Layer: 6
   m_Name: '[ENTITY] Plane'
   m_TagString: Untagged
@@ -268,6 +270,13 @@ MonoBehaviour:
   _isAutopilot: 1
   _planeBody: {fileID: 5831562902396000746}
   _speedChangeMagnitude: 200
+  _humEvent:
+    Guid:
+      Data1: -1419789682
+      Data2: 1184479377
+      Data3: -164841840
+      Data4: -64137552
+    Path: event:/PlaneHum
   _contrailPrefab: {fileID: 1532563846836532694, guid: a26fa1afeec522f4b95c6c36e154fbcb,
     type: 3}
   _contrailWingspan: 20
@@ -352,6 +361,56 @@ CapsuleCollider:
   m_Height: 10
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8705611143611370969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747712956887816217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1419789682
+      Data2: 1184479377
+      Data3: -164841840
+      Data4: -64137552
+    Path: event:/PlaneHum
+  Event: 
+  PlayEvent: 1
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 3000
+--- !u!114 &4903962422912929031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747712956887816217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 744a208c85da6d04c861d81b992e4ead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Emitters:
+  - Target: {fileID: 8705611143611370969}
+    Params:
+    - Name: PlaneSpeed
+      Value: 1
+  TriggerEvent: 1
 --- !u!1 &7836725229957097662
 GameObject:
   m_ObjectHideFlags: 0

@@ -239,7 +239,7 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
 
     public void BeginSpawnRoutine()
     {
-	if (_spawnRoutineActive) return;
+        if (_spawnRoutineActive) return;
 
         _spawnRoutineActive = true;
         _spawnRoutine = StartCoroutine(SpawnRoutine());
@@ -261,17 +261,7 @@ public class SpawnManager : MonoBehaviourSingleton<SpawnManager>
         Debug.Log($"{Prefix} Spawn Routine Started");
         int tickCount = 0;
 
-	yield return new WaitForSeconds(1);
-
-        // Create planes
-        for (int i = 0; i < 3; i++)
-        {
-            Vector3 randSpawnPosition = GetRandomAvailableSpawnPoint().position;
-            PlaneEntity newPlane = StageManager.Instance.SpawnEntity<PlaneEntity>(randSpawnPosition);
-            newPlane.SetTargetRotation(StageManager.WindDirection, true);
-
-            yield return new WaitForSeconds(0.5f);
-        }
+        yield return new WaitForSeconds(1);
 
         while (_spawnRoutineActive)
         {

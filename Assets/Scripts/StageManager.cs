@@ -9,6 +9,8 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
+using Darklight.UnityExt.FMODExt;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -73,6 +75,11 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         {
             _playerInputManager.onPlayerJoined += OnPlayerJoined;
             _playerInputManager.onPlayerLeft += OnPlayerLeft;
+
+            //FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
+            //FMOD_EventManager.Instance.PlayStartInteractionEvent();
+
+
         }
     }
 

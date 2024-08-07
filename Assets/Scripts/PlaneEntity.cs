@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Darklight.UnityExt.Input;
+
 using Darklight.UnityExt.Editor;
-using UnityEditor;
-using UnityEngine.InputSystem;
-using UnityEditor.VersionControl;
+using Darklight.UnityExt.FMODExt;
+using FMOD.Studio;
+using FMODUnity;
+using UnityEngine;
 
 public class PlaneEntity : StageEntity
 {
@@ -15,6 +14,11 @@ public class PlaneEntity : StageEntity
     public bool IsAutopilot => _isAutopilot;
     [SerializeField] Transform _planeBody;
     [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
+
+
+    [Header("Audio")]
+    [SerializeField] EventReference _humEvent;
+    private EventInstance _humInstance;
 
     public override void Initialize()
     {
@@ -29,6 +33,22 @@ public class PlaneEntity : StageEntity
         {
             CreateContrails();
         }
+
+        // Create the hum sound event instance
+        _humInstance = FMODUnity.RuntimeManager.CreateInstance(_humEvent);
+        _humInstance.setParameterByName("PlaneSpeed", 1f);
+        _humInstance.start();
+    }
+
+    public void Update()
+    {
+        /*
+        if (_humInstance.isValid())
+        {
+            _humInstance.set3DAttributes(RuntimeUtils.To3DAttributes(transform));
+            _humInstance.setParameterByName("PlaneSpeed", 0.5f);
+        }
+        */
     }
 
     public override void OnDrawGizmos()
@@ -48,8 +68,6 @@ public class PlaneEntity : StageEntity
         DeactivateAutopilot();
 
         Debug.Log($"Player input assigned to plane: {_playerInputData.GetInfo()}", this);
-
-
     }
 
     #endregion
@@ -64,7 +82,7 @@ public class PlaneEntity : StageEntity
 
         // Set the speed offset based on the direction of the z input
         // Clamp the speed offset to the speed change magnitude
-        _curr_moveSpeed_offset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 2, _speedChangeMagnitude);
+        _curr_moveSpeed_offset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 4, _speedChangeMagnitude);
     }
 
     protected override void UpdateMovement()
@@ -85,6 +103,11 @@ public class PlaneEntity : StageEntity
     protected override void ResetMovement()
     {
         base.ResetMovement();
+    }
+
+    float GetSpeedPercentage()
+    {
+        return _curr_moveSpeed / data.moveSpeed;
     }
 
     #endregion
