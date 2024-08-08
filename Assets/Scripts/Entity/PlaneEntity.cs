@@ -5,16 +5,21 @@ using Darklight.UnityExt.Editor;
 using Darklight.UnityExt.FMODExt;
 using FMOD.Studio;
 using FMODUnity;
+using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlaneEntity : StageEntity
 {
-    [SerializeField] PlayerInputData _playerInputData;
+    [SerializeField] LocalPlayerInputData _playerInputData;
     [ShowOnly, SerializeField] bool _isAutopilot = true;
     public bool IsAutopilot => _isAutopilot;
-    [SerializeField] Transform _planeBody;
-    [SerializeField, Range(0, 500)] float _speedChangeMagnitude = 10;
 
+    [SerializeField] Transform _planeBody;
+
+    [Header("Movement")]
+    [SerializeField, ShowOnly] float _speedMultiplier_slow = 0.5f;
+    [SerializeField, ShowOnly] float _speedMultiplier_fast = 1.5f;
 
     [Header("Audio")]
     [SerializeField] EventReference _humEvent;
@@ -59,15 +64,13 @@ public class PlaneEntity : StageEntity
     }
 
     #region ======================= [[ INPUT HANDLING ]] =======================
-
-    public void AssignPlayerInput(PlayerInputData input)
+    public void AssignPlayerInput(LocalPlayerInputData inputData)
     {
-        _playerInputData = input;
+        this.name = "[PLAYER] PLANE";
+
+        _playerInputData = inputData;
         DeactivateAutopilot();
-
-        Debug.Log($"Player input assigned to plane: {_playerInputData.GetInfo()}", this);
     }
-
     #endregion
 
 
@@ -76,11 +79,13 @@ public class PlaneEntity : StageEntity
     {
         // Set the target rotation value based on the direction of the x input
         float horz_inputDirection = moveInput.x * -90;
-        _target_rotAngle = currentRotation.eulerAngles.y + horz_inputDirection;
+        _target_rotAngle = rotation.eulerAngles.y + horz_inputDirection;
 
         // Set the speed offset based on the direction of the z input
-        // Clamp the speed offset to the speed change magnitude
-        _curr_moveSpeed_offset = Mathf.Clamp(moveInput.y * _speedChangeMagnitude, -_speedChangeMagnitude / 4, _speedChangeMagnitude);
+        if (moveInput.y > 0) { _speedMultiplier = _speedMultiplier_fast; }
+        else if (moveInput.y < 0) { _speedMultiplier = _speedMultiplier_slow; }
+        else { _speedMultiplier = 1f; }
+
     }
 
     protected override void UpdateMovement()
@@ -101,11 +106,6 @@ public class PlaneEntity : StageEntity
     protected override void ResetMovement()
     {
         base.ResetMovement();
-    }
-
-    float GetSpeedPercentage()
-    {
-        return _curr_moveSpeed / data.moveSpeed;
     }
 
     #endregion

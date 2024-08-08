@@ -135,10 +135,12 @@ GameObject:
   - component: {fileID: 277487364}
   - component: {fileID: 277487366}
   - component: {fileID: 277487367}
+  - component: {fileID: 277487370}
   - component: {fileID: 277487363}
   - component: {fileID: 277487368}
+  - component: {fileID: 277487369}
   m_Layer: 0
-  m_Name: Stage Manager
+  m_Name: '[ STAGE MANAGER ]'
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -257,7 +259,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 277487362}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00024414062, y: -500, z: -0.00024414062}
+  m_LocalPosition: {x: 0, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -286,72 +288,72 @@ MonoBehaviour:
   _spawnPoints:
   - _currentState: 1
     _index: 0
-    _position: {x: 1369.9998, y: -500, z: -0.00024414062}
+    _position: {x: 1370, y: -500, z: 0}
   - _currentState: 1
     _index: 1
-    _position: {x: 1302.9471, y: -500, z: -423.35358}
+    _position: {x: 1302.9474, y: -500, z: -423.35333}
   - _currentState: 1
     _index: 2
-    _position: {x: 1108.353, y: -500, z: -805.2661}
+    _position: {x: 1108.3533, y: -500, z: -805.26587}
   - _currentState: 1
     _index: 3
-    _position: {x: 805.2654, y: -500, z: -1108.3536}
+    _position: {x: 805.2656, y: -500, z: -1108.3534}
   - _currentState: 1
     _index: 4
-    _position: {x: 423.35306, y: -500, z: -1302.9478}
+    _position: {x: 423.3533, y: -500, z: -1302.9475}
   - _currentState: 0
     _index: 5
-    _position: {x: -0.00016248226, y: -500, z: -1370.0001}
+    _position: {x: 0.00008165836, y: -500, z: -1369.9999}
   - _currentState: 1
     _index: 6
-    _position: {x: -423.3538, y: -500, z: -1302.9476}
+    _position: {x: -423.35355, y: -500, z: -1302.9474}
   - _currentState: 0
     _index: 7
-    _position: {x: -805.26605, y: -500, z: -1108.3536}
+    _position: {x: -805.2658, y: -500, z: -1108.3534}
   - _currentState: 1
     _index: 8
-    _position: {x: -1108.3536, y: -500, z: -805.26605}
+    _position: {x: -1108.3534, y: -500, z: -805.2658}
   - _currentState: 1
     _index: 9
-    _position: {x: -1302.9478, y: -500, z: -423.3536}
+    _position: {x: -1302.9475, y: -500, z: -423.35336}
   - _currentState: 1
     _index: 10
-    _position: {x: -1370.0002, y: -500, z: -0.00012437142}
+    _position: {x: -1370, y: -500, z: 0.0001197692}
   - _currentState: 1
     _index: 11
-    _position: {x: -1302.9475, y: -500, z: 423.3533}
+    _position: {x: -1302.9473, y: -500, z: 423.35355}
   - _currentState: 1
     _index: 12
-    _position: {x: -1108.3533, y: -500, z: 805.2659}
+    _position: {x: -1108.353, y: -500, z: 805.2662}
   - _currentState: 1
     _index: 13
-    _position: {x: -805.26636, y: -500, z: 1108.3529}
+    _position: {x: -805.2661, y: -500, z: 1108.3531}
   - _currentState: 1
     _index: 14
-    _position: {x: -423.3536, y: -500, z: 1302.947}
+    _position: {x: -423.35336, y: -500, z: 1302.9473}
   - _currentState: 2
     _index: 15
-    _position: {x: -0.00016248226, y: -500, z: 1369.9996}
+    _position: {x: 0.00008165836, y: -500, z: 1369.9999}
   - _currentState: 1
     _index: 16
-    _position: {x: 423.3533, y: -500, z: 1302.9471}
+    _position: {x: 423.35355, y: -500, z: 1302.9474}
   - _currentState: 2
     _index: 17
-    _position: {x: 805.26587, y: -500, z: 1108.3528}
+    _position: {x: 805.2661, y: -500, z: 1108.353}
   - _currentState: 1
     _index: 18
-    _position: {x: 1108.353, y: -500, z: 805.2656}
+    _position: {x: 1108.3533, y: -500, z: 805.26587}
   - _currentState: 1
     _index: 19
-    _position: {x: 1302.9473, y: -500, z: 423.353}
+    _position: {x: 1302.9475, y: -500, z: 423.35324}
   _windEntryPoint:
     _currentState: 2
     _index: 16
-    _position: {x: 423.3533, y: -500, z: 1302.9471}
+    _position: {x: 423.35355, y: -500, z: 1302.9474}
   _windExitPoint:
     _currentState: 0
     _index: 6
-    _position: {x: -423.3538, y: -500, z: -1302.9476}
+    _position: {x: -423.35355, y: -500, z: -1302.9474}
 --- !u!114 &277487367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,7 +372,7 @@ MonoBehaviour:
   systemIsOk: 66
   allBanksLoaded: 0
   allBusesLoaded: 0
-  masterBusPath: bus:/MasterVolume
+  masterBusPath: bus:/Master
   masterBusVolume: 0
 --- !u!114 &277487368
 MonoBehaviour:
@@ -403,6 +405,34 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: -1
   OverrideMaxDistance: -1
+--- !u!114 &277487369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277487362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attenuationObject: {fileID: 0}
+--- !u!114 &277487370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277487362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee13b02f8b344084ebceb2d35b6a93ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _curPlayerCount: 0
+  _maxPlayerCount: 8
+  _playerInputData: []
 --- !u!1001 &767988637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1103,7 +1133,6 @@ GameObject:
   - component: {fileID: 773662974}
   - component: {fileID: 773662971}
   - component: {fileID: 773662972}
-  - component: {fileID: 773662975}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1144,7 +1173,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 100.00003
+  field of view: 100
   orthographic: 0
   orthographic size: 500
   m_Depth: -1
@@ -1221,19 +1250,6 @@ Transform:
   m_Father: {fileID: 800653251}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &773662975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773662970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attenuationObject: {fileID: 0}
 --- !u!1 &800653249
 GameObject:
   m_ObjectHideFlags: 0
@@ -1266,7 +1282,7 @@ MonoBehaviour:
   _camerasInChildren:
   - {fileID: 773662971}
   _focusTarget: {fileID: 808860985}
-  _focusTargetPosition: {x: -0.00024414062, y: -2500, z: -0.00024414062}
+  _focusTargetPosition: {x: 0, y: -2500, z: 0}
   _focusTargetPositionOffset: {x: 0, y: 0, z: 0}
   _focusOffsetY: 0
   _offsetPosition: {x: 0, y: -50, z: -0}
@@ -1285,8 +1301,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800653249}
-  m_LocalRotation: {x: -0.7071066, y: 0, z: 0, w: 0.70710707}
-  m_LocalPosition: {x: -0.00024414062, y: -2549.999, z: -0.00024414062}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -2550, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

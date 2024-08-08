@@ -16,7 +16,6 @@ using Darklight.UnityExt.FMODExt;
 using UnityEditor;
 #endif
 
-[RequireComponent(typeof(PlayerInputManager))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     public enum AreaType { ALL, STAGE, SPAWN_AREA }
@@ -43,8 +42,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     }
 
     // -------------- Properties ------------------------
-    PlayerInputManager _playerInputManager => GetComponent<PlayerInputManager>();
-    List<PlayerInputData> _playerInputs = new List<PlayerInputData>();
 
     [Header("Stage Settings")]
     [SerializeField] int _maxPlayers = 4;
@@ -73,10 +70,9 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         if (Application.isPlaying)
         {
-            _playerInputManager.onPlayerJoined += OnPlayerJoined;
-            _playerInputManager.onPlayerLeft += OnPlayerLeft;
 
-            //FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
+
+            FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
             //FMOD_EventManager.Instance.PlayStartInteractionEvent();
 
 
@@ -294,52 +290,9 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     #region ================= [[ PLAYER MANAGEMENT ]] ================= >>
 
-    /// <summary>
-    /// Called when a player joins the game.
-    /// This method is called by the PlayerInputManager event : onPlayerJoined.
-    /// </summary>
-    /// <param name="playerInput">
-    ///     The PlayerInput object of the player that joined.
-    /// </param>
-    void OnPlayerJoined(PlayerInput playerInput)
-    {
-        // Create temp data and apply base checks
-        PlayerInputData playerInputData = new PlayerInputData(playerInput);
 
-        // Check if the max players are reached        
-        if (_playerInputs.Count >= _maxPlayers)
-        {
-            Debug.Log($"Max players reached! >> Cannot connect [ {playerInputData.GetInfo()} ]");
-            return;
-        }
 
-        // Check if the player is already connected
-        if (_playerInputs.Any(p => p.deviceId == playerInputData.deviceId))
-        {
-            Debug.Log($"{playerInputData.GetInfo()} is already connected!");
-            return;
-        }
-
-        // Add the player to the list
-        _playerInputs.Add(playerInputData);
-        AssignPlayerToPlane(playerInputData);
-    }
-
-    /// <summary>
-    /// Called when a player leaves the game.
-    /// This method is called by the PlayerInputManager event : onPlayerLeft.
-    /// </summary>
-    /// <param name="playerInput">
-    ///     The PlayerInput object of the player that left.
-    /// </param>
-    public void OnPlayerLeft(PlayerInput playerInput)
-    {
-        // Create temp data and apply base checks
-        PlayerInputData playerInputData = new PlayerInputData(playerInput);
-        Debug.Log($"{playerInputData.GetInfo()} left the game!");
-    }
-
-    public PlaneEntity AssignPlayerToPlane(PlayerInputData playerInputData)
+    public PlaneEntity AssignPlayerToPlane(LocalPlayerInputData playerInputData)
     {
         // Find the first available plane
         List<PlaneEntity> planes = GetAllEntitiesOfType<PlaneEntity>();
