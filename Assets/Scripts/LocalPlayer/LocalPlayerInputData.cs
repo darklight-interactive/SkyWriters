@@ -1,3 +1,4 @@
+using System.Collections;
 using Darklight.UnityExt.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,9 +15,11 @@ public class LocalPlayerInputData
     PlayerInput _playerInput;
     [ShowOnly, SerializeField] int _playerId = -1;
     [ShowOnly, SerializeField] string _playerName = "NULL";
+    [ShowOnly, SerializeField] float _input_lastUpdateTime = 0f;
     public PlayerInput playerInput => _playerInput;
     public int playerId => _playerInput.playerIndex;
     public string playerName => _playerName;
+    public float input_lastUpdateTime => _input_lastUpdateTime;
 
     // ============= Device Info =============
     InputDevice _device;
@@ -28,10 +31,7 @@ public class LocalPlayerInputData
     public int deviceID => _deviceID;
     public string deviceName => _deviceName;
     public DEVICE_TYPE deviceType => _deviceType;
-
-    // ============= Input Data =============
-    [ShowOnly, SerializeField] Vector2 _moveInput = Vector2.zero;
-
+    public double device_lastUpdateTime => _device_lastUpdateTime;
 
     // ============= Constructor =============
     public LocalPlayerInputData(PlayerInput playerInput)
@@ -39,6 +39,7 @@ public class LocalPlayerInputData
         _createdTime = Time.time;
 
         _playerInput = playerInput;
+        _playerInput.onActionTriggered += OnActionTriggered;
 
         UpdateData();
     }
@@ -56,9 +57,14 @@ public class LocalPlayerInputData
 
         // Set the name of the gameobject
         _playerInput.gameObject.name = $"<INPUT> {playerName} : {deviceType}";
+    }
 
-        // Read the move input
-        ReadMoveInput();
+    void OnActionTriggered(InputAction.CallbackContext context)
+    {
+        // Debug.Log($"<INPUT> {playerName} : {deviceType} : {context.action.name} : {context.phase}");
+        _input_lastUpdateTime = Time.time;
+
+        LocalPlayerInputManager.Instance.RemoveDuplicateData(this);
     }
 
     DEVICE_TYPE GetDeviceType()
@@ -81,13 +87,5 @@ public class LocalPlayerInputData
     {
         return $"{deviceName} : {deviceID}";
     }
-
-    public Vector2 ReadMoveInput()
-    {
-        _moveInput = playerInput.actions["MoveInput"].ReadValue<Vector2>();
-        return _moveInput;
-    }
-
-
 
 }

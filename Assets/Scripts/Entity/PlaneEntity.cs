@@ -11,13 +11,14 @@ using UnityEngine.InputSystem;
 
 public class PlaneEntity : StageEntity
 {
-    [SerializeField] LocalPlayerInputData _playerInputData;
+    [SerializeField] LocalPlayerInputData _input;
     [ShowOnly, SerializeField] bool _isAutopilot = true;
     public bool IsAutopilot => _isAutopilot;
 
     [SerializeField] Transform _planeBody;
 
     [Header("Movement")]
+    [SerializeField, ShowOnly] float _currSpeedPercentage = 0f;
     [SerializeField, ShowOnly] float _speedMultiplier_slow = 0.5f;
     [SerializeField, ShowOnly] float _speedMultiplier_fast = 1.5f;
 
@@ -28,7 +29,7 @@ public class PlaneEntity : StageEntity
     public override void Initialize()
     {
         base.Initialize();
-        if (_playerInputData == null)
+        if (_input == null)
         {
             ActivateAutopilot();
         }
@@ -41,7 +42,7 @@ public class PlaneEntity : StageEntity
 
         // Create the hum sound event instance
         _humInstance = FMODUnity.RuntimeManager.CreateInstance(_humEvent);
-        _humInstance.setParameterByName("PlaneSpeed", 1f);
+        _humInstance.setParameterByName("PlaneSpeed", 0f);
         _humInstance.start();
     }
 
@@ -50,7 +51,7 @@ public class PlaneEntity : StageEntity
         if (_humInstance.isValid())
         {
             _humInstance.set3DAttributes(RuntimeUtils.To3DAttributes(transform));
-            _humInstance.setParameterByName("PlaneSpeed", 0.5f);
+            _humInstance.setParameterByName("PlaneSpeed", GetSpeedPercentage());
         }
     }
 
@@ -66,15 +67,38 @@ public class PlaneEntity : StageEntity
     #region ======================= [[ INPUT HANDLING ]] =======================
     public void AssignPlayerInput(LocalPlayerInputData inputData)
     {
-        this.name = "[PLAYER] PLANE";
+        _input = inputData;
+        this.name = $"({inputData.playerName}) : PlaneEntity";
 
-        _playerInputData = inputData;
+        if (inputData.device is Gamepad)
+        {
+            LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)inputData.device, 0.5f, 0.5f);
+        }
+
         DeactivateAutopilot();
     }
     #endregion
 
 
     #region ======================= [[ MOVEMENT CONTROLLER ]] =======================
+    Vector2 GetMovementInput()
+    {
+        if (_input != null)
+        {
+            PlayerInput playerInput = _input.playerInput;
+            return playerInput.actions["MoveInput"].ReadValue<Vector2>();
+        }
+        return Vector2.zero;
+    }
+
+    float GetSpeedPercentage()
+    {
+        float currentSpeed = velocity.magnitude;
+        float maxSpeed = data.moveSpeed * _speedMultiplier_fast;
+        _currSpeedPercentage = currentSpeed / maxSpeed;
+        return _currSpeedPercentage;
+    }
+
     void ApplyMovementInput(Vector2 moveInput)
     {
         // Set the target rotation value based on the direction of the x input
@@ -82,17 +106,17 @@ public class PlaneEntity : StageEntity
         _target_rotAngle = rotation.eulerAngles.y + horz_inputDirection;
 
         // Set the speed offset based on the direction of the z input
-        if (moveInput.y > 0) { _speedMultiplier = _speedMultiplier_fast; }
-        else if (moveInput.y < 0) { _speedMultiplier = _speedMultiplier_slow; }
-        else { _speedMultiplier = 1f; }
+        if (moveInput.y > 0) { _currSpeedMultiplier = _speedMultiplier_fast; }
+        else if (moveInput.y < 0) { _currSpeedMultiplier = _speedMultiplier_slow; }
+        else { _currSpeedMultiplier = 1f; }
 
     }
 
     protected override void UpdateMovement()
     {
-        if (_playerInputData != null && !_isAutopilot)
+        if (_input != null && !_isAutopilot)
         {
-            Vector2 moveInput = _playerInputData.ReadMoveInput();
+            Vector2 moveInput = GetMovementInput();
             ApplyMovementInput(moveInput);
         }
 

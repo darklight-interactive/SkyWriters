@@ -236,7 +236,8 @@ public class StageEntity : MonoBehaviour
 
     [Space(10), HorizontalLine(), Header("Live Data")]
     [SerializeField, ShowOnly] protected State _currentState; // The current state of the entity
-    [SerializeField, ShowOnly] protected float _speedMultiplier = 1; // The current speed multiplier of the entity
+    [SerializeField, ShowOnly] protected float _currSpeed; // The current speed of the entity
+    [SerializeField, ShowOnly] protected float _currSpeedMultiplier = 1; // The current speed multiplier of the entity
     [SerializeField, ShowOnly] protected float _curr_rotAngle; // The current rotation angle of the entity
     [SerializeField, ShowOnly] protected float _target_rotAngle; // The target rotation angle of the entity
 
@@ -306,7 +307,8 @@ public class StageEntity : MonoBehaviour
     {
         // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
-        Vector3 thrustVelocity = transform.forward * (data.moveSpeed * _speedMultiplier);
+        Vector3 thrustVelocity = transform.forward * (data.moveSpeed * _currSpeedMultiplier);
+        _currSpeed = thrustVelocity.magnitude; // << Update the current speed
 
         // Calculate the current wind velocity
         float windDirection = StageManager.WindDirection;
@@ -339,7 +341,7 @@ public class StageEntity : MonoBehaviour
 
     protected virtual void ResetMovement()
     {
-        _speedMultiplier = 0;
+        _currSpeedMultiplier = 0;
 
         // Set the target rotation to the current rotation
         _target_rotAngle = rotation.eulerAngles.y;
