@@ -42,13 +42,11 @@ public class PlaneEntity : StageEntity
 
     public void Update()
     {
-        /*
         if (_humInstance.isValid())
         {
             _humInstance.set3DAttributes(RuntimeUtils.To3DAttributes(transform));
             _humInstance.setParameterByName("PlaneSpeed", 0.5f);
         }
-        */
     }
 
     public override void OnDrawGizmos()
