@@ -21,6 +21,11 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     public List<InputDevice> allDevices => _inputData.Select(x => x.device).ToList();
     public int currentPlayerCount => _inputData.Count;
 
+    // Events ===================================== >>>>
+    public delegate void InputDataEvent(LocalPlayerInputData data);
+    public event InputDataEvent OnAddLocalPlayerInput;
+    public event InputDataEvent OnRemoveLocalPlayerInput;
+
     // Methods ===================================== >>>>
     public override void Initialize()
     {
@@ -46,7 +51,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     /// </param>
     void OnPlayerJoined(PlayerInput playerInput)
     {
-        RegisterNewInput(playerInput);
+        HandleNewInput(playerInput);
     }
 
     /// <summary>
@@ -58,10 +63,10 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     /// </param>
     void OnPlayerLeft(PlayerInput playerInput)
     {
-        RemovePlayer(playerInput);
+        RemovePlayerInput(playerInput);
     }
 
-    void RegisterNewInput(PlayerInput playerInput)
+    void HandleNewInput(PlayerInput playerInput)
     {
         LocalPlayerInputData newData = new LocalPlayerInputData(playerInput);
         if (IsDataDuplicate(newData))
@@ -79,9 +84,10 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
         }
 
         _inputData.Add(newData);
+        OnAddLocalPlayerInput?.Invoke(newData);
     }
 
-    void RemovePlayer(PlayerInput playerInput)
+    void RemovePlayerInput(PlayerInput playerInput)
     {
         _inputData.RemoveAll(x => x.playerInput == playerInput);
         Destroy(playerInput.gameObject);

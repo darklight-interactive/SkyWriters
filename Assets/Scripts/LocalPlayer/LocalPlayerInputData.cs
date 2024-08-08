@@ -46,7 +46,7 @@ public class LocalPlayerInputData
     public void UpdateData()
     {
         _playerId = playerInput.playerIndex;
-        _playerName = $"PLAYER_{_playerId}";
+        _playerName = $"PLAYER{_playerId}";
 
         _device = playerInput.devices[0];
         _deviceID = device.deviceId;
@@ -55,7 +55,7 @@ public class LocalPlayerInputData
         _device_lastUpdateTime = _device.lastUpdateTime;
 
         // Set the name of the gameobject
-        _playerInput.gameObject.name = playerName + GetDeviceInfo();
+        _playerInput.gameObject.name = $"<INPUT> {playerName} : {deviceType}";
 
         // Read the move input
         ReadMoveInput();

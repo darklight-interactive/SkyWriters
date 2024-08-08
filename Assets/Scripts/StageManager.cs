@@ -16,6 +16,7 @@ using Darklight.UnityExt.FMODExt;
 using UnityEditor;
 #endif
 
+[RequireComponent(typeof(LocalPlayerInputManager))]
 public class StageManager : MonoBehaviourSingleton<StageManager>
 {
     public enum AreaType { ALL, STAGE, SPAWN_AREA }
@@ -41,10 +42,13 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         return points;
     }
 
+    // -------------- Data ------------------------
+    public Dictionary<LocalPlayerInputData, PlaneEntity> playerEntityDict = new Dictionary<LocalPlayerInputData, PlaneEntity>();
+
     // -------------- Properties ------------------------
 
     [Header("Stage Settings")]
-    [SerializeField] int _maxPlayers = 4;
+    [SerializeField] int _maxPlayers = 8;
     [SerializeField] float _stageRadius = 1000;
     [SerializeField, Range(10, 1000)] float _spawnRadiusOffset = 100;
 
@@ -70,7 +74,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     {
         if (Application.isPlaying)
         {
-
+            LocalPlayerInputManager.Instance.OnAddLocalPlayerInput += AssignPlayerToPlane;
 
             FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
             //FMOD_EventManager.Instance.PlayStartInteractionEvent();
@@ -290,10 +294,12 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     #region ================= [[ PLAYER MANAGEMENT ]] ================= >>
 
-
-
-    public PlaneEntity AssignPlayerToPlane(LocalPlayerInputData playerInputData)
+    public void AssignPlayerToPlane(LocalPlayerInputData playerInputData)
     {
+        // If the player is already assigned to a plane, return
+        if (playerEntityDict.ContainsKey(playerInputData)) return;
+
+        /*
         // Find the first available plane
         List<PlaneEntity> planes = GetAllEntitiesOfType<PlaneEntity>();
         foreach (PlaneEntity plane in planes)
@@ -301,14 +307,17 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
             if (plane.IsAutopilot)
             {
                 plane.AssignPlayerInput(playerInputData);
-                return plane;
+                return;
             }
         }
+        */
 
         // If no planes are available, spawn a new one
         PlaneEntity newPlane = SpawnEntityRandomly_InStage<PlaneEntity>();
         newPlane.AssignPlayerInput(playerInputData);
-        return newPlane;
+        playerEntityDict.Add(playerInputData, newPlane);
+
+        Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
     }
 
     #endregion
