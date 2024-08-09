@@ -16,7 +16,7 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
     public VFX_ColorPalette colorPalette { get => _colorPalette; set => _colorPalette = value; }
 
     [SerializeField] VFX_GradientData _defaultGradient;
-    public VFX_GradientData defaultGradient => _defaultGradient;
+    public VFX_GradientData defaultGradientData => _defaultGradient;
 
 
 
@@ -59,6 +59,14 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
         {
             handler = go.AddComponent<VFX_ParticleSystemHandler>();
         }
+
+        return handler;
+    }
+
+    public static VFX_ParticleSystemHandler CreateParticleSystemHandler(ParticleSystem particleSystem, Vector3 position, Transform parent = null)
+    {
+        VFX_ParticleSystemHandler handler = CreateParticleSystemHandler(particleSystem, parent);
+        handler.transform.position = position;
 
         return handler;
     }

@@ -10,31 +10,55 @@ public class CloudEntity : StageEntity
     VFX_ParticleSystemHandler _cloudBurstParticleHandler;
 
     [SerializeField] VFX_ColorData _mainColor;
-    [SerializeField] VFX_GradientData _baseGradient;
-    [SerializeField] Gradient _currentGradient;
 
     public override void Initialize()
     {
         base.Initialize();
 
+        Debug.Log("CloudEntity Initialized", this);
+
         if (_mainColor == null)
             _mainColor = VFX_Manager.ColorPalette.whiteColor;
 
-        if (_baseGradient == null)
-            _baseGradient = VFX_Manager.Instance.defaultGradient;
+        DestroyAllParticles();
+        CreateCloudParticles();
 
-        _currentGradient = _baseGradient.CreateModifiedGradient(0, _mainColor);
-        CreateCloudParticles(_currentGradient);
+        OnTriggerEntered += HandleTriggerEntered;
     }
 
-    public void CreateCloudParticles(Gradient gradient)
+    void HandleTriggerEntered(Collider other)
+    {
+        if (other.GetComponent<PlaneEntity>())
+        {
+            PlaneEntity plane = other.GetComponent<PlaneEntity>();
+            plane.CollectNewColor(_mainColor);
+
+            if (Application.isPlaying)
+            {
+                CreateCloudBurstParticles();
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    Gradient GetCurrentGradient()
+    {
+        return VFX_Manager.Instance.defaultGradientData.CreateModifiedGradient(0, _mainColor);
+    }
+
+    public void SetMainColor(VFX_ColorData colorData)
+    {
+        _mainColor = colorData;
+        Initialize();
+    }
+
+    void CreateCloudParticles()
     {
         ParticleSystem cloudParticles = VFX_Manager.Instance.cloudParticles;
 
-        if (_cloudParticleHandler == null)
-            _cloudParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudParticles, transform);
+        _cloudParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudParticles, transform);
 
-        _cloudParticleHandler.SetGradient(gradient);
+        _cloudParticleHandler.SetGradient(GetCurrentGradient());
         _cloudParticleHandler.Play();
     }
 
@@ -43,8 +67,9 @@ public class CloudEntity : StageEntity
         if (_cloudBurstParticleHandler != null) return;
 
         ParticleSystem cloudBurstParticles = VFX_Manager.Instance.cloudBurstParticles;
-        _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, transform);
-        _cloudBurstParticleHandler.SetGradientData(_baseGradient);
+        _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, null);
+
+        _cloudBurstParticleHandler.SetGradient(GetCurrentGradient());
         _cloudBurstParticleHandler.Play();
     }
 

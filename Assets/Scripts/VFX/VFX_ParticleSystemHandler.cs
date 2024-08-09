@@ -2,6 +2,8 @@ using NaughtyAttributes;
 using UnityEngine;
 using Darklight.UnityExt.Editor;
 using UnityEngine.VFX;
+using System.Collections;
+
 
 
 
@@ -89,7 +91,7 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
 
         if (_gradientData == null)
         {
-            _gradientData = VFX_Manager.Instance.defaultGradient;
+            _gradientData = VFX_Manager.Instance.defaultGradientData;
             SetGradientData(_gradientData);
         }
     }
@@ -111,7 +113,27 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
         SetGradient(gradientData.gradient);
     }
 
+    public void StopAndDestroyOnComplete()
+    {
+        StartCoroutine(StopAndDestroyRoutine());
+    }
 
+    private IEnumerator StopAndDestroyRoutine()
+    {
+        particleSystem.Stop();
+        particleSystem.name += " (Stopping)";
+
+        // Wait until the particle system has no more particles
+        while (particleSystem.IsAlive(true))
+        {
+            yield return null;
+        }
+
+        if (Application.isPlaying)
+            Destroy(gameObject);
+        else
+            DestroyImmediate(gameObject);
+    }
 }
 
 #if UNITY_EDITOR

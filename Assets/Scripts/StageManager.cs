@@ -279,9 +279,10 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         }
     }
 
-    public CloudEntity SpawnCloudAt(Vector3 position)
+    public CloudEntity SpawnCloudAt(Vector3 position, VFX_ColorData colorData)
     {
         CloudEntity newCloud = SpawnEntity<CloudEntity>(position);
+        newCloud.SetMainColor(colorData);
         return newCloud;
     }
     #endregion
@@ -309,7 +310,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
         */
 
         // If no planes are available, spawn a new one
-        PlaneEntity newPlane = SpawnEntityRandomly_InStage<PlaneEntity>();
+        PlaneEntity newPlane = SpawnEntity<PlaneEntity>(StageCenter);
         newPlane.AssignPlayerInput(playerInputData);
         playerEntityDict.Add(playerInputData, newPlane);
 

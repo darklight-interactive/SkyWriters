@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-
+using System.Collections.Generic;
 using Darklight.UnityExt.Editor;
 using Darklight.UnityExt.FMODExt;
 using FMOD.Studio;
@@ -11,7 +11,10 @@ using UnityEngine.InputSystem;
 
 public class PlaneEntity : StageEntity
 {
+    [Header("Local Player Input Data")]
     [SerializeField] LocalPlayerInputData _input;
+
+    [Header("Autopilot")]
     [ShowOnly, SerializeField] bool _isAutopilot = true;
     public bool IsAutopilot => _isAutopilot;
 
@@ -26,24 +29,41 @@ public class PlaneEntity : StageEntity
     [SerializeField] EventReference _humEvent;
     private EventInstance _humInstance;
 
+
+    [Header("Contrails")]
+    [SerializeField] float _contrailWingspan;
+
+    [Space(10)]
+    [SerializeField] List<VFX_ColorData> _contrailColors;
+    [SerializeField] Gradient _contrailGradient;
+    [SerializeField, ShowOnly] VFX_ParticleSystemHandler _leftContrail;
+    [SerializeField, ShowOnly] VFX_ParticleSystemHandler _rightContrail;
+
     public override void Initialize()
     {
         base.Initialize();
-        if (_input == null)
-        {
-            ActivateAutopilot();
-        }
 
-        // If the contrails are not set, create them
+        DestroyAllParticles();
+        ResetGradientToDefault();
+
+
         if (Application.isPlaying)
         {
-            CreateContrails();
-        }
+            if (_input == null) ActivateAutopilot();
 
-        // Create the hum sound event instance
-        _humInstance = FMODUnity.RuntimeManager.CreateInstance(_humEvent);
-        _humInstance.setParameterByName("PlaneSpeed", 0f);
-        _humInstance.start();
+            // Create the hum sound event instance
+            _humInstance = FMODUnity.RuntimeManager.CreateInstance(_humEvent);
+            _humInstance.setParameterByName("PlaneSpeed", 0f);
+            _humInstance.start();
+        }
+    }
+
+    public override void Refresh()
+    {
+        base.Refresh();
+
+        RefreshGradient();
+
     }
 
     public void Update()
@@ -168,98 +188,51 @@ public class PlaneEntity : StageEntity
 
     #endregion
 
-
     #region ======================= [[ CONTRAILS ]] ============== 
 
-    [Header("Contrails")]
-    [SerializeField] GameObject _contrailPrefab;
-    [SerializeField] float _contrailWingspan = 5f;
-    [SerializeField] float _contrailScale = 10f;
-    [SerializeField] Gradient _contrailGradient;
+    public void CollectNewColor(VFX_ColorData newColor)
+    {
+        _contrailColors.Insert(0, newColor);
+        _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
+        CreateContrails();
+    }
 
-    // Contrail particle system references
-    ParticleSystem _leftContrail;
-    ParticleSystem _rightContrail;
+    public void RefreshGradient()
+    {
+        _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
+    }
 
-    void CreateContrails(bool destroyOld = false)
+    public void ResetGradientToDefault()
+    {
+        _contrailColors.Clear();
+        VFX_GradientData data = VFX_Manager.Instance.defaultGradientData;
+        _contrailGradient = data.gradient;
+        _contrailColors = data.colorDataKeys;
+        CreateContrails();
+    }
+
+
+
+    void CreateContrails()
     {
         // Calculate the positions of the contrails
         Vector3 planeCenter = transform.position;
         Vector3 leftContrailPos = planeCenter + Vector3.left * _contrailWingspan;
         Vector3 rightContrailPos = planeCenter + Vector3.right * _contrailWingspan;
 
-        // Create the contrail game objects
-        GameObject leftContrail = Instantiate(_contrailPrefab, leftContrailPos, Quaternion.identity);
-        GameObject rightContrail = Instantiate(_contrailPrefab, rightContrailPos, Quaternion.identity);
+        // Create the contrails
+        ParticleSystem contrailParticles = VFX_Manager.Instance.contrailParticles;
+        if (_leftContrail != null)
+            _leftContrail.StopAndDestroyOnComplete();
+        _leftContrail = VFX_Manager.CreateParticleSystemHandler(contrailParticles, leftContrailPos, transform);
 
-        // Set the contrail parents
-        leftContrail.transform.SetParent(transform);
-        rightContrail.transform.SetParent(transform);
+        if (_rightContrail != null)
+            _rightContrail.StopAndDestroyOnComplete();
+        _rightContrail = VFX_Manager.CreateParticleSystemHandler(contrailParticles, rightContrailPos, transform);
 
-        // Set the contrail scales
-        leftContrail.transform.localScale = Vector3.one * _contrailScale;
-        rightContrail.transform.localScale = Vector3.one * _contrailScale;
-
-        // Save the particle system references
-        _leftContrail = leftContrail.GetComponent<ParticleSystem>();
-        _rightContrail = rightContrail.GetComponent<ParticleSystem>();
-
-        // Set the contrail colors
-        SetColorOverLifetime(_leftContrail, _contrailGradient);
-        SetColorOverLifetime(_rightContrail, _contrailGradient);
-    }
-
-    void SetColorOverLifetime(ParticleSystem ps, Gradient colorGradient)
-    {
-        ParticleSystem.ColorOverLifetimeModule colorOverLifetime = ps.colorOverLifetime;
-        colorOverLifetime.enabled = true;
-        colorOverLifetime.color = colorGradient;
-    }
-
-    /// <summary>
-    /// Create a new contrail with the given gradient color
-    /// </summary>
-    /// <param name="gradient"></param>
-    public void CreateNewContrail(Gradient gradient)
-    {
-
-        SetColorOverLifetime(_leftContrail, gradient);
-        SetColorOverLifetime(_rightContrail, gradient);
-
-        /*
-        // Stop the current contrails
-        _leftContrail.Stop();
-        _rightContrail.Stop();
-
-        // Start coroutine to check and destroy old contrails
-        StartCoroutine(CheckAndDestroyContrail(_leftContrail));
-        StartCoroutine(CheckAndDestroyContrail(_rightContrail));
-
-        // Instantiate and configure the new left contrail
-        _leftContrail = Instantiate(_leftContrail, _leftContrail.transform.position, _leftContrail.transform.rotation, transform);
-        _leftContrail.transform.localScale = Vector3.one * _contrailScale;
-        _leftContrail.gameObject.name = "Left Contrail";
-        SetColorOverLifetime(_leftContrail, gradient);
-
-        // Instantiate and configure the new right contrail
-        _rightContrail = Instantiate(_rightContrail, _rightContrail.transform.position, _rightContrail.transform.rotation, transform);
-        _rightContrail.transform.localScale = Vector3.one * _contrailScale;
-        _rightContrail.gameObject.name = "Right Contrail";
-        SetColorOverLifetime(_rightContrail, gradient);
-        */
-
-    }
-
-    private IEnumerator CheckAndDestroyContrail(ParticleSystem contrail)
-    {
-        // Wait until the particle system has no more particles
-        while (contrail.IsAlive(true))
-        {
-            yield return null;
-        }
-
-        // Destroy the particle system game object
-        Destroy(contrail.gameObject);
+        // Set the gradient for the contrails
+        _leftContrail.SetGradient(_contrailGradient);
+        _rightContrail.SetGradient(_contrailGradient);
     }
 
     #endregion 

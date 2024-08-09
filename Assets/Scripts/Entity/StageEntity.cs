@@ -288,6 +288,7 @@ public class StageEntity : MonoBehaviour
         if (_preset != null) { LoadPreset(_preset); }
         LoadColliderSettings();
 
+        DestroyAllParticles();
 
         // Set up entity for play mode
         if (Application.isPlaying && data.lifeSpan > 0)
@@ -304,6 +305,8 @@ public class StageEntity : MonoBehaviour
             Destroy(gameObject, data.lifeSpan);
         }
     }
+
+    public virtual void Refresh() { }
 
     void LoadPreset(StageEntityPreset preset)
     {
@@ -427,7 +430,18 @@ public class StageEntity : MonoBehaviour
         return position;
     }
 
-
+    public void DestroyAllParticles()
+    {
+        // Get all the VFX_ParticleSystemHandler objects in children
+        VFX_ParticleSystemHandler[] particles = GetComponentsInChildren<VFX_ParticleSystemHandler>();
+        for (int i = 0; i < particles.Length; i++)
+        {
+            if (Application.isPlaying)
+                Destroy(particles[i].gameObject);
+            else
+                DestroyImmediate(particles[i].gameObject);
+        }
+    }
 }
 
 
@@ -449,10 +463,17 @@ public class StageEntityCustomEditor : Editor
 
         EditorGUI.BeginChangeCheck();
 
+
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Initialize"))
         {
             _script.Initialize();
         }
+        if (GUILayout.Button("Refresh"))
+        {
+            _script.Refresh();
+        }
+        EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
         CustomInspectorGUI.DrawDefaultInspectorWithoutSelfReference(_serializedObject);
@@ -460,11 +481,7 @@ public class StageEntityCustomEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             _serializedObject.ApplyModifiedProperties();
-
-            if (!Application.isPlaying)
-            {
-                _script.Initialize(); // << Assign the new values
-            }
+            _script.Refresh();
         }
     }
 }
