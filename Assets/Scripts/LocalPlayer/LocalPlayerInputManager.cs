@@ -7,6 +7,7 @@ using Darklight.UnityExt.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.InputSystem.XInput;
 
 [RequireComponent(typeof(PlayerInputManager))]
 public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputManager>
@@ -14,12 +15,16 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
 
     // Data ===================================== >>>>
     [SerializeField, ShowOnly] int _maxPlayerCount = 8;
-    [SerializeField] List<LocalPlayerInputData> _inputData = new LocalPlayerInputData[16].ToList();
+    [SerializeField] List<LocalPlayerInputData> _playerInputData = new List<LocalPlayerInputData>();
+    private List<System.Type> _deviceBlacklist = new List<System.Type>
+    {
+        typeof(XInputControllerWindows)
+    };
 
     // References ===================================== >>>>
     public PlayerInputManager inputManager => GetComponent<PlayerInputManager>();
-    public List<InputDevice> allDevices => _inputData.Select(x => x.device).ToList();
-    public int currentPlayerCount => _inputData.Count;
+    public List<InputDevice> allDevices => _playerInputData.Select(x => x.device).ToList();
+    public int currentPlayerCount => _playerInputData.Count;
 
     // Events ===================================== >>>>
     public delegate void InputDataEvent(LocalPlayerInputData data);
@@ -35,7 +40,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
 
     void Update()
     {
-        foreach (LocalPlayerInputData data in _inputData)
+        foreach (LocalPlayerInputData data in _playerInputData)
         {
             if (data == null || data.playerInput == null) continue;
             data.UpdateData();
@@ -51,7 +56,26 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     /// </param>
     void OnPlayerJoined(PlayerInput playerInput)
     {
-        HandleNewInput(playerInput);
+        LocalPlayerInputData newData = new LocalPlayerInputData(playerInput);
+
+        // Check if the device is in the whitelist
+        if (IsDeviceBlacklisted(playerInput.devices[0]))
+        {
+            Debug.Log($"{Prefix} Device is blacklisted! >> Cannot connect [ {newData.GetDeviceType()} ]");
+            return;
+        }
+
+        // Check if the max players are reached        
+        if (_playerInputData.Count >= _maxPlayerCount)
+        {
+            Debug.Log($"{Prefix} Max players reached! >> Cannot connect [ {newData.GetDeviceInfo()} ]");
+            return;
+        }
+
+        Debug.Log($"Player {playerInput.playerIndex} joined with device(s): {newData.GetDeviceType()}");
+
+        _playerInputData.Add(newData);
+        OnAddLocalPlayerInput?.Invoke(newData);
     }
 
     /// <summary>
@@ -68,17 +92,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
 
     void HandleNewInput(PlayerInput playerInput)
     {
-        LocalPlayerInputData newData = new LocalPlayerInputData(playerInput);
 
-        // Check if the max players are reached        
-        if (_inputData.Count >= _maxPlayerCount)
-        {
-            Debug.Log($"{Prefix} Max players reached! >> Cannot connect [ {newData.GetDeviceInfo()} ]");
-            return;
-        }
-
-        _inputData.Add(newData);
-        OnAddLocalPlayerInput?.Invoke(newData);
     }
 
     public void RemoveDuplicateData(LocalPlayerInputData data)
@@ -86,7 +100,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
         if (data == null) return;
 
         List<LocalPlayerInputData> duplicates = new();
-        foreach (LocalPlayerInputData item in _inputData)
+        foreach (LocalPlayerInputData item in _playerInputData)
         {
             if (IsDataDuplicate(data, item))
             {
@@ -94,13 +108,19 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
             }
         }
 
-
+        /*
         foreach (LocalPlayerInputData duplicate in duplicates)
         {
             _inputData.Remove(duplicate);
             Destroy(duplicate.playerInput.gameObject);
             OnRemoveLocalPlayerInput?.Invoke(duplicate);
         }
+        */
+    }
+
+    bool IsDeviceBlacklisted(InputDevice device)
+    {
+        return _deviceBlacklist.Contains(device.GetType());
     }
 
     bool IsDataDuplicate(LocalPlayerInputData data1, LocalPlayerInputData data2)

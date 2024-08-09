@@ -6,8 +6,6 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class LocalPlayerInputData
 {
-    public enum DEVICE_TYPE { NULL, KEYBOARD, GAMEPAD }
-
     [ShowOnly, SerializeField] float _createdTime = 0f;
     public float createdTime => _createdTime;
 
@@ -25,12 +23,12 @@ public class LocalPlayerInputData
     InputDevice _device;
     [ShowOnly, SerializeField] int _deviceID = -1;
     [ShowOnly, SerializeField] string _deviceName = "NULL";
-    [ShowOnly, SerializeField] DEVICE_TYPE _deviceType = DEVICE_TYPE.NULL;
+    [ShowOnly, SerializeField] System.Type _deviceType;
     [ShowOnly, SerializeField] double _device_lastUpdateTime = 0f;
     public InputDevice device => _device;
     public int deviceID => _deviceID;
     public string deviceName => _deviceName;
-    public DEVICE_TYPE deviceType => _deviceType;
+    public System.Type deviceType => _deviceType;
     public double device_lastUpdateTime => _device_lastUpdateTime;
 
     // ============= Constructor =============
@@ -52,7 +50,7 @@ public class LocalPlayerInputData
         _device = playerInput.devices[0];
         _deviceID = device.deviceId;
         _deviceName = device.name;
-        _deviceType = GetDeviceType();
+        _deviceType = _device.GetType();
         _device_lastUpdateTime = _device.lastUpdateTime;
 
         // Set the name of the gameobject
@@ -67,20 +65,9 @@ public class LocalPlayerInputData
         LocalPlayerInputManager.Instance.RemoveDuplicateData(this);
     }
 
-    DEVICE_TYPE GetDeviceType()
+    public System.Type GetDeviceType()
     {
-        if (device is Keyboard)
-        {
-            return DEVICE_TYPE.KEYBOARD;
-        }
-        else if (device is Gamepad)
-        {
-            return DEVICE_TYPE.GAMEPAD;
-        }
-        else
-        {
-            return DEVICE_TYPE.NULL;
-        }
+        return _deviceType;
     }
 
     public string GetDeviceInfo()
