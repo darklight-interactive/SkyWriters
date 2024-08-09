@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5669088686213857413}
   - component: {fileID: 7586768240665509224}
   m_Layer: 7
-  m_Name: BlimpEntity
+  m_Name: ENTITY_Blimp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

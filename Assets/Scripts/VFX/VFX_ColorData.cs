@@ -33,7 +33,7 @@ public class VFX_ColorData : ScriptableObject
     /// </summary>
     public void Refresh()
     {
-        // Assign the color values
+        _name = this.name;
         _color = new Color(_red, _green, _blue, _alpha);
     }
 

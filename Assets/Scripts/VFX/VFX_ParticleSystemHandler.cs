@@ -69,37 +69,48 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
     // ---------------- Serialized Fields ----------------
     [SerializeField, ShowOnly] bool _initialized;
     [SerializeField] ParticleSystem _particleSystem;
-    [SerializeField, Expandable] VFX_ColorData _colorData;
+    [SerializeField, Expandable] VFX_GradientData _gradientData;
+    public new ParticleSystem particleSystem
+    {
+        get
+        {
+            if (_particleSystem == null)
+                _particleSystem = GetComponent<ParticleSystem>();
+            return _particleSystem;
+        }
+        set => _particleSystem = value;
+    }
 
     void Start() => Refresh();
     public void Refresh()
     {
         _particleSystem = GetComponent<ParticleSystem>();
+        _initialized = LoadModules();
 
-
-        bool modulesLoaded = LoadModules();
-        bool colorDataSet = SetColorData(_colorData);
-        _initialized = modulesLoaded && colorDataSet;
-    }
-
-    public bool SetColorData(VFX_ColorData colorData)
-    {
-        // If the color data is null, set it to white
-        if (colorData == null)
+        if (_gradientData == null)
         {
-            colorData = VFX_Manager.ColorPalette.whiteColor;
+            _gradientData = VFX_Manager.Instance.defaultGradient;
+            SetGradientData(_gradientData);
         }
-
-        // Store the data
-        _colorData = colorData;
-        _colorData.Refresh();
-
-        // Set the color values
-        _main.startColor = _colorData.Color;
-        _colorOverLifetime.color = VFX_Manager.CreateGradient(new Color[] { _colorData.Color });
-
-        return true;
     }
+
+    public void Play() => _particleSystem.Play();
+    public void Stop() => _particleSystem.Stop();
+
+    public void SetGradient(Gradient gradient)
+    {
+        Refresh();
+
+        _main.startColor = new ParticleSystem.MinMaxGradient(gradient);
+        _colorOverLifetime.color = gradient;
+    }
+
+    public void SetGradientData(VFX_GradientData gradientData)
+    {
+        _gradientData = gradientData;
+        SetGradient(gradientData.gradient);
+    }
+
 
 }
 
@@ -122,6 +133,14 @@ public class VFX_ParticleSystemDataCustomEditor : Editor
         _serializedObject.Update();
 
         EditorGUI.BeginChangeCheck();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Play"))
+            _script.Play();
+        if (GUILayout.Button("Stop"))
+            _script.Stop();
+        EditorGUILayout.EndHorizontal();
+
 
         base.OnInspectorGUI();
 

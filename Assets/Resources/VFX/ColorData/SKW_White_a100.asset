@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5229654e1180d604db28b89035391066, type: 3}
-  m_Name: CloudPreset
+  m_Script: {fileID: 11500000, guid: fca77c9f3c98ce447acd8f19bcdc7dbf, type: 3}
+  m_Name: SKW_White_a100
   m_EditorClassIdentifier: 
-  _type: 2
-  _colliderHeight: 150
-  _colliderRadius: 150
-  _moveSpeed: 0
-  _rotationSpeed: 2
-  _windResistance: 0
-  _respawnOnExit: 0
-  _lifeSpan: 60
+  _name: White
+  _color: {r: 1, g: 1, b: 1, a: 1}
+  _red: 1
+  _green: 1
+  _blue: 1
+  _alpha: 1

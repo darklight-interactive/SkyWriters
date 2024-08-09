@@ -10,12 +10,13 @@ using System.Collections;
 using UnityEditor;
 #endif
 
-[ExecuteAlways]
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
     public enum Type { NULL, PLANE, CLOUD, BLIMP }
     public enum State { NULL, SPAWN, GAME, DESPAWN }
+
+    #region -------- << DATA CLASS >>
     public class Data
     {
         public int entityId { get; private set; } = -1;
@@ -52,6 +53,9 @@ public class StageEntity : MonoBehaviour
             lifeSpan = preset.lifeSpan;
         }
     }
+    #endregion
+
+    #region -------- << STATE MACHINE >>
     public class StateMachine : FiniteStateMachine<State>
     {
         public StageEntity entity { get; protected set; }
@@ -162,6 +166,11 @@ public class StageEntity : MonoBehaviour
             public override void Exit() { }
         }
     }
+    #endregion
+
+    // ==== Private Properties =================================  ))
+    StateMachine _stateMachine;
+    Data _data;
 
     // ==== Public Properties ================================== ))
     public Data data
@@ -213,9 +222,10 @@ public class StageEntity : MonoBehaviour
         set => rb.velocity = value;
     }
 
-    // ==== Private Properties =================================  ))
-    StateMachine _stateMachine;
-    Data _data;
+    // ==== Public Events ======================================  ))
+    public delegate void ColliderTriggerEvent(Collider other);
+    public event ColliderTriggerEvent OnTriggerEntered;
+    public event ColliderTriggerEvent OnTriggerExited;
 
     // ==== Protected Properties ================================= ))
     protected StageManager stageManager => StageManager.Instance;
@@ -225,21 +235,16 @@ public class StageEntity : MonoBehaviour
 
     // ==== Serialized Fields =================================== ))
 
-    [Header("Entity Settings")]
-    [Expandable, SerializeField] protected StageEntityPreset _preset;
-    private void LoadPreset(StageEntityPreset preset)
-    {
-        if (preset == null) return;
-        _preset = preset;
-        _data = new Data(preset);
-    }
 
-    [Space(10), HorizontalLine(), Header("Live Data")]
+    [Header("Live Data")]
     [SerializeField, ShowOnly] protected State _currentState; // The current state of the entity
     [SerializeField, ShowOnly] protected float _currSpeed; // The current speed of the entity
     [SerializeField, ShowOnly] protected float _currSpeedMultiplier = 1; // The current speed multiplier of the entity
     [SerializeField, ShowOnly] protected float _curr_rotAngle; // The current rotation angle of the entity
     [SerializeField, ShowOnly] protected float _target_rotAngle; // The target rotation angle of the entity
+
+    [HorizontalLine(), Header("Entity Settings")]
+    [Expandable, SerializeField] protected StageEntityPreset _preset;
 
     #region ======================== [[ UNITY METHODS ]] ======================== >>
 
@@ -252,6 +257,9 @@ public class StageEntity : MonoBehaviour
         if (_stateMachine != null) _stateMachine.Step();
     }
 
+    void OnTriggerEnter(Collider other) { OnTriggerEntered?.Invoke(other); }
+    void OnTriggerExit(Collider other) { OnTriggerExited?.Invoke(other); }
+
     public virtual void OnDrawGizmos()
     {
         Vector3 entityPos = position;
@@ -262,7 +270,7 @@ public class StageEntity : MonoBehaviour
         // Draw the target position and the line to it
         Gizmos.color = Color.red;
         Gizmos.DrawLine(entityPos, targetPos);
-        Gizmos.DrawCube(targetPos, data.colliderRadius * 0.5f * Vector3.one);
+        Gizmos.DrawCube(targetPos, data.colliderRadius * 0.1f * Vector3.one);
 
         // Draw the current velocity
         Gizmos.color = Color.yellow;
@@ -271,36 +279,45 @@ public class StageEntity : MonoBehaviour
     #endregion
 
     #region ======================== [[ BASE ENTITY METHODS ]] ======================== >>
-
     /// <summary>
     /// Initialize the object with the given settings & assign the entity to the stage
     /// </summary>
     public virtual void Initialize()
     {
-        //Debug.Log("Initializing " + gameObject.name);
-
         // Load the preset data
         if (_preset != null) { LoadPreset(_preset); }
+        LoadColliderSettings();
 
-        // Create the state machine
-        _stateMachine = new StateMachine(this);
-        _currentState = _stateMachine.CurrentState;
-        _stateMachine.OnStateChanged += (state) =>
+
+        // Set up entity for play mode
+        if (Application.isPlaying && data.lifeSpan > 0)
         {
-            _currentState = state;
-        };
+            // Create the state machine
+            _stateMachine = new StateMachine(this);
+            _currentState = _stateMachine.CurrentState;
+            _stateMachine.OnStateChanged += (state) =>
+            {
+                _currentState = state;
+            };
 
-        // Assign the collider settings
+            // Destroy this object after the lifespan
+            Destroy(gameObject, data.lifeSpan);
+        }
+    }
+
+    void LoadPreset(StageEntityPreset preset)
+    {
+        if (preset == null) return;
+        _preset = preset;
+        _data = new Data(preset);
+    }
+
+    void LoadColliderSettings()
+    {
         col.height = data.colliderHeight;
         col.radius = data.colliderRadius;
         col.direction = 2; // Set to the Z axis , inline with the forward direction of the object
         col.center = Vector3.zero;
-
-        // Destroy this object after the lifespan
-        if (Application.isPlaying && data.lifeSpan > 0)
-        {
-            Destroy(gameObject, data.lifeSpan);
-        }
     }
 
     protected virtual void UpdateMovement()
@@ -432,7 +449,13 @@ public class StageEntityCustomEditor : Editor
 
         EditorGUI.BeginChangeCheck();
 
-        DrawDefaultInspector();
+        if (GUILayout.Button("Initialize"))
+        {
+            _script.Initialize();
+        }
+
+        EditorGUILayout.Space();
+        CustomInspectorGUI.DrawDefaultInspectorWithoutSelfReference(_serializedObject);
 
         if (EditorGUI.EndChangeCheck())
         {
