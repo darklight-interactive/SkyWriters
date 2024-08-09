@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f92c8198e7c2f3d4a862868dc4bf445a, type: 3}
-  m_Name: SKW_CloudParticles
+  m_Script: {fileID: 11500000, guid: fca77c9f3c98ce447acd8f19bcdc7dbf, type: 3}
+  m_Name: SKW_Blue
   m_EditorClassIdentifier: 
-  _particleSystem: {fileID: 316231922153566340, guid: 670095fcd27338a489db3d8498d7ec2c,
-    type: 3}
-  _loaded: 1
-  _name: 
+  _name: Blue
+  _color: {r: 0, g: 0.5, b: 1, a: 1}
+  _red: 0
+  _green: 0.5
+  _blue: 1
+  _alpha: 1

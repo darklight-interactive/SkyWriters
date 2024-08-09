@@ -134,12 +134,12 @@ GameObject:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
   - component: {fileID: 277487366}
+  - component: {fileID: 277487371}
   - component: {fileID: 277487370}
   - component: {fileID: 277487363}
   - component: {fileID: 277487367}
   - component: {fileID: 277487368}
   - component: {fileID: 277487369}
-  - component: {fileID: 277487371}
   m_Layer: 0
   m_Name: '[ STAGE MANAGER ]'
   m_TagString: Untagged
@@ -435,7 +435,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13f281cf3e90fa4d8b99a403d349e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorPalette: {fileID: 0}
+  _colorPalette: {fileID: 11400000, guid: 68cddfe82eaecfb44a3cf284dcb57886, type: 2}
+  _cloudParticles: {fileID: 0}
+  _cloudBurstParticles: {fileID: 0}
+  _cloudRingParticles: {fileID: 0}
+  _contrailParticles: {fileID: 0}
+  _explosionParticles: {fileID: 0}
 --- !u!1001 &767988637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1058,6 +1063,16 @@ PrefabInstance:
         type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[2].countCurve.minCurve.m_Curve.Array.data[1].outWeight
       value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7088452762058963576, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: _initialized
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7088452762058963576, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: _particleSystem
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7272883665023594307, guid: a4ebc9b50f7cf15409d6334f556a3afe,
         type: 3}
@@ -1744,6 +1759,16 @@ PrefabInstance:
         type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7088452762058963576, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: _initialized
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7088452762058963576, guid: a4ebc9b50f7cf15409d6334f556a3afe,
+        type: 3}
+      propertyPath: _particleSystem
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7272883665023594307, guid: a4ebc9b50f7cf15409d6334f556a3afe,
         type: 3}

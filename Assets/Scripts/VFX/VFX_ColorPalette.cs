@@ -33,23 +33,4 @@ public class VFX_ColorPalette : ScriptableObject
         List<VFX_ColorData> colorDataList = GetColorDataList();
         return colorDataList[Random.Range(0, colorDataList.Count)];
     }
-
-    public static Gradient CreateGradient(Color[] colors)
-    {
-        Gradient gradient = new Gradient();
-        GradientColorKey[] colorKeys = new GradientColorKey[colors.Length];
-        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[colors.Length];
-
-        for (int i = 0; i < colors.Length; i++)
-        {
-            colorKeys[i].color = colors[i];
-            colorKeys[i].time = (float)i / (colors.Length - 1);
-
-            alphaKeys[i].alpha = colors[i].a;
-            alphaKeys[i].time = (float)i / (colors.Length - 1);
-        }
-
-        gradient.SetKeys(colorKeys, alphaKeys);
-        return gradient;
-    }
 }

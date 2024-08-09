@@ -1,18 +1,18 @@
 using NaughtyAttributes;
 using UnityEngine;
 using Darklight.UnityExt.Editor;
+using UnityEngine.VFX;
+
 
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-[CreateAssetMenu(menuName = "Darklight/VFX/ParticleSystemData")]
-public class VFX_ParticleSystemData : ScriptableObject
+[RequireComponent(typeof(ParticleSystem))]
+public class VFX_ParticleSystemHandler : MonoBehaviour
 {
-    [SerializeField] ParticleSystem _particleSystem;
-
-    #region ================================== [[ MODULE DATA ]] ================================== >>
+    #region ----------- Module Data ----------------------
     ParticleSystem.MainModule _main;
     ParticleSystem.EmissionModule _emission;
     ParticleSystem.ShapeModule _shape;
@@ -35,24 +35,6 @@ public class VFX_ParticleSystemData : ScriptableObject
     ParticleSystem.LightsModule _lights;
     ParticleSystem.TrailModule _trails;
     ParticleSystem.CustomDataModule _customData;
-    #endregion
-
-    // ---------------- Serialized Fields ----------------
-    [SerializeField, ShowOnly] bool _loaded;
-    [SerializeField, ShowOnly] string _name;
-    public VFX_ParticleSystemData() { }
-    public VFX_ParticleSystemData(ParticleSystem particleSystem)
-    {
-        this._particleSystem = particleSystem;
-        LoadModules();
-    }
-
-    public void Refresh()
-    {
-        _loaded = LoadModules();
-        _name = this.name;
-    }
-
     bool LoadModules()
     {
         if (_particleSystem == null) return false;
@@ -82,37 +64,57 @@ public class VFX_ParticleSystemData : ScriptableObject
 
         return true;
     }
+    #endregion
 
-    void Reset()
+    // ---------------- Serialized Fields ----------------
+    [SerializeField, ShowOnly] bool _initialized;
+    [SerializeField] ParticleSystem _particleSystem;
+    [SerializeField, Expandable] VFX_ColorData _colorData;
+
+    void Start() => Refresh();
+    public void Refresh()
     {
-        _loaded = false;
+        _particleSystem = GetComponent<ParticleSystem>();
+
+
+        bool modulesLoaded = LoadModules();
+        bool colorDataSet = SetColorData(_colorData);
+        _initialized = modulesLoaded && colorDataSet;
     }
 
-    public ParticleSystem CreateInstance()
+    public bool SetColorData(VFX_ColorData colorData)
     {
-        if (_particleSystem == null) return null;
+        // If the color data is null, set it to white
+        if (colorData == null)
+        {
+            colorData = VFX_Manager.ColorPalette.whiteColor;
+        }
 
-        ParticleSystem ps = Instantiate(_particleSystem);
-        ps.transform.position = Vector3.zero;
-        ps.transform.rotation = Quaternion.identity;
-        ps.name = $">> VFX Particle System: {this.name} <<";
+        // Store the data
+        _colorData = colorData;
+        _colorData.Refresh();
 
-        LoadModules();
-        return ps;
+        // Set the color values
+        _main.startColor = _colorData.Color;
+        _colorOverLifetime.color = VFX_Manager.CreateGradient(new Color[] { _colorData.Color });
+
+        return true;
     }
+
 }
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(VFX_ParticleSystemData))]
+[CustomEditor(typeof(VFX_ParticleSystemHandler))]
 public class VFX_ParticleSystemDataCustomEditor : Editor
 {
     SerializedObject _serializedObject;
-    VFX_ParticleSystemData _script;
+    VFX_ParticleSystemHandler _script;
 
     private void OnEnable()
     {
         _serializedObject = new SerializedObject(target);
-        _script = (VFX_ParticleSystemData)target;
+        _script = (VFX_ParticleSystemHandler)target;
+        _script.Refresh();
     }
 
     public override void OnInspectorGUI()
@@ -122,16 +124,6 @@ public class VFX_ParticleSystemDataCustomEditor : Editor
         EditorGUI.BeginChangeCheck();
 
         base.OnInspectorGUI();
-
-        if (GUILayout.Button("Create Instance"))
-        {
-            _script.CreateInstance();
-        }
-
-        if (GUILayout.Button("Refresh"))
-        {
-            _script.Refresh();
-        }
 
         if (EditorGUI.EndChangeCheck())
         {

@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 7384500800503127253}
   - component: {fileID: 8705611143611370969}
   m_Layer: 6
-  m_Name: '[ENTITY] Plane'
+  m_Name: PlaneEntity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

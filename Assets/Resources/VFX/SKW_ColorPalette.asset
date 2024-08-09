@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ba4fcea628c658469fbe05a26ec08e4, type: 3}
-  m_Name: SkyWriters_ColorPalette
+  m_Name: SKW_ColorPalette
   m_EditorClassIdentifier: 
   whiteColor: {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}
-  blackColor: {fileID: 0}
-  redColor: {fileID: 0}
-  greenColor: {fileID: 0}
-  blueColor: {fileID: 0}
+  blackColor: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
+  redColor: {fileID: 11400000, guid: f933a0363d0806a47b51de326aa21f70, type: 2}
+  greenColor: {fileID: 11400000, guid: 7d73bf38972ee4e46b5f065b9c261214, type: 2}
+  blueColor: {fileID: 11400000, guid: c280f28ec117bb84ca16b674783dbab8, type: 2}
