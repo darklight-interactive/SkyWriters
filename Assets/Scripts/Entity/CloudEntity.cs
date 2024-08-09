@@ -2,23 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways, RequireComponent(typeof(ParticleSystem))]
+[ExecuteAlways, RequireComponent(typeof(VFX_Manager))]
 public class CloudEntity : StageEntity
 {
-    ParticleSystem _particleSystem => GetComponent<ParticleSystem>();
-    CloudData _gradientData;
-
-    public void SetCloudGradient(CloudData cloudParticleData)
-    {
-        _gradientData = cloudParticleData;
-        SetColorOverLifetime(_gradientData.ToGradient());
-    }
-
-    void SetColorOverLifetime(Gradient gradient)
-    {
-        ParticleSystem.ColorOverLifetimeModule colorOverLifetime = _particleSystem.colorOverLifetime;
-        colorOverLifetime.color = gradient;
-    }
+    VFX_Manager _particleSystemHandler;
 
     // ================== Unity Events ==================
     void OnTriggerEnter(Collider other)
@@ -34,14 +21,7 @@ public class CloudEntity : StageEntity
                 return;
             }
 
-            if (_gradientData == null)
-            {
-                Debug.LogError("CloudParticleData not set on the cloud object.");
-                Destroy(gameObject);
-                return;
-            }
-
-            planeController.CreateNewContrail(_gradientData.ToGradient());
+            //planeController.CreateNewContrail(_colorGradient);
             Destroy(gameObject);
         }
     }

@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "617ac3b72afb13a132c2e82f836a4e29b9125149"
+      "hash": "1a45f96f59d471cd7a5d46e7842b6860f1c794e5"
     },
     "com.darklight.unityext.fmod": {
       "version": "https://github.com/darklight-interactive/com.darklight.unityext.fmod.git",

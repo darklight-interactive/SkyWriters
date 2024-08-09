@@ -134,11 +134,12 @@ GameObject:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
   - component: {fileID: 277487366}
-  - component: {fileID: 277487367}
   - component: {fileID: 277487370}
   - component: {fileID: 277487363}
+  - component: {fileID: 277487367}
   - component: {fileID: 277487368}
   - component: {fileID: 277487369}
+  - component: {fileID: 277487371}
   m_Layer: 0
   m_Name: '[ STAGE MANAGER ]'
   m_TagString: Untagged
@@ -235,16 +236,6 @@ MonoBehaviour:
   _cloudPrefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c,
     type: 3}
   _cloudPreset: {fileID: 11400000, guid: 35ff75f662a8c024485a3e4cf3909dda, type: 2}
-  _cloudGradients:
-  - startColor: {r: 1, g: 1, b: 1, a: 1}
-    middleColor: {r: 1, g: 1, b: 1, a: 1}
-    endColor: {r: 1, g: 1, b: 1, a: 1}
-  - startColor: {r: 0.60909534, g: 0.5235849, b: 1, a: 1}
-    middleColor: {r: 0.6059693, g: 0.5801887, b: 1, a: 1}
-    endColor: {r: 0.48584908, g: 0.5140415, b: 1, a: 1}
-  - startColor: {r: 1, g: 0.7718435, b: 0.5424528, a: 1}
-    middleColor: {r: 1, g: 0.8312694, b: 0.5803922, a: 1}
-    endColor: {r: 1, g: 0.8496941, b: 0.48627448, a: 1}
   _planePrefab: {fileID: 1747712956887816217, guid: f494ee903a152d34eac87de0685fb10a,
     type: 3}
   _planePreset: {fileID: 11400000, guid: d99ff3677e54338429e1927519aaec4d, type: 2}
@@ -431,7 +422,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxPlayerCount: 8
-  _inputData: []
+  _playerInputData: []
+--- !u!114 &277487371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277487362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13f281cf3e90fa4d8b99a403d349e3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorPalette: {fileID: 0}
 --- !u!1001 &767988637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1172,7 +1176,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 100
+  field of view: 47.4
   orthographic: 0
   orthographic size: 500
   m_Depth: -1
@@ -1290,9 +1294,9 @@ MonoBehaviour:
   _fovLerpSpeed: 5
   _distanceY: -50
   _distanceZ: 0
-  _baseFOV: 100
+  _baseFOV: 47.4
   _offsetFOV: 0
-  _currentFOV: 100
+  _currentFOV: 47.4
 --- !u!4 &800653251
 Transform:
   m_ObjectHideFlags: 0

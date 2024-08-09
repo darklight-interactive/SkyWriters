@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7670275015513312434}
   - component: {fileID: 8617047698032842873}
   - component: {fileID: 5069445420879061551}
+  - component: {fileID: 4214222343198095856}
   m_Layer: 8
   m_Name: '[ENTITY] Cloud'
   m_TagString: Untagged
@@ -49,9 +50,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _preset: {fileID: 11400000, guid: 35ff75f662a8c024485a3e4cf3909dda, type: 2}
+  _vfxData: {fileID: 11400000, guid: 7df6a16fca122914c9d0b135b8ade8ba, type: 2}
   _currentState: 1
-  _curr_moveSpeed: 0
-  _curr_moveSpeed_offset: 0
+  _currSpeed: 0
+  _currSpeedMultiplier: 1
   _curr_rotAngle: 0
   _target_rotAngle: 0
 --- !u!198 &316231922153566340
@@ -4994,8 +4996,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 25
-  m_Height: 25
+  m_Radius: 100
+  m_Height: 100
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5069445420879061551
@@ -5025,3 +5027,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4214222343198095856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3186196175442933025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13f281cf3e90fa4d8b99a403d349e3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

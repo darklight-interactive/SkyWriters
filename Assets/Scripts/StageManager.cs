@@ -59,7 +59,6 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
     [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
     [Expandable, SerializeField] StageEntityPreset _cloudPreset;
-    [SerializeField] List<CloudData> _cloudGradients;
 
     [Header("Plane Settings")]
     [SerializeField] GameObject _planePrefab;
@@ -282,10 +281,7 @@ public class StageManager : MonoBehaviourSingleton<StageManager>
 
     public CloudEntity SpawnCloudAt(Vector3 position)
     {
-        CloudData gradient = _cloudGradients[Random.Range(0, _cloudGradients.Count)];
-
         CloudEntity newCloud = SpawnEntity<CloudEntity>(position);
-        newCloud.GetComponent<CloudEntity>().SetCloudGradient(gradient);
         return newCloud;
     }
     #endregion

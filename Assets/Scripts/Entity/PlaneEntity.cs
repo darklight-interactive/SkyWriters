@@ -222,6 +222,11 @@ public class PlaneEntity : StageEntity
     /// <param name="gradient"></param>
     public void CreateNewContrail(Gradient gradient)
     {
+
+        SetColorOverLifetime(_leftContrail, gradient);
+        SetColorOverLifetime(_rightContrail, gradient);
+
+        /*
         // Stop the current contrails
         _leftContrail.Stop();
         _rightContrail.Stop();
@@ -241,6 +246,8 @@ public class PlaneEntity : StageEntity
         _rightContrail.transform.localScale = Vector3.one * _contrailScale;
         _rightContrail.gameObject.name = "Right Contrail";
         SetColorOverLifetime(_rightContrail, gradient);
+        */
+
     }
 
     private IEnumerator CheckAndDestroyContrail(ParticleSystem contrail)
