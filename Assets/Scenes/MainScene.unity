@@ -244,6 +244,7 @@ Transform:
   - {fileID: 808860985}
   - {fileID: 2114272949}
   - {fileID: 295614067}
+  - {fileID: 2105311727}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -359,7 +360,7 @@ GameObject:
   - component: {fileID: 295614067}
   - component: {fileID: 295614068}
   m_Layer: 0
-  m_Name: (SPAWNER) OuterSpawner
+  m_Name: (SPAWNER) PlayerSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393,13 +394,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shape2DPreset: {fileID: 11400000, guid: 333623434e24fd34bbfae030ec516939, type: 2}
-  _shape2D:
-    _center: {x: 0, y: -500, z: 0}
-    _radius: 1114
-    _segments: 4
-    _normal: {x: 0, y: 1, z: 0}
-  _spawnRoutineActive: 0
   _tickSpeed: 2
+  _defaultState: 1
+  _primaryA:
+    _index: 0
+    _position: {x: 500, y: -500, z: 0}
+  _primaryA_index: 0
+  _primaryA_neighborInfluence: 2
+  _primaryA_state: 1
+  showGizmos: 1
+  gimzoSize: 60
+  gizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1001 &767988637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1613,6 +1618,62 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d9d227aa23754b5095446346d611d27, type: 3}
+--- !u!1 &2105311726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2105311727}
+  - component: {fileID: 2105311728}
+  m_Layer: 0
+  m_Name: (SPAWNER) BlimpSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2105311727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105311726}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 277487365}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2105311728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105311726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 444c37e08a16f8844b749589de28c446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shape2DPreset: {fileID: 11400000, guid: c2f11b6109f2b5246b1f6cb5c68daa98, type: 2}
+  _tickSpeed: 2
+  _defaultState: 1
+  _primaryA:
+    _index: 0
+    _position: {x: 1500, y: -500, z: 0}
+  _primaryA_index: 0
+  _primaryA_neighborInfluence: 2
+  _primaryA_state: 1
+  showGizmos: 1
+  gimzoSize: 60
+  gizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &2114272948
 GameObject:
   m_ObjectHideFlags: 0

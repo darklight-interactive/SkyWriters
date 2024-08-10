@@ -61,8 +61,6 @@ public class SpawnPoint
     }
     public SpawnPoint.State CurrentState => stateMachine.CurrentState;
     public void GoToState(State state) => stateMachine.GoToState(state);
-
-
     #endregion
 
     // ---------- Data ----------
@@ -98,6 +96,9 @@ public class SpawnPoint
         }
     }
 
-
-
+    public void DrawGizmos(int size)
+    {
+        Gizmos.color = GetColor();
+        Gizmos.DrawSphere(_position, size);
+    }
 }
