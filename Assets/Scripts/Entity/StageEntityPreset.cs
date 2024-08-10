@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "SkyWriters/StageEntityPreset")]
 public class StageEntityPreset : ScriptableObject
 {
-    [SerializeField] StageEntity.Type _type;
+    [SerializeField] StageEntity.Class _type;
 
     [Header("--- Collider ---")]
     [SerializeField, Range(1, 500)] float _colliderHeight;
@@ -23,7 +23,7 @@ public class StageEntityPreset : ScriptableObject
     [SerializeField, Range(-1, 999)] float _lifeSpan;
 
     // ----------------- Getters -----------------
-    public StageEntity.Type type => _type;
+    public StageEntity.Class type => _type;
     public float colliderHeight => _colliderHeight;
     public float colliderRadius => _colliderRadius;
     public float moveSpeed => _moveSpeed;

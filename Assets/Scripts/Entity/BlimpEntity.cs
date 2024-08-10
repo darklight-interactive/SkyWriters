@@ -53,7 +53,7 @@ public class BlimpEntity : StageEntity
         while (true)
         {
             yield return new WaitForSeconds(_cloudSpawnDelay);
-            StageManager.Instance.SpawnCloudAt(_exhaustPosition, VFX_Manager.ColorPalette.blueColor);
+            //StageManager.Instance.SpawnCloudAt(_exhaustPosition, VFX_Manager.ColorPalette.blueColor);
         }
     }
 

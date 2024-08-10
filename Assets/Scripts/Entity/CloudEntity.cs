@@ -15,8 +15,6 @@ public class CloudEntity : StageEntity
     {
         base.Initialize();
 
-        Debug.Log("CloudEntity Initialized", this);
-
         if (_mainColor == null)
             _mainColor = VFX_Manager.ColorPalette.whiteColor;
 

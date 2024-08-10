@@ -3,6 +3,8 @@ using NaughtyAttributes;
 using UnityEngine;
 using Darklight.UnityExt.Behaviour;
 using System.Collections;
+using System;
+
 
 
 
@@ -13,14 +15,46 @@ using UnityEditor;
 [RequireComponent(typeof(CapsuleCollider), typeof(Rigidbody))]
 public class StageEntity : MonoBehaviour
 {
-    public enum Type { NULL, PLANE, CLOUD, BLIMP }
+    /// <summary>
+    /// An enum to represent the entity's class type
+    /// </summary>
+    public enum Class { NULL, PLANE, CLOUD, BLIMP }
+
+    /// <summary>
+    /// Get the enum type of the entity from a subclass of StageEntity
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The subclass of StageEntity
+    /// </typeparam>
+    /// <returns>
+    ///     The enum value of the entity's class type
+    /// </returns>
+    public static Class GetEnumTypeFromSubclass<T>() where T : StageEntity
+    {
+        Type entityType = typeof(T);
+        Type stageEntityType = typeof(StageEntity);
+        if (!entityType.IsSubclassOf(stageEntityType))
+        {
+            Debug.LogError($"Type {entityType} is not a subclass of StageEntity.");
+            return Class.NULL;
+        }
+
+        switch (entityType)
+        {
+            case Type t when t == typeof(PlaneEntity): return Class.PLANE;
+            case Type t when t == typeof(CloudEntity): return Class.CLOUD;
+            case Type t when t == typeof(BlimpEntity): return Class.BLIMP;
+            default: return Class.NULL;
+        }
+    }
+
     public enum State { NULL, SPAWN, GAME, DESPAWN }
 
     #region -------- << DATA CLASS >>
     public class Data
     {
         public int entityId { get; private set; } = -1;
-        public StageEntity.Type type { get; private set; } = Type.NULL;
+        public StageEntity.Class type { get; private set; } = Class.NULL;
 
         // ---- Rules ----
         public bool respawnOnExit { get; private set; } = true;
@@ -228,7 +262,7 @@ public class StageEntity : MonoBehaviour
     public event ColliderTriggerEvent OnTriggerExited;
 
     // ==== Protected Properties ================================= ))
-    protected StageManager stageManager => StageManager.Instance;
+    protected Stage stageManager => Stage.Instance;
     protected Rigidbody rb => GetComponent<Rigidbody>();
     protected CapsuleCollider col => GetComponent<CapsuleCollider>();
     protected int id => GetInstanceID();
@@ -284,8 +318,9 @@ public class StageEntity : MonoBehaviour
     /// </summary>
     public virtual void Initialize()
     {
-        // Load the preset data
-        if (_preset != null) { LoadPreset(_preset); }
+        if (_preset != null)
+            LoadPreset(_preset);
+
         LoadColliderSettings();
 
         DestroyAllParticles();
@@ -306,6 +341,11 @@ public class StageEntity : MonoBehaviour
         }
     }
 
+    public void Initialize(StageEntityPreset preset)
+    {
+        LoadPreset(preset);
+        Initialize();
+    }
     public virtual void Refresh() { }
 
     void LoadPreset(StageEntityPreset preset)
@@ -331,8 +371,8 @@ public class StageEntity : MonoBehaviour
         _currSpeed = thrustVelocity.magnitude; // << Update the current speed
 
         // Calculate the current wind velocity
-        float windDirection = StageManager.WindDirection;
-        float windIntensity = StageManager.WindIntensity;
+        float windDirection = Stage.Settings.windDirection;
+        float windIntensity = Stage.Settings.windIntensity;
         float windResistance = data.windResistance;
 
         // Calculate the Quaternion for the wind direction
@@ -387,12 +427,13 @@ public class StageEntity : MonoBehaviour
 
     protected bool IsInStageBounds()
     {
-        return stageManager.IsColliderInArea(col, StageManager.AreaType.STAGE);
+        return Stage.IsPositionWithinRadius(position, Stage.Settings.stageRadius);
     }
 
     protected bool IsInSpawnBounds()
     {
-        return stageManager.IsColliderInArea(col, StageManager.AreaType.SPAWN_AREA);
+        return true;
+        //return StageManager.IsPositionWithinRadiusRange(position, StageManager.Settings.stageRadius);
     }
 
     /// <summary>
@@ -402,8 +443,8 @@ public class StageEntity : MonoBehaviour
     {
         if (respawn)
         {
-            Vector3 antipodalPoint = StageManager.Instance.GetAntipodalPoint(position);
-            transform.position = antipodalPoint;
+            //Vector3 antipodalPoint = Stage.GetAntipodalPoint(position);
+            //transform.position = antipodalPoint;
             return;
         }
 
