@@ -16,25 +16,19 @@ using Darklight.UnityExt.FMODExt;
 using UnityEditor;
 #endif
 
-[RequireComponent(typeof(LocalPlayerInputManager))]
+[RequireComponent(typeof(LocalPlayerInputManager), typeof(EntityRegistry))]
 public class Stage : MonoBehaviourSingleton<Stage>
 {
     public enum AreaType { ALL, STAGE, SPAWN_AREA }
 
     // ----------------- Static Properties -------------------
     public static StageData_Settings Settings => Instance._settings;
-    public static StageData_Entities Entities => Instance._entities;
-
 
     // -------------- Data ------------------------
     Dictionary<LocalPlayerInputData, PlaneEntity> _players = new();
 
     [Header("Data")]
     [SerializeField, Expandable] StageData_Settings _settings;
-    [SerializeField, Expandable] StageData_Entities _entities;
-
-    [Header("Registry")]
-    [SerializeField] StageRegistry _stageRegistry = new();
 
     [Header("Spawners")]
     public Spawner spawner_innerStage;
@@ -108,7 +102,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
         if (_players.ContainsKey(playerInputData)) return;
 
         // If no planes are available, spawn a new one
-        PlaneEntity newPlane = spawner_innerStage.SpawnEntityAtRandomAvailable(StageEntity.ClassType.PLANE) as PlaneEntity;
+        PlaneEntity newPlane = spawner_innerStage.SpawnEntityAtRandomAvailablePoint<PlaneEntity>();
         if (newPlane != null)
             newPlane.AssignPlayerInput(playerInputData);
 

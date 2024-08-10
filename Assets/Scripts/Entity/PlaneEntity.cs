@@ -39,13 +39,11 @@ public class PlaneEntity : StageEntity
     [SerializeField, ShowOnly] VFX_ParticleSystemHandler _leftContrail;
     [SerializeField, ShowOnly] VFX_ParticleSystemHandler _rightContrail;
 
-    public override void Initialize()
+    public override void Initialize(EntitySettings settings)
     {
-        base.Initialize();
+        base.Initialize(settings);
 
-        DestroyAllParticles();
         ResetGradientToDefault();
-
 
         if (Application.isPlaying)
         {
@@ -61,9 +59,9 @@ public class PlaneEntity : StageEntity
         }
     }
 
-    public override void Refresh()
+    public override void ReloadSettings()
     {
-        base.Refresh();
+        base.ReloadSettings();
 
         RefreshGradient();
 
@@ -234,8 +232,8 @@ public class PlaneEntity : StageEntity
         _rightContrail = VFX_Manager.CreateParticleSystemHandler(contrailParticles, rightContrailPos, transform);
 
         // Set the gradient for the contrails
-        _leftContrail.ApplyGradientToParticleSystem(_contrailGradient);
-        _rightContrail.ApplyGradientToParticleSystem(_contrailGradient);
+        _leftContrail.ApplyGradient(_contrailGradient);
+        _rightContrail.ApplyGradient(_contrailGradient);
     }
 
     #endregion 

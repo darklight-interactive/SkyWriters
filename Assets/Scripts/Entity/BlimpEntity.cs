@@ -40,9 +40,10 @@ public class BlimpEntity : StageEntity
         }
     }
 
-    public override void Start()
+    public override void Initialize(EntitySettings settings)
     {
-        base.Start();
+        base.Initialize(settings);
+
         StartCoroutine(SpawnExhaustClouds());
     }
 
@@ -55,7 +56,7 @@ public class BlimpEntity : StageEntity
             int rand_rotOffset = Random.Range(-90, 90);
             SetTargetRotation(rand_rotOffset);
 
-            Spawner.SpawnEntity<CloudEntity>(_exhaustPosition);
+            CloudEntity cloud = EntityRegistry.CreateNewEntity<CloudEntity>(_exhaustPosition);
         }
     }
 

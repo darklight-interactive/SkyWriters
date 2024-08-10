@@ -4,6 +4,8 @@ using UnityEngine;
 using Darklight.UnityExt.Behaviour;
 using System.Collections;
 using System;
+using Unity.VisualScripting;
+
 
 
 
@@ -18,73 +20,63 @@ public class StageEntity : MonoBehaviour
     /// <summary>
     /// An enum to represent the entity's class type
     /// </summary>
-    public enum ClassType { NULL, PLANE, CLOUD, BLIMP }
+    public enum Class { NULL, PLANE, CLOUD, BLIMP }
 
     /// <summary>
-    /// Get the enum type of the entity from a subclass of StageEntity
+    /// An enum to represent the entity's state
     /// </summary>
-    /// <typeparam name="T">
-    ///     The subclass of StageEntity
-    /// </typeparam>
-    /// <returns>
-    ///     The enum value of the entity's class type
-    /// </returns>
-    public static ClassType GetEnumTypeFromSubclass<T>() where T : StageEntity
-    {
-        Type entityType = typeof(T);
-        Type stageEntityType = typeof(StageEntity);
-        if (!entityType.IsSubclassOf(stageEntityType))
-        {
-            Debug.LogError($"Type {entityType} is not a subclass of StageEntity.");
-            return ClassType.NULL;
-        }
-
-        switch (entityType)
-        {
-            case Type t when t == typeof(PlaneEntity): return ClassType.PLANE;
-            case Type t when t == typeof(CloudEntity): return ClassType.CLOUD;
-            case Type t when t == typeof(BlimpEntity): return ClassType.BLIMP;
-            default: return ClassType.NULL;
-        }
-    }
-
     public enum State { NULL, SPAWN, GAME, DESPAWN }
 
     #region -------- << DATA CLASS >>
+    [System.Serializable]
     public class Data
     {
-        public int entityId { get; private set; } = -1;
-        public StageEntity.ClassType type { get; private set; } = ClassType.NULL;
+        [Header("---- Identifiers ----")]
+        Type _entityType;
+        [SerializeField, ShowOnly] string _entityTypeName;
+        [SerializeField] Class _entityClass = Class.NULL;
+        public Type entityType => GetType();
+        public Class entityClass => _entityClass;
 
-        // ---- Rules ----
-        public bool respawnOnExit { get; private set; } = true;
+        [Header("---- Rules ----")]
+        [SerializeField] bool _respawnOnExit = true;
+        public bool respawnOnExit => _respawnOnExit;
 
-        // ---- Collider ----
-        public float colliderHeight { get; private set; } = 10;
-        public float colliderRadius { get; private set; } = 5;
+        [Header("---- Collider ----")]
+        [SerializeField] float _colliderHeight = 10f;
+        [SerializeField] float _colliderRadius = 5f;
+        public float colliderHeight => _colliderHeight;
+        public float colliderRadius => _colliderRadius;
 
-        // ---- Speed ----
-        public float moveSpeed { get; private set; } = 10;
-        public float rotationSpeed { get; private set; } = 5;
+        [Header("---- Movement ----")]
+        [SerializeField] float _moveSpeed = 10f;
+        [SerializeField] float _rotationSpeed = 5f;
+        public float moveSpeed => _moveSpeed;
+        public float rotationSpeed => _rotationSpeed;
 
-        // ---- Stats ----
-        public float windResistance { get; private set; } = 0.2f;
+        [Header("---- Stats ----")]
+        [SerializeField] float _windResistance = 0.2f;
+        public float windResistance => _windResistance;
 
-        // ---- Gameplay ----
-        public float lifeSpan { get; private set; } = -1;
+        [Header("---- Gameplay ----")]
+        [SerializeField] float _lifeSpan = -1f;
+        public float lifeSpan => _lifeSpan;
 
+        // ---- Constructors ----
         public Data() { }
-        public Data(StageEntityPreset preset)
+        public Data(Data originData)
         {
-            entityId = preset.GetInstanceID();
-            type = preset.type;
-            colliderHeight = preset.colliderHeight;
-            colliderRadius = preset.colliderRadius;
-            moveSpeed = preset.moveSpeed;
-            rotationSpeed = preset.rotationSpeed;
-            windResistance = preset.windResistance;
-            respawnOnExit = preset.respawnOnExit;
-            lifeSpan = preset.lifeSpan;
+            _entityClass = originData.entityClass;
+            _entityType = EntityRegistry.GetTypeFromClass(_entityClass);
+            _entityTypeName = _entityType.Name;
+
+            _respawnOnExit = originData.respawnOnExit;
+            _colliderHeight = originData.colliderHeight;
+            _colliderRadius = originData.colliderRadius;
+            _moveSpeed = originData.moveSpeed;
+            _rotationSpeed = originData.rotationSpeed;
+            _windResistance = originData.windResistance;
+            _lifeSpan = originData.lifeSpan;
         }
     }
     #endregion
@@ -203,41 +195,12 @@ public class StageEntity : MonoBehaviour
     #endregion
 
     // ==== Private Properties =================================  ))
-    ClassType _classType;
     StateMachine _stateMachine;
-    Data _data;
+    Data _entityData;
+    Class _entityClass;
 
 
-    // ==== Public Properties ================================== ))
-
-    public ClassType classType
-    {
-        get
-        {
-            if (_preset != null) { _classType = _preset.type; }
-            return _classType;
-        }
-    }
-
-    public Data data
-    {
-        get
-        {
-            if (_data == null)
-            {
-                if (_preset != null) { _data = new Data(_preset); }
-                else { _data = new Data(); }
-            }
-            return _data;
-        }
-    }
-
-    public StageEntityPreset preset
-    {
-        get => _preset;
-        set => LoadPreset(value);
-    }
-
+    #region -------- ( References )
     public StateMachine stateMachine
     {
         get
@@ -249,6 +212,30 @@ public class StageEntity : MonoBehaviour
             return _stateMachine;
         }
     }
+
+    public Data data
+    {
+        get
+        {
+            if (_entityData == null)
+            {
+                if (_settings != null) { _entityData = new Data(_settings.data); }
+                else { _entityData = new Data(); }
+            }
+            return _entityData;
+        }
+    }
+
+    public Class entityClass
+    {
+        get
+        {
+            if (_settings != null) { _entityClass = _settings.data.entityClass; }
+            return _entityClass;
+        }
+    }
+
+
 
     public Vector3 position
     {
@@ -267,6 +254,7 @@ public class StageEntity : MonoBehaviour
         get => rb.velocity;
         set => rb.velocity = value;
     }
+    #endregion
 
     // ==== Public Events ======================================  ))
     public delegate void ColliderTriggerEvent(Collider other);
@@ -280,8 +268,6 @@ public class StageEntity : MonoBehaviour
     protected int id => GetInstanceID();
 
     // ==== Serialized Fields =================================== ))
-
-
     [Header("Live Data")]
     [SerializeField, ShowOnly] protected State _currentState; // The current state of the entity
     [SerializeField, ShowOnly] protected float _currSpeed; // The current speed of the entity
@@ -290,7 +276,7 @@ public class StageEntity : MonoBehaviour
     [SerializeField, ShowOnly] protected float _target_rotAngle; // The target rotation angle of the entity
 
     [HorizontalLine(), Header("Entity Settings")]
-    [Expandable, SerializeField] protected StageEntityPreset _preset;
+    [Expandable, SerializeField] protected EntitySettings _settings;
 
     #region ======================== [[ UNITY METHODS ]] ======================== >>
 
@@ -324,16 +310,14 @@ public class StageEntity : MonoBehaviour
     }
     #endregion
 
-    #region ======================== [[ BASE ENTITY METHODS ]] ======================== >>
+    #region ======================== [[ ENTITY METHODS ]] ======================== >>
     /// <summary>
     /// Initialize the object with the given settings & assign the entity to the stage
     /// </summary>
-    public virtual void Initialize()
+    public virtual void Initialize(EntitySettings settings = null)
     {
-        if (_preset != null)
-            LoadPreset(_preset);
-
-        LoadColliderSettings();
+        if (settings != null)
+            LoadSettings(settings);
 
         DestroyAllParticles();
 
@@ -354,22 +338,24 @@ public class StageEntity : MonoBehaviour
         }
     }
 
-    public void Initialize(StageEntityPreset preset)
+    public virtual void ReloadSettings()
     {
-        LoadPreset(preset);
-        Initialize();
-    }
-    public virtual void Refresh() { }
+        if (_settings == null)
+        {
+            Debug.LogError("No settings found for " + gameObject.name, this);
+            return;
+        }
 
-    void LoadPreset(StageEntityPreset preset)
-    {
-        if (preset == null) return;
-        _preset = preset;
-        _data = new Data(preset);
+        LoadSettings(_settings);
     }
 
-    void LoadColliderSettings()
+    void LoadSettings(EntitySettings settings)
     {
+        if (settings == null) return;
+        _settings = settings;
+        _entityData = new Data(settings.data);
+
+        // Set the collider values
         col.height = data.colliderHeight;
         col.radius = data.colliderRadius;
         col.direction = 2; // Set to the Z axis , inline with the forward direction of the object
@@ -524,28 +510,29 @@ public class StageEntityCustomEditor : Editor
     public override void OnInspectorGUI()
     {
         _serializedObject.Update();
-
         EditorGUI.BeginChangeCheck();
 
-
+        // << HORIZONTAL BUTTONS >> ---------------- >>
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Initialize"))
         {
             _script.Initialize();
         }
-        if (GUILayout.Button("Refresh"))
+        if (GUILayout.Button("Reload Settings"))
         {
-            _script.Refresh();
+            _script.ReloadSettings();
         }
         EditorGUILayout.EndHorizontal();
 
+        // << DRAW DEFAULT INSPECTOR >> ---------------- >>
         EditorGUILayout.Space();
         CustomInspectorGUI.DrawDefaultInspectorWithoutSelfReference(_serializedObject);
 
+        // << APPLY CHANGES >> ---------------- >>
         if (EditorGUI.EndChangeCheck())
         {
             _serializedObject.ApplyModifiedProperties();
-            _script.Refresh();
+            _script.ReloadSettings();
         }
     }
 }

@@ -7,7 +7,6 @@ using UnityEngine;
 public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
 {
     const string OBJECT_PREFIX = "<*>";
-
     public static VFX_ColorPalette ColorPalette => Instance.colorPalette;
 
     // ---------------- Properties ----------------
@@ -15,15 +14,16 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
     [SerializeField, Expandable] VFX_ColorPalette _colorPalette;
     public VFX_ColorPalette colorPalette { get => _colorPalette; set => _colorPalette = value; }
 
-    [SerializeField] VFX_GradientData _defaultGradient;
-    public VFX_GradientData defaultGradientData => _defaultGradient;
+
 
 
 
     [Header("Cloud VFX")]
+    [SerializeField] VFX_GradientData _defaultCloudGradient;
     [SerializeField] ParticleSystem _cloudParticles;
     [SerializeField] ParticleSystem _cloudBurstParticles;
     [SerializeField] ParticleSystem _cloudRingParticles;
+    public VFX_GradientData defaultGradientData => _defaultCloudGradient;
     public ParticleSystem cloudParticles => _cloudParticles;
     public ParticleSystem cloudBurstParticles => _cloudBurstParticles;
     public ParticleSystem cloudRingParticles => _cloudRingParticles;

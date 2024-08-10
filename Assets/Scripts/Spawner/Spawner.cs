@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Darklight.UnityExt.Behaviour;
+using Darklight.UnityExt.Editor;
 using UnityEngine;
 using NaughtyAttributes;
 using System.Collections;
 using System;
-using Darklight.UnityExt.Editor;
 using Unity.VisualScripting;
 
 #if UNITY_EDITOR
@@ -14,13 +13,14 @@ using UnityEditor;
 public class Spawner : MonoBehaviour
 {
     const string PREFIX = "[Spawner]";
+    public ConsoleGUI guiConsole { get; private set; } = new ConsoleGUI();
 
     // ---------------- Data ----------------------
     List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
     Coroutine _spawnRoutine;
 
     // ---------------- Serialized Data ----------------------
-    [SerializeField, Expandable] SpawnerPreset _preset;
+    [SerializeField, Expandable] SpawnerPreset _settings;
 
     [HorizontalLine, Header("Live Data")]
     [SerializeField, ShowOnly] bool _active = false;
@@ -29,8 +29,6 @@ public class Spawner : MonoBehaviour
     [SerializeField, Range(1, 10)] float _tickSpeed = 2;
     [SerializeField] float _spawnDelay = 0.5f;
     [SerializeField] SpawnPoint.State _spawnPoint_defaultState = SpawnPoint.State.AVAILABLE;
-
-
 
     [HorizontalLine, Header("Primary Points")]
     [SerializeField] SpawnPoint _primaryA;
@@ -52,7 +50,9 @@ public class Spawner : MonoBehaviour
     #region ================= [[ UNITY METHODS ]] ================= >>
     void Start()
     {
-        Refresh();
+
+
+        Initialize();
 
         if (Application.isPlaying)
             BeginSpawnRoutine();
@@ -69,47 +69,16 @@ public class Spawner : MonoBehaviour
     }
     #endregion
 
-    public static T SpawnEntity<T>(Vector3 position) where T : StageEntity
-    {
-        // Get the class type enum
-        StageEntity.ClassType classType = GetClassType<T>();
 
-        // Check if we can spawn this entity
-        if (StageRegistry.IsCollectionFull(classType))
-        {
-            Debug.LogWarning($"{PREFIX} Cannot spawn entity of type {classType} because the collection is full");
-            return null;
-        }
-
-        // Create the entity
-        T newEntity = Stage.Entities.CreateEntity<T>();
-        newEntity.transform.position = position;
-
-        // Register the entity
-        StageRegistry.RegisterEntity(newEntity);
-
-        return newEntity;
-    }
-
-    static StageEntity.ClassType GetClassType<T>() where T : StageEntity
-    {
-        if (typeof(T) == typeof(CloudEntity)) return StageEntity.ClassType.CLOUD;
-        if (typeof(T) == typeof(PlaneEntity)) return StageEntity.ClassType.PLANE;
-        if (typeof(T) == typeof(BlimpEntity)) return StageEntity.ClassType.BLIMP;
-        return StageEntity.ClassType.NULL;
-    }
 
     #region ================= [[ BASE METHODS ]] ================= >>
-    public StageEntity SpawnEntityAtRandomAvailable(StageEntity.ClassType classType)
+    public void Initialize()
     {
-        SpawnPoint spawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
-        if (spawnPoint == null) return null;
-
-        return SpawnEntity(classType, spawnPoint);
-    }
-
-    public void Refresh()
-    {
+        if (_settings == null)
+        {
+            Debug.LogError($"{PREFIX} No SpawnerPreset assigned", this);
+            return;
+        }
         // Create the shape2D object
         GenerateSpawnPoints();
 
@@ -123,11 +92,37 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    public StageEntity SpawnEntityAtPoint(Type type, SpawnPoint spawnPoint)
+    {
+        if (spawnPoint == null) return null;
+        spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
+
+        StageEntity entity = EntityRegistry.CreateNewEntity(type, spawnPoint.position);
+        StageEntity.Class entityClass = entity.entityClass;
+
+        guiConsole.Log($"{PREFIX} {entityClass} Spawned at {spawnPoint.position}");
+
+        return entity;
+    }
+
+    public T SpawnEntityAtPoint<T>(SpawnPoint spawnPoint) where T : StageEntity
+    {
+        return (T)SpawnEntityAtPoint(typeof(T), spawnPoint);
+    }
+
+    public T SpawnEntityAtRandomAvailablePoint<T>() where T : StageEntity
+    {
+        SpawnPoint spawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
+        return SpawnEntityAtPoint<T>(spawnPoint);
+    }
+
     #region --------- ( Handle Spawn Points ) ---------
     void GenerateSpawnPoints()
     {
         _spawnPoints.Clear();
-        Vector3[] vertices = _preset.shape2D.vertices;
+
+        Shape2D shape2D = _settings.CreateShape2D();
+        Vector3[] vertices = shape2D.vertices;
         for (int i = 0; i < vertices.Length; i++)
         {
             SpawnPoint newSpawnPoint = new SpawnPoint(this, i, vertices[i]);
@@ -221,39 +216,6 @@ public class Spawner : MonoBehaviour
 
     #endregion
 
-    #region --------- ( Handle Entities ) ---------
-
-
-    StageEntity SpawnEntity(StageEntity.ClassType classType, SpawnPoint spawnPoint)
-    {
-        StageEntity newEntity = null;
-        switch (classType)
-        {
-            case StageEntity.ClassType.CLOUD:
-                newEntity = SpawnEntity<CloudEntity>(spawnPoint.position);
-                break;
-            case StageEntity.ClassType.PLANE:
-                newEntity = SpawnEntity<PlaneEntity>(spawnPoint.position);
-                break;
-            case StageEntity.ClassType.BLIMP:
-                newEntity = SpawnEntity<BlimpEntity>(spawnPoint.position);
-                break;
-        }
-
-        // Check if the entity was created
-        if (newEntity == null) return null;
-
-        // Set the position
-        newEntity.transform.position = spawnPoint.position;
-
-        // Update the state of the spawn point
-        spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
-
-        return newEntity;
-    }
-
-
-    #endregion
 
 
     #endregion
@@ -296,8 +258,12 @@ public class Spawner : MonoBehaviour
             if (randSpawnPoint == null) continue;
 
             // Get random entity settings
-            StageEntityPreset randomEntitySettings = _preset.GetRandomEntityByChance();
+            EntitySettings randomEntitySettings = _settings.GetRandomEntitySettings();
+            if (randomEntitySettings == null) continue;
 
+            // Spawn the entity
+            Type entityType = randomEntitySettings.data.entityType;
+            SpawnEntityAtPoint(entityType, randSpawnPoint);
         }
     }
     #endregion
@@ -315,7 +281,7 @@ public class SpawnManagerCustomEditor : Editor
         _serializedObject = new SerializedObject(target);
         _script = (Spawner)target;
 
-        _script.Refresh();
+        _script.Initialize();
     }
 
     public override void OnInspectorGUI()
@@ -323,25 +289,14 @@ public class SpawnManagerCustomEditor : Editor
         _serializedObject.Update();
         EditorGUI.BeginChangeCheck();
 
-        DrawDefaultInspector();
+        _script.guiConsole.DrawInEditor();
 
-        if (GUILayout.Button("Toggle Spawn Routine"))
-        {
-            if (_script.active)
-            {
-                _script.EndSpawnRoutine();
-            }
-            else
-            {
-                _script.BeginSpawnRoutine();
-            }
-        }
-
+        CustomInspectorGUI.DrawDefaultInspectorWithoutSelfReference(_serializedObject);
 
         if (EditorGUI.EndChangeCheck())
         {
             _serializedObject.ApplyModifiedProperties();
-            _script.Refresh();
+            _script.Initialize();
         }
     }
 }

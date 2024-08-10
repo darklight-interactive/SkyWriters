@@ -96,13 +96,13 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
 
         if (_gradientData == null)
             _gradientData = VFX_Manager.Instance.defaultGradientData;
-        ApplyGradientToParticleSystem(_gradientData.gradient);
+        ApplyGradient(_gradientData.gradient);
     }
 
     public void Play() => _particleSystem.Play();
     public void Stop() => _particleSystem.Stop();
 
-    public void ApplyGradientToParticleSystem(Gradient gradient)
+    public void ApplyGradient(Gradient gradient)
     {
         if (_particleSystem == null) return;
         if (!_initialized) return;

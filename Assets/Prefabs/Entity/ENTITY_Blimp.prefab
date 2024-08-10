@@ -47,14 +47,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a0c87ddb3ae1438cb590c4aa365cfee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _preset: {fileID: 11400000, guid: 2ebf92378d4842b41b142ea9eb8233be, type: 2}
-  _curr_moveSpeed: 0
-  _curr_moveSpeed_offset: 0
-  _curr_rotSpeed: 0
+  _currentState: 0
+  _currSpeed: 0
+  _currSpeedMultiplier: 1
   _curr_rotAngle: 0
   _target_rotAngle: 0
-  _cloudSpawnDelay: 2.5
-  _cloudDeathDelay: 1
+  _settings: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
 --- !u!136 &5669088686213857413
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -74,8 +72,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 50
-  m_Height: 200
+  m_Radius: 5
+  m_Height: 10
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7586768240665509224

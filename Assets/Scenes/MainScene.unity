@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.26793307, g: 0.46431145, b: 0.6133213, a: 1}
+  m_IndirectSpecularColor: {r: 0.26792946, g: 0.463935, b: 0.61439043, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 277487365}
   - component: {fileID: 277487364}
+  - component: {fileID: 277487372}
   - component: {fileID: 277487371}
   - component: {fileID: 277487370}
   - component: {fileID: 277487363}
@@ -228,21 +229,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: 152f8b9a7e2740248b569e23cc95202c, type: 2}
-  _entities: {fileID: 11400000, guid: 94223530b94c6674a9c2489cd6ce2af1, type: 2}
-  _stageRegistry:
-    _entityCollections:
-    - _parent: {fileID: 0}
-      classType: 1
-      maxEntityCount: 8
-      entities: []
-    - _parent: {fileID: 0}
-      classType: 2
-      maxEntityCount: 32
-      entities: []
-    - _parent: {fileID: 0}
-      classType: 3
-      maxEntityCount: 2
-      entities: []
   spawner_innerStage: {fileID: 295614068}
   spawner_middleStage: {fileID: 498359091}
   spawner_outerStage: {fileID: 2105311728}
@@ -259,7 +245,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2114272949}
-  - {fileID: 1283292565}
+  - {fileID: 295614067}
+  - {fileID: 498359090}
+  - {fileID: 2105311727}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -354,7 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorPalette: {fileID: 11400000, guid: 68cddfe82eaecfb44a3cf284dcb57886, type: 2}
-  _defaultGradient: {fileID: 11400000, guid: 84a3f32a8540a0945a685e3d240efabb, type: 2}
+  _defaultCloudGradient: {fileID: 0}
   _cloudParticles: {fileID: 316231922153566340, guid: 2fd8c4d61e5e93b4f868be9c33e501d5,
     type: 3}
   _cloudBurstParticles: {fileID: 316231922153566340, guid: aa27ab93e15f750418b724bb0320461d,
@@ -364,6 +352,21 @@ MonoBehaviour:
   _contrailParticles: {fileID: 2336267122292066198, guid: a26fa1afeec522f4b95c6c36e154fbcb,
     type: 3}
   _explosionParticles: {fileID: 0}
+--- !u!114 &277487372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277487362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec5194381f19354b8bfe63007b2fd20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cloudPreset: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
+  _planePreset: {fileID: 11400000, guid: 3d41c8897302dd749a23a877dbc2800f, type: 2}
+  _blimpPreset: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
 --- !u!1 &295614066
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +378,7 @@ GameObject:
   - component: {fileID: 295614067}
   - component: {fileID: 295614068}
   m_Layer: 0
-  m_Name: (SPWN) InnerStage
+  m_Name: (SPWNR) InnerStage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393,7 +396,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1283292565}
+  m_Father: {fileID: 277487365}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &295614068
@@ -408,12 +411,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444c37e08a16f8844b749589de28c446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shape2DPreset: {fileID: 11400000, guid: 333623434e24fd34bbfae030ec516939, type: 2}
+  _settings: {fileID: 11400000, guid: fc936ffa973f473498da168828f331c7, type: 2}
   _active: 0
   _tickSpeed: 2
   _spawnDelay: 5
   _spawnPoint_defaultState: 1
-  _entitySpawnSettings: []
   _primaryA:
     _index: 0
     _position: {x: 250, y: -500, z: 0}
@@ -434,7 +436,7 @@ GameObject:
   - component: {fileID: 498359090}
   - component: {fileID: 498359091}
   m_Layer: 0
-  m_Name: (SPWN) MiddleStage
+  m_Name: (SPWNR) MiddleStage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -452,7 +454,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1283292565}
+  m_Father: {fileID: 277487365}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &498359091
@@ -467,14 +469,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444c37e08a16f8844b749589de28c446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shape2DPreset: {fileID: 11400000, guid: c9860c8ff8cfee24b9bab6c8a859aa08, type: 2}
+  _settings: {fileID: 11400000, guid: 4133f50685a47b3449eb13b447cdf2a9, type: 2}
   _active: 0
   _tickSpeed: 2
   _spawnDelay: 5
   _spawnPoint_defaultState: 1
-  _entitySpawnSettings:
-  - entityType: 2
-    spawnChance: 1
   _primaryA:
     _index: 0
     _position: {x: 1500, y: -500, z: 0}
@@ -535,7 +534,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 100
+  field of view: 89.99999
   orthographic: 0
   orthographic size: 1000
   m_Depth: -1
@@ -647,16 +646,16 @@ MonoBehaviour:
   _focusTargetPosition: {x: 0, y: 0, z: 0}
   _focusTargetPositionOffset: {x: 0, y: 0, z: 0}
   _focusOffsetY: 0
-  _offsetPosition: {x: 0, y: -2000, z: 0}
+  _offsetPosition: {x: 0, y: -2300, z: 0}
   _positionLerpSpeed: 10
-  _rotationLerpSpeed: 10
+  _rotationLerpSpeed: 0
   _fovLerpSpeed: 10
   _distanceX: 0
-  _distanceY: -2000
+  _distanceY: -2300
   _distanceZ: 0
-  _baseFOV: 100
+  _baseFOV: 90
   _offsetFOV: 0
-  _currentFOV: 100
+  _currentFOV: 90
 --- !u!4 &800653251
 Transform:
   m_ObjectHideFlags: 0
@@ -665,7 +664,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800653249}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -2000, z: 0}
+  m_LocalPosition: {x: 3e-45, y: -2299.9998, z: 8.514556e-22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -855,40 +854,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
---- !u!1 &1283292564
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1283292565}
-  m_Layer: 0
-  m_Name: (SPAWNERS)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1283292565
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283292564}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 295614067}
-  - {fileID: 498359090}
-  - {fileID: 2105311727}
-  m_Father: {fileID: 277487365}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1396304297
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1013,7 +978,7 @@ GameObject:
   - component: {fileID: 2105311727}
   - component: {fileID: 2105311728}
   m_Layer: 0
-  m_Name: (SPWN) OuterStage
+  m_Name: (SPWNR) OuterStage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1031,7 +996,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1283292565}
+  m_Father: {fileID: 277487365}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2105311728
@@ -1046,14 +1011,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444c37e08a16f8844b749589de28c446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shape2DPreset: {fileID: 11400000, guid: c2f11b6109f2b5246b1f6cb5c68daa98, type: 2}
+  _settings: {fileID: 11400000, guid: 69e26797a5ce80c4bb51fd3105e6fb6f, type: 2}
   _active: 0
   _tickSpeed: 2
   _spawnDelay: 5
   _spawnPoint_defaultState: 1
-  _entitySpawnSettings:
-  - entityType: 3
-    spawnChance: 0.5
   _primaryA:
     _index: 0
     _position: {x: 1750, y: -500, z: 0}

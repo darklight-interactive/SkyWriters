@@ -51,7 +51,7 @@ MonoBehaviour:
   _currSpeedMultiplier: 1
   _curr_rotAngle: 0
   _target_rotAngle: 0
-  _preset: {fileID: 11400000, guid: 35ff75f662a8c024485a3e4cf3909dda, type: 2}
+  _settings: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
   _mainColor: {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
 --- !u!136 &8617047698032842873
 CapsuleCollider:
@@ -72,8 +72,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 150
-  m_Height: 150
+  m_Radius: 5
+  m_Height: 10
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5069445420879061551

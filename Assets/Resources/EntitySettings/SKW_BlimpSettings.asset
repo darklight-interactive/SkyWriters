@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 518ff82f9df9d78489f0025407463b1b, type: 3}
+  m_Name: SKW_BlimpSettings
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 8834439335552323763, guid: ffd8c3e49c864434b85329848d826291, type: 3}
+  _data:
+    _entityClass: 0
+    _respawnOnExit: 0
+    _colliderHeight: 200
+    _colliderRadius: 35
+    _moveSpeed: 10
+    _rotationSpeed: 1
+    _windResistance: 0.75
+    _lifeSpan: -1
