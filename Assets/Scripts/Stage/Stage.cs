@@ -114,7 +114,8 @@ public class Stage : MonoBehaviourSingleton<Stage>
         if (newPlane != null)
             newPlane.AssignPlayerInput(playerInputData);
 
-        //Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
+        _players.Add(playerInputData, newPlane);
+        Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
     }
 
     #endregion

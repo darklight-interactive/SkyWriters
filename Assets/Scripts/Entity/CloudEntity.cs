@@ -56,7 +56,7 @@ public class CloudEntity : StageEntity
 
         _cloudParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudParticles, transform);
 
-        _cloudParticleHandler.SetGradient(GetCurrentGradient());
+        _cloudParticleHandler.ApplyGradientToParticleSystem(GetCurrentGradient());
         _cloudParticleHandler.Play();
     }
 
@@ -67,7 +67,7 @@ public class CloudEntity : StageEntity
         ParticleSystem cloudBurstParticles = VFX_Manager.Instance.cloudBurstParticles;
         _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, null);
 
-        _cloudBurstParticleHandler.SetGradient(GetCurrentGradient());
+        _cloudBurstParticleHandler.ApplyGradientToParticleSystem(GetCurrentGradient());
         _cloudBurstParticleHandler.Play();
     }
 

@@ -88,29 +88,30 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
     {
         _particleSystem = GetComponent<ParticleSystem>();
         _initialized = LoadModules();
+        if (!_initialized)
+        {
+            Debug.LogError("Failed to load particle system modules", this);
+            return;
+        }
 
         if (_gradientData == null)
-        {
             _gradientData = VFX_Manager.Instance.defaultGradientData;
-            SetGradientData(_gradientData);
-        }
+        ApplyGradientToParticleSystem(_gradientData.gradient);
     }
 
     public void Play() => _particleSystem.Play();
     public void Stop() => _particleSystem.Stop();
 
-    public void SetGradient(Gradient gradient)
+    public void ApplyGradientToParticleSystem(Gradient gradient)
     {
-        Refresh();
+        if (_particleSystem == null) return;
+        if (!_initialized) return;
 
-        _main.startColor = new ParticleSystem.MinMaxGradient(gradient);
+        _main = _particleSystem.main;
+        _main.startColor = gradient.Evaluate(0);
+
+        _colorOverLifetime = _particleSystem.colorOverLifetime;
         _colorOverLifetime.color = gradient;
-    }
-
-    public void SetGradientData(VFX_GradientData gradientData)
-    {
-        _gradientData = gradientData;
-        SetGradient(gradientData.gradient);
     }
 
     public void StopAndDestroyOnComplete()
@@ -163,6 +164,10 @@ public class VFX_ParticleSystemDataCustomEditor : Editor
             _script.Stop();
         EditorGUILayout.EndHorizontal();
 
+        if (GUILayout.Button("Refresh"))
+        {
+            _script.Refresh();
+        }
 
         base.OnInspectorGUI();
 

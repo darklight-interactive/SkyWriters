@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SKW_MiddleStageShape
   m_EditorClassIdentifier: 
   _radius: 1000
-  _segments: 16
+  _segments: 8
   _gizmoColor: {r: 1, g: 0.67484564, b: 0, a: 1}

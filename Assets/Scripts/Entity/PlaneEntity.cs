@@ -22,7 +22,7 @@ public class PlaneEntity : StageEntity
 
     [Header("Movement")]
     [SerializeField, ShowOnly] float _currSpeedPercentage = 0f;
-    [SerializeField, ShowOnly] float _speedMultiplier_slow = 0.5f;
+    [SerializeField, ShowOnly] float _speedMultiplier_slow = 0.8f;
     [SerializeField, ShowOnly] float _speedMultiplier_fast = 1.5f;
 
     [Header("Audio")]
@@ -55,6 +55,9 @@ public class PlaneEntity : StageEntity
             _humInstance = FMODUnity.RuntimeManager.CreateInstance(_humEvent);
             _humInstance.setParameterByName("PlaneSpeed", 0f);
             _humInstance.start();
+
+            ParticleSystem burstParticles = VFX_Manager.Instance.cloudBurstParticles;
+            VFX_ParticleSystemHandler burstHandler = VFX_Manager.CreateParticleSystemHandler(burstParticles, transform);
         }
     }
 
@@ -231,8 +234,8 @@ public class PlaneEntity : StageEntity
         _rightContrail = VFX_Manager.CreateParticleSystemHandler(contrailParticles, rightContrailPos, transform);
 
         // Set the gradient for the contrails
-        _leftContrail.SetGradient(_contrailGradient);
-        _rightContrail.SetGradient(_contrailGradient);
+        _leftContrail.ApplyGradientToParticleSystem(_contrailGradient);
+        _rightContrail.ApplyGradientToParticleSystem(_contrailGradient);
     }
 
     #endregion 

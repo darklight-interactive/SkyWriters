@@ -16,7 +16,7 @@ MonoBehaviour:
   _colliderHeight: 150
   _colliderRadius: 150
   _moveSpeed: 0
-  _rotationSpeed: 2
+  _rotationSpeed: 0
   _windResistance: 0
   _respawnOnExit: 0
   _lifeSpan: 60

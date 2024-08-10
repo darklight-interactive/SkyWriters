@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _initialized: 0
   _particleSystem: {fileID: 6809513760409802986}
-  _gradientData: {fileID: 0}
+  _gradientData: {fileID: 11400000, guid: 8369639ccdc1140419bbe0d46739a09e, type: 2}
 --- !u!198 &6809513760409802986
 ParticleSystem:
   m_ObjectHideFlags: 0
