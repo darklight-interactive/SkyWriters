@@ -139,7 +139,7 @@ public class StageEntity : MonoBehaviour
                     entity.stateMachine.GoToStateWithDelay(State.GAME, 1);
                 }
 
-                // Check if the entity is in the game bounds
+                // Check if the entity has exited the game bounds
                 if (!entity.IsInStageBounds() && !entity.IsInSpawnBounds())
                 {
                     entity.stateMachine.GoToState(State.DESPAWN);
@@ -338,7 +338,7 @@ public class StageEntity : MonoBehaviour
         DestroyAllParticles();
 
         // Set up entity for play mode
-        if (Application.isPlaying && data.lifeSpan > 0)
+        if (Application.isPlaying)
         {
             // Create the state machine
             _stateMachine = new StateMachine(this);
@@ -349,7 +349,8 @@ public class StageEntity : MonoBehaviour
             };
 
             // Destroy this object after the lifespan
-            Destroy(gameObject, data.lifeSpan);
+            if (data.lifeSpan > 0)
+                Destroy(gameObject, data.lifeSpan);
         }
     }
 
@@ -365,8 +366,6 @@ public class StageEntity : MonoBehaviour
         if (preset == null) return;
         _preset = preset;
         _data = new Data(preset);
-
-
     }
 
     void LoadColliderSettings()
@@ -457,8 +456,7 @@ public class StageEntity : MonoBehaviour
 
     protected bool IsInSpawnBounds()
     {
-        return true;
-        //return StageManager.IsPositionWithinRadiusRange(position, StageManager.Settings.stageRadius);
+        return Stage.IsPositionWithinRadiusRange(position, Stage.Settings.stageRadius, Stage.Settings.spawnRadius);
     }
 
     /// <summary>
@@ -468,8 +466,8 @@ public class StageEntity : MonoBehaviour
     {
         if (respawn)
         {
-            //Vector3 antipodalPoint = Stage.GetAntipodalPoint(position);
-            //transform.position = antipodalPoint;
+            Vector3 antipodalPoint = Shape2DUtility.CalculateAntipodalPoint(stageManager.stageCenter, position);
+            transform.position = antipodalPoint;
             return;
         }
 

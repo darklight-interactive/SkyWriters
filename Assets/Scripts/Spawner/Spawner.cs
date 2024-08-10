@@ -19,7 +19,6 @@ public class Spawner : MonoBehaviour
     public class EntitySpawnSettings
     {
         public StageEntity.ClassType entityType;
-        [Range(0, 100)] public int maxCount;
         [Range(0, 1)] public float spawnChance;
     }
 
@@ -80,13 +79,43 @@ public class Spawner : MonoBehaviour
     }
     #endregion
 
+    public static T SpawnEntity<T>(Vector3 position) where T : StageEntity
+    {
+        // Get the class type enum
+        StageEntity.ClassType classType = GetClassType<T>();
+
+        // Check if we can spawn this entity
+        if (StageRegistry.IsCollectionFull(classType))
+        {
+            Debug.LogWarning($"{PREFIX} Cannot spawn entity of type {classType} because the collection is full");
+            return null;
+        }
+
+        // Create the entity
+        T newEntity = Stage.Entities.CreateEntity<T>();
+        newEntity.transform.position = position;
+
+        // Register the entity
+        StageRegistry.RegisterEntity(newEntity);
+
+        return newEntity;
+    }
+
+    static StageEntity.ClassType GetClassType<T>() where T : StageEntity
+    {
+        if (typeof(T) == typeof(CloudEntity)) return StageEntity.ClassType.CLOUD;
+        if (typeof(T) == typeof(PlaneEntity)) return StageEntity.ClassType.PLANE;
+        if (typeof(T) == typeof(BlimpEntity)) return StageEntity.ClassType.BLIMP;
+        return StageEntity.ClassType.NULL;
+    }
+
     #region ================= [[ BASE METHODS ]] ================= >>
-    public void SpawnEntityAtRandomAvailable(StageEntity.ClassType classType)
+    public StageEntity SpawnEntityAtRandomAvailable(StageEntity.ClassType classType)
     {
         SpawnPoint spawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
-        if (spawnPoint == null) return;
+        if (spawnPoint == null) return null;
 
-        SpawnEntity(classType, spawnPoint);
+        return SpawnEntity(classType, spawnPoint);
     }
 
     public void Refresh()
@@ -204,27 +233,7 @@ public class Spawner : MonoBehaviour
     #endregion
 
     #region --------- ( Handle Entities ) ---------
-    T SpawnEntity<T>(Vector3 position) where T : StageEntity
-    {
-        // Get the class type enum
-        StageEntity.ClassType classType = GetClassType<T>();
 
-        // Check if we can spawn this entity
-        if (StageRegistry.IsCollectionFull(classType))
-        {
-            Debug.LogWarning($"{PREFIX} Cannot spawn entity of type {classType} because the collection is full", this);
-            return null;
-        }
-
-        // Create the entity
-        T newEntity = Stage.Entities.CreateEntity<T>();
-        newEntity.transform.position = position;
-
-        // Register the entity
-        StageRegistry.RegisterEntity(newEntity);
-
-        return newEntity;
-    }
 
     StageEntity SpawnEntity(StageEntity.ClassType classType, SpawnPoint spawnPoint)
     {
@@ -242,6 +251,9 @@ public class Spawner : MonoBehaviour
                 break;
         }
 
+        // Check if the entity was created
+        if (newEntity == null) return null;
+
         // Set the position
         newEntity.transform.position = spawnPoint.position;
 
@@ -251,13 +263,7 @@ public class Spawner : MonoBehaviour
         return newEntity;
     }
 
-    StageEntity.ClassType GetClassType<T>() where T : StageEntity
-    {
-        if (typeof(T) == typeof(CloudEntity)) return StageEntity.ClassType.CLOUD;
-        if (typeof(T) == typeof(PlaneEntity)) return StageEntity.ClassType.PLANE;
-        if (typeof(T) == typeof(BlimpEntity)) return StageEntity.ClassType.BLIMP;
-        return StageEntity.ClassType.NULL;
-    }
+
     #endregion
 
 
@@ -310,6 +316,8 @@ public class Spawner : MonoBehaviour
             if (randomChance <= randomEntitySettings.spawnChance)
             {
                 StageEntity entity = SpawnEntity(randomEntitySettings.entityType, randSpawnPoint);
+                if (entity == null) continue;
+
                 entity.SetTargetRotation(Stage.Instance.stageCenter);
             }
         }

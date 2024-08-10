@@ -19,4 +19,4 @@ MonoBehaviour:
   _rotationSpeed: 1.5
   _windResistance: 0.75
   _respawnOnExit: 1
-  _lifeSpan: 0
+  _lifeSpan: -1

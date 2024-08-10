@@ -55,8 +55,7 @@ public class BlimpEntity : StageEntity
             int rand_rotOffset = Random.Range(-90, 90);
             SetTargetRotation(rand_rotOffset);
 
-            //StageManager.Instance.SpawnCloudAt(_exhaustPosition, VFX_Manager.ColorPalette.blueColor);
-
+            Spawner.SpawnEntity<CloudEntity>(_exhaustPosition);
         }
     }
 

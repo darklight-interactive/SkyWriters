@@ -18,7 +18,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     [SerializeField] List<LocalPlayerInputData> _playerInputData = new List<LocalPlayerInputData>();
     private List<System.Type> _deviceBlacklist = new List<System.Type>
     {
-        typeof(XInputControllerWindows)
+        typeof(XInputController)
     };
 
     // References ===================================== >>>>

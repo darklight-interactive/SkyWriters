@@ -57,13 +57,19 @@ public class Stage : MonoBehaviourSingleton<Stage>
 
             FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
         }
-
-        _stageRegistry = new StageRegistry();
     }
 
     void OnDrawGizmos()
     {
         if (_settings == null) return;
+
+        // Draw the stage center radius
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _settings.stageRadius);
+
+        // Draw the spawn radius
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _settings.spawnRadius);
 
         // Draw the wind direction
         Gizmos.color = Color.white;
@@ -103,23 +109,10 @@ public class Stage : MonoBehaviourSingleton<Stage>
         // If the player is already assigned to a plane, return
         if (_players.ContainsKey(playerInputData)) return;
 
-        /*
-        // Find the first available plane
-        List<PlaneEntity> planes = GetAllEntitiesOfType<PlaneEntity>();
-        foreach (PlaneEntity plane in planes)
-        {
-            if (plane.IsAutopilot)
-            {
-                plane.AssignPlayerInput(playerInputData);
-                return;
-            }
-        }
-        */
-
         // If no planes are available, spawn a new one
-        //PlaneEntity newPlane = SpawnEntity<PlaneEntity>();
-        //newPlane.AssignPlayerInput(playerInputData);
-        //_players.Add(playerInputData, newPlane);
+        PlaneEntity newPlane = spawner_innerStage.SpawnEntityAtRandomAvailable(StageEntity.ClassType.PLANE) as PlaneEntity;
+        if (newPlane != null)
+            newPlane.AssignPlayerInput(playerInputData);
 
         //Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
     }

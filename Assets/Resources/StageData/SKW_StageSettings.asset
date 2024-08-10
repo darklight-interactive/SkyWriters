@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c050e95a78c574a9d4abbcd417988d, type: 3}
   m_Name: SKW_StageSettings
   m_EditorClassIdentifier: 
+  _tickSpeed: 2
   _stageRadius: 1000
-  _spawnRadius: 1100
+  _spawnRadius: 1800
   _windDirection: 0
   _windIntensity: 10

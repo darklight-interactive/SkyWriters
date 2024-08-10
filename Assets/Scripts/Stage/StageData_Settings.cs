@@ -11,6 +11,7 @@ public class StageData_Settings : ScriptableObject
     [SerializeField, Range(1, 3000)] float _stageRadius = 1000;
     [SerializeField, Range(1, 3000)] float _spawnRadius = 1100;
     public float stageRadius => _stageRadius;
+    public float spawnRadius => _spawnRadius;
 
     [Header("Environment Settings")]
     [SerializeField, Range(0, 360)] float _windDirection = 0;

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.26792946, g: 0.463935, b: 0.61439043, a: 1}
+  m_IndirectSpecularColor: {r: 0.26793307, g: 0.46431145, b: 0.6133213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -229,6 +229,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: 152f8b9a7e2740248b569e23cc95202c, type: 2}
   _entities: {fileID: 11400000, guid: 94223530b94c6674a9c2489cd6ce2af1, type: 2}
+  _stageRegistry:
+    _entityCollections:
+    - classType: 1
+      maxEntityCount: 8
+      entities: []
+    - classType: 2
+      maxEntityCount: 32
+      entities: []
+    - classType: 3
+      maxEntityCount: 2
+      entities: []
   spawner_innerStage: {fileID: 295614068}
   spawner_middleStage: {fileID: 498359091}
   spawner_outerStage: {fileID: 2105311728}
@@ -1218,7 +1229,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 90
+  field of view: 60
   orthographic: 0
   orthographic size: 500
   m_Depth: -1
@@ -1336,9 +1347,9 @@ MonoBehaviour:
   _fovLerpSpeed: 5
   _distanceY: -2500
   _distanceZ: 0
-  _baseFOV: 90
+  _baseFOV: 60
   _offsetFOV: 0
-  _currentFOV: 90
+  _currentFOV: 60
 --- !u!4 &800653251
 Transform:
   m_ObjectHideFlags: 0
