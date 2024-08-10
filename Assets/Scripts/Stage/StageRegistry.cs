@@ -7,15 +7,26 @@ public class StageRegistry
 {
     public static StageRegistry Instance { get; private set; }
     public static Dictionary<StageEntity.ClassType, EntityCollection> EntityRegistry = new();
+    public static Transform Parent => Instance._registryParent;
 
     #region  ================= [[ ENTITY COLLECTION ]] ================= >>
     [System.Serializable]
     public class EntityCollection
     {
+        [SerializeField] Transform _collectionParent;
         [ShowOnly] public StageEntity.ClassType classType;
         [SerializeField, Range(1, 32)] int maxEntityCount = 1;
 
         [ShowOnly] public List<StageEntity> entities = new();
+
+        public EntityCollection(StageEntity.ClassType classType, Transform parent = null)
+        {
+            this.classType = classType;
+
+            if (parent == null)
+                parent = StageRegistry.Parent;
+            _collectionParent = parent;
+        }
 
         public void AddEntity(StageEntity entity)
         {
@@ -36,7 +47,7 @@ public class StageRegistry
     {
         if (!EntityRegistry.ContainsKey(classType))
         {
-            EntityRegistry.Add(classType, new EntityCollection() { classType = classType });
+            EntityRegistry.Add(classType, new EntityCollection(classType));
         }
         return EntityRegistry[classType];
     }
@@ -47,6 +58,7 @@ public class StageRegistry
 
 
     // ----------------- Serialized Fields -------------------
+    [SerializeField] Transform _registryParent;
     [SerializeField] List<EntityCollection> _entityCollections = new();
 
     public StageRegistry()
@@ -54,10 +66,12 @@ public class StageRegistry
         Instance = this;
 
         // Initialize the entity registry
-        EntityRegistry = new Dictionary<StageEntity.ClassType, EntityCollection>();
-        EntityRegistry.Add(StageEntity.ClassType.PLANE, new EntityCollection() { classType = StageEntity.ClassType.PLANE });
-        EntityRegistry.Add(StageEntity.ClassType.CLOUD, new EntityCollection() { classType = StageEntity.ClassType.CLOUD });
-        EntityRegistry.Add(StageEntity.ClassType.BLIMP, new EntityCollection() { classType = StageEntity.ClassType.BLIMP });
+        EntityRegistry = new Dictionary<StageEntity.ClassType, EntityCollection>
+        {
+            { StageEntity.ClassType.PLANE, new EntityCollection(StageEntity.ClassType.PLANE)},
+            { StageEntity.ClassType.BLIMP, new EntityCollection(StageEntity.ClassType.BLIMP)},
+            { StageEntity.ClassType.CLOUD, new EntityCollection(StageEntity.ClassType.CLOUD)}
+        };
 
         // Update the list of entity collections
         _entityCollections = new List<EntityCollection>(EntityRegistry.Values);
@@ -72,6 +86,8 @@ public class StageRegistry
     public static void RegisterEntity(StageEntity entity)
     {
         EntityCollection collection = GetEntityCollection(entity.classType);
+
+        entity.transform.parent = Instance._registryParent;
         collection.AddEntity(entity);
     }
 

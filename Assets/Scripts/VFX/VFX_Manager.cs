@@ -83,10 +83,11 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
     public static Gradient CreateGradient(Color[] colors)
     {
         Gradient gradient = new Gradient();
-        GradientColorKey[] colorKeys = new GradientColorKey[colors.Length];
-        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[colors.Length];
 
-        for (int i = 0; i < colors.Length; i++)
+        int numColors = colors.Length > 8 ? 8 : colors.Length; // Only allow up to 8 colors
+        GradientColorKey[] colorKeys = new GradientColorKey[numColors];
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[numColors];
+        for (int i = 0; i < numColors; i++)
         {
             colorKeys[i].color = colors[i];
             colorKeys[i].time = (float)i / (colors.Length - 1);

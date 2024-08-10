@@ -15,35 +15,32 @@ MonoBehaviour:
   _gradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 0.75}
-    key2: {r: 1, g: 1, b: 1, a: 0.5}
-    key3: {r: 1, g: 1, b: 1, a: 0.25}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 21845
-    ctime2: 43690
-    ctime3: 65535
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
     ctime4: 0
     ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 21845
-    atime2: 43690
-    atime3: 65535
+    atime1: 65535
+    atime2: 0
+    atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 4
-    m_NumAlphaKeys: 4
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
   _colorDataKeys:
-  - {fileID: 11400000, guid: c280f28ec117bb84ca16b674783dbab8, type: 2}
-  - {fileID: 11400000, guid: cca92f18653b07b4ba7ccefb45a9966a, type: 2}
-  - {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
-  - {fileID: 11400000, guid: 7df291c11b2daf34e9e60e69a84db6cd, type: 2}
+  - {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}

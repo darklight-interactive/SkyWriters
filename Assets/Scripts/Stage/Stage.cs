@@ -64,12 +64,10 @@ public class Stage : MonoBehaviourSingleton<Stage>
         if (_settings == null) return;
 
         // Draw the stage center radius
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _settings.stageRadius);
+        Shape2DGizmos.DrawCircle(transform.position, _settings.stageRadius, Color.red);
 
         // Draw the spawn radius
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _settings.spawnRadius);
+        Shape2DGizmos.DrawCircle(transform.position, _settings.spawnRadius, Color.yellow);
 
         // Draw the wind direction
         Gizmos.color = Color.white;

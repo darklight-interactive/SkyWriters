@@ -19,6 +19,16 @@ public static class Shape2DGizmos
         }
     }
 
+    public static void DrawRadialShape(Vector3 center, float radius, int segments, Vector3 normal, Color color)
+    {
+        Shape2D shape = new Shape2D(center, radius, segments, normal, color);
+    }
+
+    public static void DrawCircle(Vector3 center, float radius, Color color)
+    {
+        DrawRadialShape(center, radius, 32, Vector3.up, color);
+    }
+
 
 }
 #endif
