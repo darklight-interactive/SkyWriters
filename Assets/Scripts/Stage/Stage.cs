@@ -55,7 +55,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
         {
             LocalPlayerInputManager.Instance.OnAddLocalPlayerInput += AssignPlayerToPlane;
 
-            FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
+            //FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
         }
     }
 
