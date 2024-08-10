@@ -15,20 +15,12 @@ public class Spawner : MonoBehaviour
 {
     const string PREFIX = "[Spawner]";
 
-    [System.Serializable]
-    public class EntitySpawnSettings
-    {
-        public StageEntity.ClassType entityType;
-        [Range(0, 1)] public float spawnChance;
-    }
-
     // ---------------- Data ----------------------
-    Shape2D _shape2D;
     List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
     Coroutine _spawnRoutine;
 
     // ---------------- Serialized Data ----------------------
-    [SerializeField, Expandable] Shape2DPreset _shape2DPreset;
+    [SerializeField, Expandable] SpawnerPreset _preset;
 
     [HorizontalLine, Header("Live Data")]
     [SerializeField, ShowOnly] bool _active = false;
@@ -38,8 +30,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] float _spawnDelay = 0.5f;
     [SerializeField] SpawnPoint.State _spawnPoint_defaultState = SpawnPoint.State.AVAILABLE;
 
-    [Header("Entity Settings")]
-    public List<EntitySpawnSettings> _entitySpawnSettings = new List<EntitySpawnSettings>();
+
 
     [HorizontalLine, Header("Primary Points")]
     [SerializeField] SpawnPoint _primaryA;
@@ -69,7 +60,6 @@ public class Spawner : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (_shape2D != null) _shape2D.DrawGizmos();
 
         foreach (SpawnPoint spawnPoint in _spawnPoints)
         {
@@ -121,7 +111,6 @@ public class Spawner : MonoBehaviour
     public void Refresh()
     {
         // Create the shape2D object
-        _shape2D = _shape2DPreset.CreateShape2D(transform.position);
         GenerateSpawnPoints();
 
         if (_primaryA != null && _primaryA_index < _spawnPoints.Count)
@@ -138,11 +127,11 @@ public class Spawner : MonoBehaviour
     void GenerateSpawnPoints()
     {
         _spawnPoints.Clear();
-        for (int i = 0; i < _shape2D.vertices.Length; i++)
+        Vector3[] vertices = _preset.shape2D.vertices;
+        for (int i = 0; i < vertices.Length; i++)
         {
-            SpawnPoint newSpawnPoint = new SpawnPoint(this, i, _shape2D.vertices[i]);
+            SpawnPoint newSpawnPoint = new SpawnPoint(this, i, vertices[i]);
             _spawnPoints.Add(newSpawnPoint);
-
         }
     }
 
@@ -307,19 +296,8 @@ public class Spawner : MonoBehaviour
             if (randSpawnPoint == null) continue;
 
             // Get random entity settings
-            if (_entitySpawnSettings.Count == 0) continue;
-            int randomIndex = UnityEngine.Random.Range(0, _entitySpawnSettings.Count);
-            EntitySpawnSettings randomEntitySettings = _entitySpawnSettings[randomIndex];
+            StageEntityPreset randomEntitySettings = _preset.GetRandomEntityByChance();
 
-            // Roll the dice to see if we should spawn this entity
-            float randomChance = UnityEngine.Random.Range(0f, 1f);
-            if (randomChance <= randomEntitySettings.spawnChance)
-            {
-                StageEntity entity = SpawnEntity(randomEntitySettings.entityType, randSpawnPoint);
-                if (entity == null) continue;
-
-                entity.SetTargetRotation(Stage.Instance.stageCenter);
-            }
         }
     }
     #endregion

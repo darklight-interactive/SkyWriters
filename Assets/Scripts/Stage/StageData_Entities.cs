@@ -8,10 +8,12 @@ public class StageData_Entities : ScriptableObject
     [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
     [Expandable, SerializeField] StageEntityPreset _cloudPreset;
+    [SerializeField] VFX_ColorData[] _cloudColors;
 
     [Header("Plane Settings")]
     [SerializeField] GameObject _planePrefab;
     [Expandable, SerializeField] StageEntityPreset _planePreset;
+    [SerializeField] VFX_ColorData[] _planeColors;
 
     [Header("Blimp Settings")]
     [SerializeField] GameObject _blimpPrefab;
