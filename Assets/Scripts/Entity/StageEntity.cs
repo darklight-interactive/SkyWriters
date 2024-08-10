@@ -422,6 +422,12 @@ public class StageEntity : MonoBehaviour
     }
     #endregion
 
+    public void SetTargetRotation(Vector3 targetPosition, bool instant = false)
+    {
+        Vector3 direction = targetPosition - position;
+        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        SetTargetRotation(angle, instant);
+    }
 
     public void SetTargetRotation(float angle, bool instant = false)
     {
@@ -432,6 +438,11 @@ public class StageEntity : MonoBehaviour
             _curr_rotAngle = angle;
             SetRotation(angle);
         }
+    }
+
+    public void SetTargetRotation(float offsetAngle)
+    {
+        _target_rotAngle = _curr_rotAngle + offsetAngle;
     }
 
     protected void SetRotation(float angle)

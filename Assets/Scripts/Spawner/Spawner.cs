@@ -5,6 +5,8 @@ using NaughtyAttributes;
 using System.Collections;
 using System;
 using Darklight.UnityExt.Editor;
+using Unity.VisualScripting;
+
 
 
 
@@ -38,11 +40,11 @@ public class Spawner : MonoBehaviour
 
     [HorizontalLine, Header("Settings")]
     [SerializeField, Range(1, 10)] float _tickSpeed = 2;
+    [SerializeField] float _spawnDelay = 0.5f;
     [SerializeField] SpawnPoint.State _spawnPoint_defaultState = SpawnPoint.State.AVAILABLE;
 
     [Header("Entity Settings")]
     public List<EntitySpawnSettings> _entitySpawnSettings = new List<EntitySpawnSettings>();
-
 
     [HorizontalLine, Header("Primary Points")]
     [SerializeField] SpawnPoint _primaryA;
@@ -58,7 +60,7 @@ public class Spawner : MonoBehaviour
 
     // ---------------- References ----------------------
     public bool active => _active;
-
+    public float spawnDelay => _spawnDelay;
 
     #region ================= [[ UNITY METHODS ]] ================= >>
     void Start()
@@ -103,9 +105,20 @@ public class Spawner : MonoBehaviour
         _spawnPoints.Clear();
         for (int i = 0; i < _shape2D.vertices.Length; i++)
         {
-            SpawnPoint newSpawnPoint = new SpawnPoint(i, _shape2D.vertices[i]);
+            SpawnPoint newSpawnPoint = new SpawnPoint(this, i, _shape2D.vertices[i]);
             _spawnPoints.Add(newSpawnPoint);
         }
+    }
+
+    public void GoToStateWitDelay(SpawnPoint spawnPoint, SpawnPoint.State state, float delay)
+    {
+        StartCoroutine(GoToStateWithDelayRoutine(spawnPoint, state, delay));
+    }
+
+    IEnumerator GoToStateWithDelayRoutine(SpawnPoint spawnPoint, SpawnPoint.State state, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        spawnPoint.GoToState(state);
     }
 
     #region ---- << Getters >> ----
@@ -204,29 +217,27 @@ public class Spawner : MonoBehaviour
         return newEntity;
     }
 
-    T SpawnEntity<T>(SpawnPoint spawnPoint) where T : StageEntity
+    StageEntity SpawnEntity(StageEntity.ClassType classType, SpawnPoint spawnPoint)
     {
-        return SpawnEntity<T>(spawnPoint.position);
-    }
-
-    GameObject SpawnEntity(StageEntity.ClassType classType, SpawnPoint spawnPoint)
-    {
-        GameObject newEntity = null;
+        StageEntity newEntity = null;
         switch (classType)
         {
             case StageEntity.ClassType.CLOUD:
-                newEntity = Stage.Entities.CreateEntity<CloudEntity>().gameObject;
+                newEntity = SpawnEntity<CloudEntity>(spawnPoint.position);
                 break;
             case StageEntity.ClassType.PLANE:
-                newEntity = Stage.Entities.CreateEntity<PlaneEntity>().gameObject;
+                newEntity = SpawnEntity<PlaneEntity>(spawnPoint.position);
                 break;
             case StageEntity.ClassType.BLIMP:
-                newEntity = Stage.Entities.CreateEntity<BlimpEntity>().gameObject;
+                newEntity = SpawnEntity<BlimpEntity>(spawnPoint.position);
                 break;
         }
 
         // Set the position
         newEntity.transform.position = spawnPoint.position;
+
+        // Update the state of the spawn point
+        spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
 
         return newEntity;
     }
@@ -301,13 +312,16 @@ public class Spawner : MonoBehaviour
             int randomIndex = UnityEngine.Random.Range(0, _entitySpawnSettings.Count);
             EntitySpawnSettings randomEntitySettings = _entitySpawnSettings[randomIndex];
 
+            // Check to see if the entity can be spawned
+            if (!CanSpawnEntity(randomEntitySettings.entityType)) continue;
+
             // Roll the dice to see if we should spawn this entity
             float randomChance = UnityEngine.Random.Range(0f, 1f);
             if (randomChance <= randomEntitySettings.spawnChance)
             {
-                SpawnEntity(randomEntitySettings.entityType, randSpawnPoint);
+                StageEntity entity = SpawnEntity(randomEntitySettings.entityType, randSpawnPoint);
+                entity.SetTargetRotation(Stage.Instance.stageCenter);
             }
-
         }
     }
     #endregion

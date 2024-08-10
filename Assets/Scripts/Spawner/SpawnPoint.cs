@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using Darklight.UnityExt.Behaviour;
 using Darklight.UnityExt.Editor;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,9 +12,12 @@ public class SpawnPoint
     public enum State { DISABLED, AVAILABLE, SPAWNING }
     public class StateMachine : FiniteStateMachine<State>
     {
+        public Spawner spawner;
         public SpawnPoint spawnPoint;
-        public StateMachine(SpawnPoint spawnPoint)
+        public StateMachine(Spawner spawner, SpawnPoint spawnPoint)
         {
+            this.spawner = spawner;
+            this.spawnPoint = spawnPoint;
             possibleStates = new Dictionary<State, FiniteState<State>>
             {
                 { State.DISABLED, new DisabledState(this, State.DISABLED) },
@@ -22,6 +27,11 @@ public class SpawnPoint
 
             // Set the initial state
             GoToState(State.DISABLED);
+        }
+
+        public void GoToStateWithDelay(State state, float delay)
+        {
+            spawner.GoToStateWitDelay(spawnPoint, state, delay);
         }
 
         public class DisabledState : FiniteState<State>
@@ -42,28 +52,28 @@ public class SpawnPoint
 
         public class SpawningState : FiniteState<State>
         {
-            public SpawningState(FiniteStateMachine<State> stateMachine, State stateType) : base(stateMachine, stateType) { }
-            public override void Enter() { }
+            StateMachine _stateMachine;
+            public SpawningState(StateMachine stateMachine, State stateType) : base(stateMachine, stateType)
+            {
+                _stateMachine = stateMachine;
+            }
+            public override void Enter()
+            {
+                _stateMachine.GoToStateWithDelay(State.AVAILABLE, _stateMachine.spawner.spawnDelay);
+            }
             public override void Execute() { }
             public override void Exit() { }
         }
     }
     StateMachine _stateMachine;
-    public StateMachine stateMachine
-    {
-        get
-        {
-            if (_stateMachine == null)
-                _stateMachine = new StateMachine(this);
-            return _stateMachine;
-        }
-        private set => _stateMachine = value;
-    }
-    public SpawnPoint.State CurrentState => stateMachine.CurrentState;
-    public void GoToState(State state) => stateMachine.GoToState(state);
+    public SpawnPoint.State CurrentState => _stateMachine.CurrentState;
+    public void GoToState(State state) => _stateMachine.GoToState(state);
+
+
     #endregion
 
     // ---------- Data ----------
+    Spawner _spawner;
     [SerializeField, ShowOnly] int _index;
     [SerializeField, ShowOnly] Vector3 _position;
 
@@ -72,18 +82,22 @@ public class SpawnPoint
     public Vector3 position => _position;
 
     // ---------- Constructor ----------
-    public SpawnPoint(int index, Vector3 position) : base()
+    public SpawnPoint(Spawner spawner, int index, Vector3 position) : base()
     {
+        this._spawner = spawner;
         this._index = index;
         this._position = position;
 
         // Initialize the state machine
-        stateMachine = new StateMachine(this);
+        _stateMachine = new StateMachine(_spawner, this);
     }
 
     public Color GetColor()
     {
-        switch (stateMachine.CurrentState)
+        if (_stateMachine == null)
+            return Color.white;
+
+        switch (_stateMachine.CurrentState)
         {
             case State.DISABLED:
                 return Color.grey;
