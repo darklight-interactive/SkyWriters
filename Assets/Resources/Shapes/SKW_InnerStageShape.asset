@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9defe3141709a344082907711b8b1e4c, type: 3}
-  m_Name: SKW_PlayerSpawnShape
+  m_Name: SKW_InnerStageShape
   m_EditorClassIdentifier: 
-  _radius: 500
-  _segments: 8
+  _radius: 250
+  _segments: 3
+  _gizmoColor: {r: 0, g: 0, b: 0, a: 1}

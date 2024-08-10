@@ -28,8 +28,18 @@ public class Stage : MonoBehaviourSingleton<Stage>
 
     // -------------- Data ------------------------
     Dictionary<LocalPlayerInputData, PlaneEntity> _players = new();
+
+    [Header("Data")]
     [SerializeField, Expandable] StageData_Settings _settings;
     [SerializeField, Expandable] StageData_Entities _entities;
+
+    [Header("Registry")]
+    [SerializeField] StageRegistry _stageRegistry = new();
+
+    [Header("Spawners")]
+    public Spawner spawner_innerStage;
+    public Spawner spawner_middleStage;
+    public Spawner spawner_outerStage;
 
     // -------------- References ------------------------
     public Vector3 stageCenter => transform.position;
@@ -46,19 +56,14 @@ public class Stage : MonoBehaviourSingleton<Stage>
             LocalPlayerInputManager.Instance.OnAddLocalPlayerInput += AssignPlayerToPlane;
 
             FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
-            //FMOD_EventManager.Instance.PlayStartInteractionEvent();
         }
+
+        _stageRegistry = new StageRegistry();
     }
 
     void OnDrawGizmos()
     {
         if (_settings == null) return;
-
-        // Draw the stage radius
-        //CustomGizmos_DrawCircle(stageCenter, stageRadius, Vector3.up, Color.green);
-
-        // Draw the spawn area
-        //CustomGizmos_DrawCircle(transform.position, _stageRadius + _spawnRadiusOffset, Vector3.up, Color.yellow);
 
         // Draw the wind direction
         Gizmos.color = Color.white;
@@ -79,9 +84,6 @@ public class Stage : MonoBehaviourSingleton<Stage>
     {
         return Physics.OverlapSphere(stageCenter, radius);
     }
-
-
-
     #endregion
 
     #region (( ---- Entity Handling ---- ))
@@ -151,6 +153,33 @@ public class Stage : MonoBehaviourSingleton<Stage>
         return distance >= minRadius && distance <= maxRadius;
     }
     #endregion
-
-
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(Stage))]
+public class StageCustomEditor : Editor
+{
+    SerializedObject _serializedObject;
+    Stage _script;
+    private void OnEnable()
+    {
+        _serializedObject = new SerializedObject(target);
+        _script = (Stage)target;
+        _script.Initialize();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        _serializedObject.Update();
+
+        EditorGUI.BeginChangeCheck();
+
+        base.OnInspectorGUI();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            _serializedObject.ApplyModifiedProperties();
+        }
+    }
+}
+#endif

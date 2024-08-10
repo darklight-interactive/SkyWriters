@@ -90,6 +90,7 @@ public class SpawnPoint
 
         // Initialize the state machine
         _stateMachine = new StateMachine(_spawner, this);
+        _stateMachine.GoToState(_spawner.spawnPoint_defaultState);
     }
 
     public Color GetColor()

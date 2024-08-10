@@ -7,9 +7,6 @@ using System;
 using Darklight.UnityExt.Editor;
 using Unity.VisualScripting;
 
-
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -29,7 +26,6 @@ public class Spawner : MonoBehaviour
     // ---------------- Data ----------------------
     Shape2D _shape2D;
     List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
-    Dictionary<StageEntity.ClassType, List<StageEntity>> _spawnedEntities = new();
     Coroutine _spawnRoutine;
 
     // ---------------- Serialized Data ----------------------
@@ -61,6 +57,7 @@ public class Spawner : MonoBehaviour
     // ---------------- References ----------------------
     public bool active => _active;
     public float spawnDelay => _spawnDelay;
+    public SpawnPoint.State spawnPoint_defaultState => _spawnPoint_defaultState;
 
     #region ================= [[ UNITY METHODS ]] ================= >>
     void Start()
@@ -73,7 +70,7 @@ public class Spawner : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (_shape2D != null) _shape2D.DrawGizmos(gizmoColor);
+        if (_shape2D != null) _shape2D.DrawGizmos();
 
         foreach (SpawnPoint spawnPoint in _spawnPoints)
         {
@@ -84,9 +81,18 @@ public class Spawner : MonoBehaviour
     #endregion
 
     #region ================= [[ BASE METHODS ]] ================= >>
+    public void SpawnEntityAtRandomAvailable(StageEntity.ClassType classType)
+    {
+        SpawnPoint spawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
+        if (spawnPoint == null) return;
+
+        SpawnEntity(classType, spawnPoint);
+    }
+
     public void Refresh()
     {
-        _shape2D = _shape2DPreset.CreateShapeAt(transform.position);
+        // Create the shape2D object
+        _shape2D = _shape2DPreset.CreateShape2D(transform.position);
         GenerateSpawnPoints();
 
         if (_primaryA != null && _primaryA_index < _spawnPoints.Count)
@@ -107,6 +113,7 @@ public class Spawner : MonoBehaviour
         {
             SpawnPoint newSpawnPoint = new SpawnPoint(this, i, _shape2D.vertices[i]);
             _spawnPoints.Add(newSpawnPoint);
+
         }
     }
 
@@ -203,16 +210,18 @@ public class Spawner : MonoBehaviour
         StageEntity.ClassType classType = GetClassType<T>();
 
         // Check if we can spawn this entity
-        if (!CanSpawnEntity(classType)) return null;
+        if (StageRegistry.IsCollectionFull(classType))
+        {
+            Debug.LogWarning($"{PREFIX} Cannot spawn entity of type {classType} because the collection is full", this);
+            return null;
+        }
 
         // Create the entity
         T newEntity = Stage.Entities.CreateEntity<T>();
         newEntity.transform.position = position;
 
-        // Add to the dictionary
-        if (!_spawnedEntities.ContainsKey(newEntity.classType))
-            _spawnedEntities.Add(newEntity.classType, new List<StageEntity>());
-        _spawnedEntities[newEntity.classType].Add(newEntity);
+        // Register the entity
+        StageRegistry.RegisterEntity(newEntity);
 
         return newEntity;
     }
@@ -248,23 +257,6 @@ public class Spawner : MonoBehaviour
         if (typeof(T) == typeof(PlaneEntity)) return StageEntity.ClassType.PLANE;
         if (typeof(T) == typeof(BlimpEntity)) return StageEntity.ClassType.BLIMP;
         return StageEntity.ClassType.NULL;
-    }
-
-    int GetEntityCount(StageEntity.ClassType classType)
-    {
-        return _spawnedEntities.ContainsKey(classType) ? _spawnedEntities[classType].Count : 0;
-    }
-
-    bool CanSpawnEntity(StageEntity.ClassType classType)
-    {
-        foreach (EntitySpawnSettings settings in _entitySpawnSettings)
-        {
-            if (settings.entityType == classType)
-            {
-                return GetEntityCount(classType) < settings.maxCount;
-            }
-        }
-        return false;
     }
     #endregion
 
@@ -306,14 +298,12 @@ public class Spawner : MonoBehaviour
 
             // Get a random spawn point
             SpawnPoint randSpawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
+            if (randSpawnPoint == null) continue;
 
             // Get random entity settings
             if (_entitySpawnSettings.Count == 0) continue;
             int randomIndex = UnityEngine.Random.Range(0, _entitySpawnSettings.Count);
             EntitySpawnSettings randomEntitySettings = _entitySpawnSettings[randomIndex];
-
-            // Check to see if the entity can be spawned
-            if (!CanSpawnEntity(randomEntitySettings.entityType)) continue;
 
             // Roll the dice to see if we should spawn this entity
             float randomChance = UnityEngine.Random.Range(0f, 1f);
