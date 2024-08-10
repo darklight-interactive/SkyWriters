@@ -1,3 +1,4 @@
+using System;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -7,14 +8,19 @@ public class StageData_Entities : ScriptableObject
     [Header("Cloud Settings")]
     [SerializeField] GameObject _cloudPrefab;
     [Expandable, SerializeField] StageEntityPreset _cloudPreset;
+    public int maxClouds = 100;
+
 
     [Header("Plane Settings")]
     [SerializeField] GameObject _planePrefab;
     [Expandable, SerializeField] StageEntityPreset _planePreset;
+    public int maxPlanes = 8;
+
 
     [Header("Blimp Settings")]
     [SerializeField] GameObject _blimpPrefab;
     [Expandable, SerializeField] StageEntityPreset _blimpPreset;
+    public int maxBlimps = 2;
 
     public T CreateEntity<T>() where T : StageEntity
     {
@@ -41,4 +47,20 @@ public class StageData_Entities : ScriptableObject
         newEntity.Initialize(preset);
         return newEntity;
     }
+
+    public int GetMaxEntities(StageEntity.ClassType classType)
+    {
+        switch (classType)
+        {
+            case StageEntity.ClassType.CLOUD:
+                return maxClouds;
+            case StageEntity.ClassType.PLANE:
+                return maxPlanes;
+            case StageEntity.ClassType.BLIMP:
+                return maxBlimps;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
 }

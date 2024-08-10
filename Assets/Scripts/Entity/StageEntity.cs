@@ -18,7 +18,7 @@ public class StageEntity : MonoBehaviour
     /// <summary>
     /// An enum to represent the entity's class type
     /// </summary>
-    public enum Class { NULL, PLANE, CLOUD, BLIMP }
+    public enum ClassType { NULL, PLANE, CLOUD, BLIMP }
 
     /// <summary>
     /// Get the enum type of the entity from a subclass of StageEntity
@@ -29,22 +29,22 @@ public class StageEntity : MonoBehaviour
     /// <returns>
     ///     The enum value of the entity's class type
     /// </returns>
-    public static Class GetEnumTypeFromSubclass<T>() where T : StageEntity
+    public static ClassType GetEnumTypeFromSubclass<T>() where T : StageEntity
     {
         Type entityType = typeof(T);
         Type stageEntityType = typeof(StageEntity);
         if (!entityType.IsSubclassOf(stageEntityType))
         {
             Debug.LogError($"Type {entityType} is not a subclass of StageEntity.");
-            return Class.NULL;
+            return ClassType.NULL;
         }
 
         switch (entityType)
         {
-            case Type t when t == typeof(PlaneEntity): return Class.PLANE;
-            case Type t when t == typeof(CloudEntity): return Class.CLOUD;
-            case Type t when t == typeof(BlimpEntity): return Class.BLIMP;
-            default: return Class.NULL;
+            case Type t when t == typeof(PlaneEntity): return ClassType.PLANE;
+            case Type t when t == typeof(CloudEntity): return ClassType.CLOUD;
+            case Type t when t == typeof(BlimpEntity): return ClassType.BLIMP;
+            default: return ClassType.NULL;
         }
     }
 
@@ -54,7 +54,7 @@ public class StageEntity : MonoBehaviour
     public class Data
     {
         public int entityId { get; private set; } = -1;
-        public StageEntity.Class type { get; private set; } = Class.NULL;
+        public StageEntity.ClassType type { get; private set; } = ClassType.NULL;
 
         // ---- Rules ----
         public bool respawnOnExit { get; private set; } = true;
@@ -203,10 +203,22 @@ public class StageEntity : MonoBehaviour
     #endregion
 
     // ==== Private Properties =================================  ))
+    ClassType _classType;
     StateMachine _stateMachine;
     Data _data;
 
+
     // ==== Public Properties ================================== ))
+
+    public ClassType classType
+    {
+        get
+        {
+            if (_preset != null) { _classType = _preset.type; }
+            return _classType;
+        }
+    }
+
     public Data data
     {
         get
@@ -353,6 +365,8 @@ public class StageEntity : MonoBehaviour
         if (preset == null) return;
         _preset = preset;
         _data = new Data(preset);
+
+
     }
 
     void LoadColliderSettings()

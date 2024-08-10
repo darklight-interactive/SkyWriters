@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SKW_BlimpSpawnShape
   m_EditorClassIdentifier: 
   _radius: 1500
-  _segments: 3
+  _segments: 5

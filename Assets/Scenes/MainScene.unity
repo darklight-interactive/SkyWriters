@@ -394,8 +394,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shape2DPreset: {fileID: 11400000, guid: 333623434e24fd34bbfae030ec516939, type: 2}
+  _active: 0
   _tickSpeed: 2
-  _defaultState: 1
+  _spawnPoint_defaultState: 1
+  _entitySpawnSettings: []
   _primaryA:
     _index: 0
     _position: {x: 500, y: -500, z: 0}
@@ -1663,13 +1665,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shape2DPreset: {fileID: 11400000, guid: c2f11b6109f2b5246b1f6cb5c68daa98, type: 2}
+  _active: 0
   _tickSpeed: 2
-  _defaultState: 1
+  _spawnPoint_defaultState: 1
+  _entitySpawnSettings:
+  - entityType: 3
+    maxCount: 2
+    spawnChance: 0.5
   _primaryA:
     _index: 0
     _position: {x: 1500, y: -500, z: 0}
   _primaryA_index: 0
-  _primaryA_neighborInfluence: 2
+  _primaryA_neighborInfluence: 3
   _primaryA_state: 1
   showGizmos: 1
   gimzoSize: 60

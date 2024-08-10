@@ -3,6 +3,10 @@ using Darklight.UnityExt.Behaviour;
 using UnityEngine;
 using NaughtyAttributes;
 using System.Collections;
+using System;
+using Darklight.UnityExt.Editor;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,17 +16,32 @@ public class Spawner : MonoBehaviour
 {
     const string PREFIX = "[Spawner]";
 
+    [System.Serializable]
+    public class EntitySpawnSettings
+    {
+        public StageEntity.ClassType entityType;
+        [Range(0, 100)] public int maxCount;
+        [Range(0, 1)] public float spawnChance;
+    }
+
     // ---------------- Data ----------------------
     Shape2D _shape2D;
     List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
+    Dictionary<StageEntity.ClassType, List<StageEntity>> _spawnedEntities = new();
     Coroutine _spawnRoutine;
 
     // ---------------- Serialized Data ----------------------
     [SerializeField, Expandable] Shape2DPreset _shape2DPreset;
 
+    [HorizontalLine, Header("Live Data")]
+    [SerializeField, ShowOnly] bool _active = false;
+
     [HorizontalLine, Header("Settings")]
     [SerializeField, Range(1, 10)] float _tickSpeed = 2;
-    [SerializeField] SpawnPoint.State _defaultState = SpawnPoint.State.AVAILABLE;
+    [SerializeField] SpawnPoint.State _spawnPoint_defaultState = SpawnPoint.State.AVAILABLE;
+
+    [Header("Entity Settings")]
+    public List<EntitySpawnSettings> _entitySpawnSettings = new List<EntitySpawnSettings>();
 
 
     [HorizontalLine, Header("Primary Points")]
@@ -38,7 +57,8 @@ public class Spawner : MonoBehaviour
     public Color gizmoColor = Color.gray;
 
     // ---------------- References ----------------------
-    public bool active => _spawnRoutine == null;
+    public bool active => _active;
+
 
     #region ================= [[ UNITY METHODS ]] ================= >>
     void Start()
@@ -75,8 +95,6 @@ public class Spawner : MonoBehaviour
             List<SpawnPoint> affectedNeighbors = GetSpawnPoint_Neighbors(_primaryA_index, _primaryA_neighborInfluence);
             SetPointsToState(affectedNeighbors, _primaryA_state);
         }
-
-
     }
 
     #region --------- ( Handle Spawn Points ) ---------
@@ -146,7 +164,7 @@ public class Spawner : MonoBehaviour
     {
         List<SpawnPoint> points = GetAllSpawnPoints_InState(state);
         if (points.Count == 0) return null;
-        return points[Random.Range(0, points.Count)];
+        return points[UnityEngine.Random.Range(0, points.Count)];
     }
 
     #endregion
@@ -166,70 +184,133 @@ public class Spawner : MonoBehaviour
     #endregion
 
     #region --------- ( Handle Entities ) ---------
-    public T SpawnEntityAt<T>(Vector3 position) where T : StageEntity
+    T SpawnEntity<T>(Vector3 position) where T : StageEntity
     {
+        // Get the class type enum
+        StageEntity.ClassType classType = GetClassType<T>();
+
+        // Check if we can spawn this entity
+        if (!CanSpawnEntity(classType)) return null;
+
+        // Create the entity
         T newEntity = Stage.Entities.CreateEntity<T>();
         newEntity.transform.position = position;
+
+        // Add to the dictionary
+        if (!_spawnedEntities.ContainsKey(newEntity.classType))
+            _spawnedEntities.Add(newEntity.classType, new List<StageEntity>());
+        _spawnedEntities[newEntity.classType].Add(newEntity);
+
         return newEntity;
     }
 
-    public T SpawnEntityAt<T>(SpawnPoint spawnPoint) where T : StageEntity
+    T SpawnEntity<T>(SpawnPoint spawnPoint) where T : StageEntity
     {
-        return SpawnEntityAt<T>(spawnPoint.position);
+        return SpawnEntity<T>(spawnPoint.position);
+    }
+
+    GameObject SpawnEntity(StageEntity.ClassType classType, SpawnPoint spawnPoint)
+    {
+        GameObject newEntity = null;
+        switch (classType)
+        {
+            case StageEntity.ClassType.CLOUD:
+                newEntity = Stage.Entities.CreateEntity<CloudEntity>().gameObject;
+                break;
+            case StageEntity.ClassType.PLANE:
+                newEntity = Stage.Entities.CreateEntity<PlaneEntity>().gameObject;
+                break;
+            case StageEntity.ClassType.BLIMP:
+                newEntity = Stage.Entities.CreateEntity<BlimpEntity>().gameObject;
+                break;
+        }
+
+        // Set the position
+        newEntity.transform.position = spawnPoint.position;
+
+        return newEntity;
+    }
+
+    StageEntity.ClassType GetClassType<T>() where T : StageEntity
+    {
+        if (typeof(T) == typeof(CloudEntity)) return StageEntity.ClassType.CLOUD;
+        if (typeof(T) == typeof(PlaneEntity)) return StageEntity.ClassType.PLANE;
+        if (typeof(T) == typeof(BlimpEntity)) return StageEntity.ClassType.BLIMP;
+        return StageEntity.ClassType.NULL;
+    }
+
+    int GetEntityCount(StageEntity.ClassType classType)
+    {
+        return _spawnedEntities.ContainsKey(classType) ? _spawnedEntities[classType].Count : 0;
+    }
+
+    bool CanSpawnEntity(StageEntity.ClassType classType)
+    {
+        foreach (EntitySpawnSettings settings in _entitySpawnSettings)
+        {
+            if (settings.entityType == classType)
+            {
+                return GetEntityCount(classType) < settings.maxCount;
+            }
+        }
+        return false;
     }
     #endregion
 
 
     #endregion
-
-
 
     #region ================= [[ SPAWNER ROUTINE ]] ================= >>
     public void BeginSpawnRoutine()
     {
-        if (active) return;
+        if (_active) return;
+        _active = true;
+
         _spawnRoutine = StartCoroutine(SpawnRoutine());
+
+        Debug.Log($"{PREFIX} Spawn Routine Started", this);
     }
 
     public void EndSpawnRoutine()
     {
-        if (_spawnRoutine == null) return;
-        StopCoroutine(_spawnRoutine);
-        _spawnRoutine = null;
+        if (!_active) return;
+        _active = false;
+
+        if (_spawnRoutine != null)
+        {
+            StopCoroutine(_spawnRoutine);
+            _spawnRoutine = null;
+        }
+
+        Debug.Log($"{PREFIX} Spawn Routine Ended", this);
     }
 
     IEnumerator SpawnRoutine()
     {
-        Debug.Log($"{PREFIX} Spawn Routine Started");
         int tickCount = 0;
-
-        yield return new WaitForSeconds(1);
-
-        while (active)
+        while (_active)
         {
             yield return new WaitForSeconds(_tickSpeed);
             tickCount++;
 
+            // Get a random spawn point
             SpawnPoint randSpawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
 
-            /*
-            CloudEntity newCloud = StageManager.Instance.SpawnEntity<CloudEntity>(randSpawnPosition);
-            newCloud.SetTargetRotation(StageManager.WindDirection, true);
-            */
+            // Get random entity settings
+            if (_entitySpawnSettings.Count == 0) continue;
+            int randomIndex = UnityEngine.Random.Range(0, _entitySpawnSettings.Count);
+            EntitySpawnSettings randomEntitySettings = _entitySpawnSettings[randomIndex];
 
-            if (tickCount % 3 == 0)
+            // Roll the dice to see if we should spawn this entity
+            float randomChance = UnityEngine.Random.Range(0f, 1f);
+            if (randomChance <= randomEntitySettings.spawnChance)
             {
-                BlimpEntity newBlimp = SpawnEntityAt<BlimpEntity>(randSpawnPoint);
-                newBlimp.SetTargetRotation(Stage.Settings.windDirection, true);
+                SpawnEntity(randomEntitySettings.entityType, randSpawnPoint);
             }
+
         }
     }
     #endregion
-
-
-
-
-
 }
 
 
