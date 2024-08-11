@@ -97,6 +97,10 @@ public class Spawner : MonoBehaviour
         spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
 
         StageEntity entity = EntityRegistry.CreateNewEntity(entityClass);
+        if (entity == null) return null;
+
+        entity.transform.position = spawnPoint.position;
+        guiConsole.Log($"{PREFIX} Spawned {entityClass} at {spawnPoint.position}");
         return entity;
     }
 

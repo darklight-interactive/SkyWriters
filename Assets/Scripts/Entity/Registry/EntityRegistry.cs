@@ -80,14 +80,16 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
             return null;
         }
 
+        // Use custom settings if provided, otherwise, find the default settings for this entity type
+        EntitySettings settings = customSettings;
         switch (entityClass)
         {
             case StageEntity.Class.CLOUD:
-                return CreateNewEntity<CloudEntity>(customSettings);
+                return CreateNewEntity<CloudEntity>(settings);
             case StageEntity.Class.PLANE:
-                return CreateNewEntity<PlaneEntity>(customSettings);
+                return CreateNewEntity<PlaneEntity>(settings);
             case StageEntity.Class.BLIMP:
-                return CreateNewEntity<BlimpEntity>(customSettings);
+                return CreateNewEntity<BlimpEntity>(settings);
             default:
                 return null;
         }

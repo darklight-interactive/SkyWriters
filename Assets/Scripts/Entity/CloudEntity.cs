@@ -9,13 +9,24 @@ public class CloudEntity : StageEntity
     VFX_ParticleSystemHandler _cloudParticleHandler;
     VFX_ParticleSystemHandler _cloudBurstParticleHandler;
 
+    CloudEntitySettings _cloudSettings => (CloudEntitySettings)settings;
+
     public override void Initialize(EntitySettings settings)
     {
         base.Initialize(settings);
 
+        // Assign a random color from the weights
+        currentColorDataObject = _cloudSettings.GetRandomColorFromWeights();
+        currentGradientData = new VFX_GradientData(currentColorDataObject, 0.0f);
+
         CreateCloudParticles();
 
         OnTriggerEntered += HandleTriggerEntered;
+    }
+
+    public override void LoadSettings(EntitySettings settings)
+    {
+        base.LoadSettings(settings);
     }
 
     void HandleTriggerEntered(Collider other)
@@ -23,7 +34,7 @@ public class CloudEntity : StageEntity
         if (other.GetComponent<PlaneEntity>())
         {
             PlaneEntity plane = other.GetComponent<PlaneEntity>();
-            plane.CollectNewColor(currentColor);
+            plane.CollectNewColor(currentColorDataObject);
 
             if (Application.isPlaying)
             {
@@ -33,18 +44,13 @@ public class CloudEntity : StageEntity
         }
     }
 
-    public void SetColor(VFX_ColorDataObject colorData)
-    {
-        currentColor = colorData;
-        currentGradientData = new VFX_GradientData(new VFX_ColorDataObject[] { colorData });
-    }
-
     void CreateCloudParticles()
     {
         ParticleSystem cloudParticles = VFX_Manager.Instance.cloudParticles;
 
         _cloudParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudParticles, transform);
 
+        // Apply the gradient to the particle system
         _cloudParticleHandler.ApplyGradient(currentGradientData.gradient);
         _cloudParticleHandler.Play();
     }

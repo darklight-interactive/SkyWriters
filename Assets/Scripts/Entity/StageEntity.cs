@@ -5,6 +5,8 @@ using Darklight.UnityExt.Behaviour;
 using System.Collections;
 using System;
 using Unity.VisualScripting;
+using FMODUnity;
+
 
 
 
@@ -60,6 +62,9 @@ public class StageEntity : MonoBehaviour
         [SerializeField] float _lifeSpan = -1f;
         public float lifeSpan => _lifeSpan;
 
+        [Header("---- VFX ----")]
+        public VFX_ColorDataObject _startColor;
+
         // ---- Constructors ----
         public Data() { }
         public Data(Data originData)
@@ -73,6 +78,8 @@ public class StageEntity : MonoBehaviour
             _rotationSpeed = originData.rotationSpeed;
             _windResistance = originData.windResistance;
             _lifeSpan = originData.lifeSpan;
+
+            _startColor = originData._startColor;
         }
     }
     #endregion
@@ -260,10 +267,11 @@ public class StageEntity : MonoBehaviour
     protected Rigidbody rb => GetComponent<Rigidbody>();
     protected CapsuleCollider col => GetComponent<CapsuleCollider>();
     protected int id => GetInstanceID();
+    protected EntitySettings settings => _settings;
 
     // ==== Serialized Fields =================================== ))
     [Header("Live Data")]
-    [SerializeField] protected VFX_ColorDataObject currentColor;
+    [SerializeField] protected VFX_ColorDataObject currentColorDataObject;
     [SerializeField] protected VFX_GradientData currentGradientData;
     [SerializeField, ShowOnly] protected State currentState; // The current state of the entity
     [SerializeField, ShowOnly] protected float currSpeed; // The current speed of the entity
@@ -334,18 +342,7 @@ public class StageEntity : MonoBehaviour
         }
     }
 
-    public virtual void ReloadSettings()
-    {
-        if (_settings == null)
-        {
-            Debug.LogError("No settings found for " + gameObject.name, this);
-            return;
-        }
-
-        LoadSettings(_settings);
-    }
-
-    void LoadSettings(EntitySettings settings)
+    public virtual void LoadSettings(EntitySettings settings)
     {
         if (settings == null) return;
         _settings = settings;
@@ -356,6 +353,17 @@ public class StageEntity : MonoBehaviour
         col.radius = data.colliderRadius;
         col.direction = 2; // Set to the Z axis , inline with the forward direction of the object
         col.center = Vector3.zero;
+    }
+
+    public virtual void ReloadSettings()
+    {
+        if (_settings == null)
+        {
+            Debug.LogError("No settings found for " + gameObject.name, this);
+            return;
+        }
+
+        LoadSettings(_settings);
     }
 
     protected virtual void UpdateMovement()
