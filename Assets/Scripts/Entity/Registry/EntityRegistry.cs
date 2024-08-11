@@ -160,7 +160,7 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     {
         if (!_registry.ContainsKey(entityClass))
         {
-            _registry.Add(entityClass, new EntityCollection(entityClass));
+            _registry.Add(entityClass, new EntityCollection(entityClass, 32));
         }
         return _registry[entityClass];
     }
@@ -214,9 +214,9 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     public override void Initialize()
     {
         _registry.Clear();
-        _registry.Add(StageEntity.Class.CLOUD, new EntityCollection(StageEntity.Class.CLOUD), 999);
-        _registry.Add(StageEntity.Class.PLANE, new EntityCollection(StageEntity.Class.PLANE), 8);
-        _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP), 4);
+        _registry.Add(StageEntity.Class.CLOUD, new EntityCollection(StageEntity.Class.CLOUD, 999));
+        _registry.Add(StageEntity.Class.PLANE, new EntityCollection(StageEntity.Class.PLANE, 8));
+        _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP, 4));
     }
 
     void Update()
