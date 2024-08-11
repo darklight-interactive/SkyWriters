@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 using Darklight.UnityExt.FMODExt;
+using Darklight.UnityExt.Editor;
+
 
 
 #if UNITY_EDITOR
@@ -27,6 +29,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
     // -------------- Data ------------------------
     Dictionary<LocalPlayerInputData, PlaneEntity> _players = new();
 
+
     [Header("Data")]
     [SerializeField, Expandable] StageData_Settings _settings;
 
@@ -35,11 +38,17 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public Spawner spawner_middleStage;
     public Spawner spawner_outerStage;
 
+    [Header("Wind")]
+    [SerializeField, ShowOnly] float _targetWindRotation = 0f;
+    [SerializeField, ShowOnly] float _targetWindIntensity = 0f;
+
+    [SerializeField, ShowOnly] float _curr_windDirection = 0f;
+    [SerializeField, ShowOnly] float _curr_windIntensity = 0f;
+
     // -------------- References ------------------------
     public Vector3 stageCenter => transform.position;
     public float stageRadius => _settings.stageRadius;
-    public float windDirection => _settings.windDirection;
-    public float windIntensity => _settings.windIntensity;
+
 
 
     #region ================= [[ UNITY METHODS ]] ================= >>
@@ -49,8 +58,15 @@ public class Stage : MonoBehaviourSingleton<Stage>
         {
             LocalPlayerInputManager.Instance.OnAddLocalPlayerInput += AssignPlayerToPlane;
 
-            //FMOD_EventManager.Instance.PlaySceneBackgroundMusic("MainScene");
+            StartWindRoutine();
         }
+    }
+
+    public void Update()
+    {
+        // Update the wind direction
+        _curr_windDirection = Mathf.Lerp(_curr_windDirection, _targetWindRotation, Time.deltaTime);
+        _curr_windIntensity = Mathf.Lerp(_curr_windIntensity, _targetWindIntensity, Time.deltaTime);
     }
 
     void OnDrawGizmos()
@@ -65,7 +81,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
 
         // Draw the wind direction
         Gizmos.color = Color.white;
-        Vector3 windDir = Quaternion.AngleAxis(windDirection, Vector3.up) * Vector3.forward;
+        Vector3 windDir = Quaternion.AngleAxis(_curr_windDirection, Vector3.up) * Vector3.forward;
         Gizmos.DrawLine(transform.position, transform.position + windDir * stageRadius);
     }
     #endregion
@@ -111,6 +127,27 @@ public class Stage : MonoBehaviourSingleton<Stage>
 
         _players.Add(playerInputData, newPlane);
         Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
+    }
+
+    #endregion
+
+    #region ================= [[ WIND MANAGEMENT ]] ================= >>
+
+    public void StartWindRoutine()
+    {
+        StartCoroutine(WindRoutine());
+    }
+
+    IEnumerator WindRoutine()
+    {
+        while (true)
+        {
+            Debug.Log($"{Prefix} Changing wind direction and intensity");
+            _targetWindRotation = Random.Range(0, 360);
+            _targetWindIntensity = Random.Range(0, 100);
+
+            yield return new WaitForSeconds(30f);
+        }
     }
 
     #endregion

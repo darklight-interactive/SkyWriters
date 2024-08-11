@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b851f5db53a2249dfb77fc4774be9760, type: 3}
-  m_Name: SKW_CloudSettings
+  m_Name: SKW_CloudSettings_Common
   m_EditorClassIdentifier: 
   _prefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c, type: 3}
   _data:

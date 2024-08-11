@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.26792946, g: 0.463935, b: 0.61439043, a: 1}
+  m_IndirectSpecularColor: {r: 0.26793307, g: 0.46431145, b: 0.6133213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -232,6 +232,10 @@ MonoBehaviour:
   spawner_innerStage: {fileID: 295614068}
   spawner_middleStage: {fileID: 498359091}
   spawner_outerStage: {fileID: 2105311728}
+  _targetWindRotation: 0
+  _targetWindIntensity: 0
+  _curr_windDirection: 0
+  _curr_windIntensity: 0
 --- !u!4 &277487365
 Transform:
   m_ObjectHideFlags: 0
@@ -364,8 +368,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cloudSettings: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
+  _cloudCollection:
+    _entityClass: 2
+    _entityLimit: 999
+    _entities: []
   _planeSettings: {fileID: 11400000, guid: 3d41c8897302dd749a23a877dbc2800f, type: 2}
+  _planeCollection:
+    _entityClass: 1
+    _entityLimit: 8
+    _entities: []
   _blimpSettings: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
+  _blimpCollection:
+    _entityClass: 3
+    _entityLimit: 4
+    _entities: []
 --- !u!1 &295614066
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,8 +428,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: fc936ffa973f473498da168828f331c7, type: 2}
   _active: 0
-  _tickSpeed: 2
-  _spawnDelay: 5
+  _tickSpeed: 10
+  _spawnDelay: 10
   _spawnPoint_defaultState: 1
   _primaryA:
     _index: 0
@@ -475,7 +491,7 @@ MonoBehaviour:
   _spawnPoint_defaultState: 1
   _primaryA:
     _index: 0
-    _position: {x: 1500, y: -500, z: 0}
+    _position: {x: 1000, y: -500, z: 0}
   _primaryA_index: 0
   _primaryA_neighborInfluence: 0
   _primaryA_state: 1

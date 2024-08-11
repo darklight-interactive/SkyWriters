@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b851f5db53a2249dfb77fc4774be9760, type: 3}
+  m_Name: SKW_CloudSettings_Rare
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c, type: 3}
+  _data:
+    _entityClass: 2
+    _respawnOnExit: 0
+    _colliderHeight: 150
+    _colliderRadius: 150
+    _moveSpeed: 0
+    _rotationSpeed: 0
+    _windResistance: 0
+    _lifeSpan: 30
+    _startColor: {fileID: 11400000, guid: 780a3478bb43047dbaf1a0c8fa076001, type: 2}
+  colorData:
+  - item: {fileID: 11400000, guid: 780a3478bb43047dbaf1a0c8fa076001, type: 2}
+    weight: 0.75
+  - item: {fileID: 11400000, guid: e158732c31c7d45379051ee50e8a76c9, type: 2}
+    weight: 0.25

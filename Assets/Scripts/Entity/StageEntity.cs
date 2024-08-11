@@ -456,7 +456,7 @@ public class StageEntity : MonoBehaviour
         // Destroy the object by default
         if (Application.isPlaying)
         {
-            Debug.Log("Destroying " + gameObject.name);
+            //Debug.Log("Destroying " + gameObject.name);
             EntityRegistry.RemoveFromRegistry(this);
             Destroy(gameObject);
         }
