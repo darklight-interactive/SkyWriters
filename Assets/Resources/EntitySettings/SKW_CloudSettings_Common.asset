@@ -25,9 +25,9 @@ MonoBehaviour:
     _startColor: {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}
   colorData:
   - item: {fileID: 11400000, guid: c280f28ec117bb84ca16b674783dbab8, type: 2}
-    weight: 0.1
+    weight: 0.25
   - item: {fileID: 11400000, guid: 7d73bf38972ee4e46b5f065b9c261214, type: 2}
-    weight: 0.1
+    weight: 0.25
   - item: {fileID: 11400000, guid: cca92f18653b07b4ba7ccefb45a9966a, type: 2}
     weight: 1
   - item: {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}

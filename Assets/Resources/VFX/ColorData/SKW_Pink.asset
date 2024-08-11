@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _colorData:
     _name: 
-    _color: {r: 1, g: 0.5, b: 1, a: 1}
+    _color: {r: 1, g: 0.25, b: 1, a: 1}
     _red: 1
-    _green: 0.5
+    _green: 0.25
     _blue: 1
     _alpha: 1
