@@ -25,6 +25,8 @@ public class Stage : MonoBehaviourSingleton<Stage>
 
     // ----------------- Static Properties -------------------
     public static StageData_Settings Settings => Instance._settings;
+    public static float WindDirection => Instance._curr_windDirection;
+    public static float WindIntensity => Instance._curr_windIntensity;
 
     // -------------- Data ------------------------
     Dictionary<LocalPlayerInputData, PlaneEntity> _players = new();
@@ -39,8 +41,8 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public Spawner spawner_outerStage;
 
     [Header("Wind")]
-    [SerializeField, ShowOnly] float _targetWindRotation = 0f;
-    [SerializeField, ShowOnly] float _targetWindIntensity = 0f;
+    [SerializeField, Range(0, 360)] float _targetWindRotation = 0f;
+    [SerializeField, Range(0, 500)] float _targetWindIntensity = 0f;
 
     [SerializeField, ShowOnly] float _curr_windDirection = 0f;
     [SerializeField, ShowOnly] float _curr_windIntensity = 0f;
@@ -54,6 +56,9 @@ public class Stage : MonoBehaviourSingleton<Stage>
     #region ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
     {
+        _targetWindRotation = _settings.windDirection;
+        _targetWindIntensity = _settings.windIntensity;
+
         if (Application.isPlaying)
         {
             LocalPlayerInputManager.Instance.OnAddLocalPlayerInput += AssignPlayerToPlane;

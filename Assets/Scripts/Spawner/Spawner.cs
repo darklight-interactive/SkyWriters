@@ -69,8 +69,6 @@ public class Spawner : MonoBehaviour
     }
     #endregion
 
-
-
     #region ================= [[ BASE METHODS ]] ================= >>
     public void Initialize()
     {
@@ -91,12 +89,12 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    public StageEntity SpawnEntityAtPoint(StageEntity.Class entityClass, SpawnPoint spawnPoint)
+    public StageEntity SpawnEntityAtPoint(StageEntity.Class entityClass, SpawnPoint spawnPoint, EntitySettings customSettings = null)
     {
         if (spawnPoint == null) return null;
         spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
 
-        StageEntity entity = EntityRegistry.CreateNewEntity(entityClass);
+        StageEntity entity = EntityRegistry.CreateNewEntity(entityClass, customSettings);
         if (entity == null)
         {
             Debug.LogWarning($"{PREFIX} EntityRegistry blocked new {entityClass}", this);
@@ -267,7 +265,8 @@ public class Spawner : MonoBehaviour
 
             // Spawn the entity
             StageEntity.Class entityClass = randomEntitySettings.data.entityClass;
-            SpawnEntityAtPoint(entityClass, randSpawnPoint);
+            SpawnEntityAtPoint(entityClass, randSpawnPoint, randomEntitySettings);
+
         }
     }
     #endregion
