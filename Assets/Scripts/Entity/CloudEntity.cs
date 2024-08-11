@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class CloudEntity : StageEntity
 {
-    VFX_ColorData _currentColor;
-    VFX_GradientData _currentGradient;
+
     VFX_ParticleSystemHandler _cloudParticleHandler;
     VFX_ParticleSystemHandler _cloudBurstParticleHandler;
 
@@ -25,7 +24,7 @@ public class CloudEntity : StageEntity
         if (other.GetComponent<PlaneEntity>())
         {
             PlaneEntity plane = other.GetComponent<PlaneEntity>();
-            plane.CollectNewColor(_currentColor);
+            plane.CollectNewColor(currentColor);
 
             if (Application.isPlaying)
             {
@@ -37,12 +36,12 @@ public class CloudEntity : StageEntity
 
     Gradient GetCurrentGradient()
     {
-        return VFX_Manager.Instance.defaultGradientData.CreateModifiedGradient(0, _currentColor);
+        return VFX_Manager.Instance.defaultGradientData.CreateModifiedGradient(0, currentColor);
     }
 
     public void SetMainColor(VFX_ColorData colorData)
     {
-        _currentColor = colorData;
+        currentColor = colorData;
     }
 
     void CreateCloudParticles()

@@ -231,8 +231,6 @@ public class StageEntity : MonoBehaviour
         }
     }
 
-
-
     public Vector3 position
     {
         get => transform.position;
@@ -265,11 +263,13 @@ public class StageEntity : MonoBehaviour
 
     // ==== Serialized Fields =================================== ))
     [Header("Live Data")]
-    [SerializeField, ShowOnly] protected State _currentState; // The current state of the entity
-    [SerializeField, ShowOnly] protected float _currSpeed; // The current speed of the entity
-    [SerializeField, ShowOnly] protected float _currSpeedMultiplier = 1; // The current speed multiplier of the entity
-    [SerializeField, ShowOnly] protected float _curr_rotAngle; // The current rotation angle of the entity
-    [SerializeField, ShowOnly] protected float _target_rotAngle; // The target rotation angle of the entity
+    [SerializeField] protected VFX_ColorData currentColor;
+    [SerializeField] protected VFX_GradientData currentGradient;
+    [SerializeField, ShowOnly] protected State currentState; // The current state of the entity
+    [SerializeField, ShowOnly] protected float currSpeed; // The current speed of the entity
+    [SerializeField, ShowOnly] protected float currSpeedMultiplier = 1; // The current speed multiplier of the entity
+    [SerializeField, ShowOnly] protected float curr_rotAngle; // The current rotation angle of the entity
+    [SerializeField, ShowOnly] protected float target_rotAngle; // The target rotation angle of the entity
 
     [HorizontalLine(), Header("Entity Settings")]
     [Expandable, SerializeField] protected EntitySettings _settings;
@@ -293,7 +293,7 @@ public class StageEntity : MonoBehaviour
         Vector3 entityPos = position;
 
         // Get the target position from _rotationDirection using pythagorean theorem
-        Vector3 targetPos = CalculateTargetPosition(entityPos, _target_rotAngle, data.moveSpeed * 2);
+        Vector3 targetPos = CalculateTargetPosition(entityPos, target_rotAngle, data.moveSpeed * 2);
 
         // Draw the target position and the line to it
         Gizmos.color = Color.red;
@@ -322,10 +322,10 @@ public class StageEntity : MonoBehaviour
         {
             // Create the state machine
             _stateMachine = new StateMachine(this);
-            _currentState = _stateMachine.CurrentState;
+            currentState = _stateMachine.CurrentState;
             _stateMachine.OnStateChanged += (state) =>
             {
-                _currentState = state;
+                currentState = state;
             };
 
             // Destroy this object after the lifespan
@@ -362,8 +362,8 @@ public class StageEntity : MonoBehaviour
     {
         // << FORCE >> ---------------- >>
         // Assign the general thrust velocity of the entity
-        Vector3 thrustVelocity = transform.forward * (data.moveSpeed * _currSpeedMultiplier);
-        _currSpeed = thrustVelocity.magnitude; // << Update the current speed
+        Vector3 thrustVelocity = transform.forward * (data.moveSpeed * currSpeedMultiplier);
+        currSpeed = thrustVelocity.magnitude; // << Update the current speed
 
         // Calculate the current wind velocity
         float windDirection = Stage.Settings.windDirection;
@@ -381,7 +381,7 @@ public class StageEntity : MonoBehaviour
         // << ROTATION >> ---------------- >>
         // Store the current and target rotation values in Euler Angles
         Vector3 vec3_currentRotation = rotation.eulerAngles;
-        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, _target_rotAngle, vec3_currentRotation.z);
+        Vector3 vec3_targetRotation = new Vector3(vec3_currentRotation.x, target_rotAngle, vec3_currentRotation.z);
 
         // Convert to Quaternions
         Quaternion q_currentRotation = rotation;
@@ -391,15 +391,15 @@ public class StageEntity : MonoBehaviour
         transform.rotation = Quaternion.Slerp(q_currentRotation, q_targetRotation, data.rotationSpeed * Time.fixedDeltaTime);
 
         // Update the current rotation angle
-        _curr_rotAngle = rotation.eulerAngles.y;
+        curr_rotAngle = rotation.eulerAngles.y;
     }
 
     protected virtual void ResetMovement()
     {
-        _currSpeedMultiplier = 0;
+        currSpeedMultiplier = 0;
 
         // Set the target rotation to the current rotation
-        _target_rotAngle = rotation.eulerAngles.y;
+        target_rotAngle = rotation.eulerAngles.y;
     }
     #endregion
 
@@ -412,18 +412,18 @@ public class StageEntity : MonoBehaviour
 
     public void SetTargetRotation(float angle, bool instant = false)
     {
-        _target_rotAngle = angle;
+        target_rotAngle = angle;
 
         if (instant)
         {
-            _curr_rotAngle = angle;
+            curr_rotAngle = angle;
             SetRotation(angle);
         }
     }
 
     public void SetTargetRotation(float offsetAngle)
     {
-        _target_rotAngle = _curr_rotAngle + offsetAngle;
+        target_rotAngle = curr_rotAngle + offsetAngle;
     }
 
     protected void SetRotation(float angle)

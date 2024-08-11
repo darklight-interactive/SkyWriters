@@ -124,12 +124,12 @@ public class PlaneEntity : StageEntity
     {
         // Set the target rotation value based on the direction of the x input
         float horz_inputDirection = moveInput.x * -90;
-        _target_rotAngle = rotation.eulerAngles.y + horz_inputDirection;
+        target_rotAngle = rotation.eulerAngles.y + horz_inputDirection;
 
         // Set the speed offset based on the direction of the z input
-        if (moveInput.y > 0) { _currSpeedMultiplier = _speedMultiplier_fast; }
-        else if (moveInput.y < 0) { _currSpeedMultiplier = _speedMultiplier_slow; }
-        else { _currSpeedMultiplier = 1f; }
+        if (moveInput.y > 0) { currSpeedMultiplier = _speedMultiplier_fast; }
+        else if (moveInput.y < 0) { currSpeedMultiplier = _speedMultiplier_slow; }
+        else { currSpeedMultiplier = 1f; }
 
     }
 
