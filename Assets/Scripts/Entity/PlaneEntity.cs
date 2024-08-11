@@ -121,10 +121,22 @@ public class PlaneEntity : StageEntity
         float horz_inputDirection = moveInput.x * -90;
         target_rotAngle = rotation.eulerAngles.y + horz_inputDirection;
 
+        PlaneEntitySettings settings = (PlaneEntitySettings)base.settings;
+
         // Set the speed offset based on the direction of the z input
-        if (moveInput.y > 0) { currSpeedMultiplier = _speedMultiplier_fast; }
-        else if (moveInput.y < 0) { currSpeedMultiplier = _speedMultiplier_slow; }
-        else { currSpeedMultiplier = 1f; }
+        if (moveInput.y > 0.5f)
+        {
+            currSpeedMultiplier = Mathf.Lerp(currSpeedMultiplier, _speedMultiplier_fast, settings.accelerationSpeed * Time.fixedDeltaTime);
+        }
+        else if (moveInput.y < -0.5f)
+        {
+            currSpeedMultiplier = Mathf.Lerp(currSpeedMultiplier, _speedMultiplier_slow, settings.accelerationSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            currSpeedMultiplier = Mathf.Lerp(currSpeedMultiplier, 1f, settings.accelerationSpeed * Time.fixedDeltaTime);
+        }
+
 
     }
 
