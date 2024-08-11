@@ -187,6 +187,9 @@ public class PlaneEntity : StageEntity
     #region ======================= [[ CONTRAILS ]] ============== 
     public void CollectNewColor(VFX_ColorDataObject newColor)
     {
+        if (_input.device is Gamepad)
+            LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)_input.device, 0.2f, 0.2f);
+
         if (_contrailColors.Count >= MAX_CONTRAIL_COLORS - 1)
         {
             // Remove after the max number of colors

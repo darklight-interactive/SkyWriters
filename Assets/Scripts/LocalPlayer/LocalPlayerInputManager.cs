@@ -6,6 +6,7 @@ using Darklight.UnityExt.Behaviour;
 using Darklight.UnityExt.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.XInput;
 
@@ -18,7 +19,9 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     [SerializeField] List<LocalPlayerInputData> _playerInputData = new List<LocalPlayerInputData>();
     private List<System.Type> _deviceBlacklist = new List<System.Type>
     {
-        typeof(XInputController)
+        typeof(XInputController),
+        typeof(DualShock4GamepadHID),
+        typeof(DualShock3GamepadHID)
     };
 
     // References ===================================== >>>>

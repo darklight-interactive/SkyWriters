@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b851f5db53a2249dfb77fc4774be9760, type: 3}
-  m_Name: SKW_CloudSettings_Common
+  m_Name: SKW_CloudSettings_Exhast
   m_EditorClassIdentifier: 
   _prefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c, type: 3}
   _data:
@@ -20,15 +20,9 @@ MonoBehaviour:
     _colliderRadius: 150
     _moveSpeed: 0
     _rotationSpeed: 0
-    _windResistance: 0
+    _windResistance: 0.95
     _lifeSpan: 30
-    _startColor: {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}
+    _startColor: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
   colorData:
-  - item: {fileID: 11400000, guid: c280f28ec117bb84ca16b674783dbab8, type: 2}
-    weight: 0.1
-  - item: {fileID: 11400000, guid: 7d73bf38972ee4e46b5f065b9c261214, type: 2}
-    weight: 0.1
-  - item: {fileID: 11400000, guid: cca92f18653b07b4ba7ccefb45a9966a, type: 2}
-    weight: 1
-  - item: {fileID: 11400000, guid: 5971bdc222ac50a4a8234b7b9d40d3b4, type: 2}
+  - item: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
     weight: 1

@@ -10,7 +10,6 @@ using UnityEditor;
 
 public class BlimpEntity : StageEntity
 {
-    private float _cloudSpawnDelay = 10f;
     private Vector3 _exhaustPosition
     {
         get
@@ -44,19 +43,20 @@ public class BlimpEntity : StageEntity
     {
         base.Initialize(settings);
 
-        StartCoroutine(SpawnExhaustClouds());
+        StartCoroutine(AutopilotRoutine());
     }
 
-    IEnumerator SpawnExhaustClouds()
+    IEnumerator AutopilotRoutine()
     {
         while (true)
         {
-            yield return new WaitForSeconds(_cloudSpawnDelay);
+            BlimpEntitySettings settings = this.settings as BlimpEntitySettings;
+            SetTargetRotation(Stage.Instance.stageCenter);
 
-            int rand_rotOffset = Random.Range(-90, 90);
-            SetTargetRotation(rand_rotOffset);
+            yield return new WaitForSeconds((settings.exhaustSpawnDelay));
 
             CloudEntity cloud = EntityRegistry.CreateNewEntity<CloudEntity>(_exhaustPosition);
+            cloud.Initialize(settings.exhaustCloudSettings);
         }
     }
 
