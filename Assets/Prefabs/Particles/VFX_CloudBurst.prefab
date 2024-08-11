@@ -48,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _initialized: 1
   _particleSystem: {fileID: 316231922153566340}
-  _gradientData: {fileID: 11400000, guid: 84a3f32a8540a0945a685e3d240efabb, type: 2}
 --- !u!198 &316231922153566340
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -57,7 +56,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3186196175442933025}
   serializedVersion: 8
-  lengthInSec: 0.25
+  lengthInSec: 1
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0

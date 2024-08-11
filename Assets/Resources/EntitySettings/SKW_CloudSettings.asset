@@ -15,7 +15,7 @@ MonoBehaviour:
   _prefab: {fileID: 3186196175442933025, guid: 670095fcd27338a489db3d8498d7ec2c, type: 3}
   _data:
     _entityClass: 2
-    _respawnOnExit: 1
+    _respawnOnExit: 0
     _colliderHeight: 150
     _colliderRadius: 150
     _moveSpeed: 0

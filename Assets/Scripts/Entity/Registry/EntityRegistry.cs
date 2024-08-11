@@ -4,8 +4,9 @@ using Darklight.UnityExt.Editor;
 using Darklight.UnityExt.Behaviour;
 using NaughtyAttributes;
 using System;
-using Unity.VisualScripting;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
 {
     // ----------------- Static Data -------------------
@@ -97,8 +98,6 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     }
 
     #endregion
-
-
 
     #region (( ENTITY REGISTRATION ))
     static void AddToRegistry(StageEntity entity)
@@ -202,13 +201,17 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     #endregion
 
     // ----------------- Serialized Data -------------------
+    [Header("Clouds")]
     [Expandable, SerializeField] CloudEntitySettings _cloudSettings;
-    [Expandable, SerializeField] PlaneEntitySettings _planeSettings;
-    [Expandable, SerializeField] BlimpEntitySettings _blimpSettings;
+    [SerializeField] EntityCollection _cloudCollection;
 
-    [SerializeField, ShowOnly] EntityCollection _cloudCollection;
-    [SerializeField, ShowOnly] EntityCollection _planeCollection;
-    [SerializeField, ShowOnly] EntityCollection _blimpCollection;
+    [Header("Planes")]
+    [Expandable, SerializeField] PlaneEntitySettings _planeSettings;
+    [SerializeField] EntityCollection _planeCollection;
+
+    [Header("Blimps")]
+    [Expandable, SerializeField] BlimpEntitySettings _blimpSettings;
+    [SerializeField] EntityCollection _blimpCollection;
 
     // ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
@@ -217,9 +220,16 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         _registry.Add(StageEntity.Class.CLOUD, new EntityCollection(StageEntity.Class.CLOUD, 999));
         _registry.Add(StageEntity.Class.PLANE, new EntityCollection(StageEntity.Class.PLANE, 8));
         _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP, 4));
+
+        UpdateCollections();
     }
 
-    void Update()
+    public void Update()
+    {
+        UpdateCollections();
+    }
+
+    void UpdateCollections()
     {
         _cloudCollection = GetEntityCollection<CloudEntity>();
         _planeCollection = GetEntityCollection<PlaneEntity>();
@@ -227,3 +237,33 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     }
 
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(EntityRegistry))]
+public class EntityRegistryCustomEditor : Editor
+{
+    SerializedObject _serializedObject;
+    EntityRegistry _script;
+    private void OnEnable()
+    {
+        _serializedObject = new SerializedObject(target);
+        _script = (EntityRegistry)target;
+        _script.Awake();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        _serializedObject.Update();
+
+        EditorGUI.BeginChangeCheck();
+
+        base.OnInspectorGUI();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            _serializedObject.ApplyModifiedProperties();
+        }
+    }
+}
+#endif
+

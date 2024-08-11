@@ -63,7 +63,8 @@ public class CloudEntity : StageEntity
         if (_cloudBurstParticleHandler != null) return;
 
         ParticleSystem cloudBurstParticles = VFX_Manager.Instance.cloudBurstParticles;
-        _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, transform);
+        _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, transform.position);
+
 
         Gradient gradient = currentColorDataObject.ToGradient(0.25f);
         _cloudBurstParticleHandler.ApplyGradient(gradient);
