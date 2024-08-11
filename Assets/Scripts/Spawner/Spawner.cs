@@ -81,7 +81,6 @@ public class Spawner : MonoBehaviour
         }
         // Create the shape2D object
         GenerateSpawnPoints();
-
         if (_primaryA != null && _primaryA_index < _spawnPoints.Count)
         {
             _primaryA = _spawnPoints[_primaryA_index];
@@ -92,22 +91,19 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    public StageEntity SpawnEntityAtPoint(Type type, SpawnPoint spawnPoint)
+    public StageEntity SpawnEntityAtPoint(StageEntity.Class entityClass, SpawnPoint spawnPoint)
     {
         if (spawnPoint == null) return null;
         spawnPoint.GoToState(SpawnPoint.State.SPAWNING);
 
-        StageEntity entity = EntityRegistry.CreateNewEntity(type, spawnPoint.position);
-        StageEntity.Class entityClass = entity.entityClass;
-
-        guiConsole.Log($"{PREFIX} {entityClass} Spawned at {spawnPoint.position}");
-
+        StageEntity entity = EntityRegistry.CreateNewEntity(entityClass);
         return entity;
     }
 
     public T SpawnEntityAtPoint<T>(SpawnPoint spawnPoint) where T : StageEntity
     {
-        return (T)SpawnEntityAtPoint(typeof(T), spawnPoint);
+        StageEntity.Class entityClass = EntityRegistry.GetClassFromType(typeof(T));
+        return (T)SpawnEntityAtPoint(entityClass, spawnPoint);
     }
 
     public T SpawnEntityAtRandomAvailablePoint<T>() where T : StageEntity
@@ -262,8 +258,8 @@ public class Spawner : MonoBehaviour
             if (randomEntitySettings == null) continue;
 
             // Spawn the entity
-            Type entityType = randomEntitySettings.data.entityType;
-            SpawnEntityAtPoint(entityType, randSpawnPoint);
+            StageEntity.Class entityClass = randomEntitySettings.data.entityClass;
+            SpawnEntityAtPoint(entityClass, randSpawnPoint);
         }
     }
     #endregion

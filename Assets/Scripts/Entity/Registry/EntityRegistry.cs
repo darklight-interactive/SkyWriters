@@ -16,7 +16,50 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
 
     public static T CreateNewEntity<T>(EntitySettings customSettings = null) where T : StageEntity
     {
-        return (T)CreateNewEntity(typeof(T), customSettings);
+        // Find the collection for this entity type
+        StageEntity.Class entityClass = GetClassFromType<T>();
+        EntityCollection collection = GetEntityCollection(entityClass);
+        if (collection != null && collection.IsCollectionFull())
+        {
+            Debug.LogWarning($"{Prefix} Cannot create new entity of type {entityClass} because the collection is full");
+            return null;
+        }
+
+        // Use custom settings if provided, otherwise, find the default settings for this entity type
+        EntitySettings settings = customSettings ?? GetDefaultSettingsForClass(entityClass);
+        if (settings == null)
+        {
+            Debug.LogError($"{Prefix} No settings found for entity type {entityClass}");
+            return null;
+        }
+
+        // Get the prefab from the settings
+        GameObject prefab = settings.prefab;
+        if (prefab == null)
+        {
+            Debug.LogError($"{Prefix} No prefab found in settings for entity type {entityClass}");
+            return null;
+        }
+
+        // Instantiate the prefab & initialize with preset settings
+        GameObject entityObj = UnityEngine.Object.Instantiate(prefab);
+        StageEntity newEntity = entityObj.GetComponent<T>();
+
+        if (newEntity != null)
+        {
+            newEntity.Initialize(settings);
+
+            // Register the entity
+            AddToRegistry(newEntity);
+        }
+        else
+        {
+            Debug.LogError($"{Prefix} Failed to get component of type {entityClass} from instantiated prefab");
+            UnityEngine.Object.Destroy(entityObj);
+            return null;
+        }
+
+        return (T)newEntity;
     }
 
     public static T CreateNewEntity<T>(Vector3 position, EntitySettings customSettings = null) where T : StageEntity
@@ -29,67 +72,25 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         return newEntity;
     }
 
-    public static StageEntity CreateNewEntity(Type entityType, EntitySettings customSettings = null)
+    public static StageEntity CreateNewEntity(StageEntity.Class entityClass, EntitySettings customSettings = null)
     {
-        // Ensure the type is a subclass of StageEntity
-        if (!typeof(StageEntity).IsAssignableFrom(entityType))
+        if (entityClass == StageEntity.Class.NULL)
         {
-            Debug.LogError($"{Prefix} Cannot create entity because {entityType} is not a valid StageEntity type");
+            Debug.LogError($"{Prefix} Cannot create entity of class NULL");
             return null;
         }
 
-        // Find the collection for this entity type
-        EntityCollection collection = GetEntityCollection(entityType);
-        if (collection != null && collection.IsCollectionFull())
+        switch (entityClass)
         {
-            Debug.LogWarning($"{Prefix} Cannot create new entity of type {entityType} because the collection is full");
-            return null;
+            case StageEntity.Class.CLOUD:
+                return CreateNewEntity<CloudEntity>(customSettings);
+            case StageEntity.Class.PLANE:
+                return CreateNewEntity<PlaneEntity>(customSettings);
+            case StageEntity.Class.BLIMP:
+                return CreateNewEntity<BlimpEntity>(customSettings);
+            default:
+                return null;
         }
-
-        // Use custom settings if provided, otherwise, find the default settings for this entity type
-        EntitySettings settings = customSettings ?? GetSettingsFromType(entityType);
-        if (settings == null)
-        {
-            Debug.LogError($"{Prefix} No settings found for entity type {entityType}");
-            return null;
-        }
-
-        // Get the prefab from the settings
-        GameObject prefab = settings.prefab;
-        if (prefab == null)
-        {
-            Debug.LogError($"{Prefix} No prefab found in settings for entity type {entityType}");
-            return null;
-        }
-
-        // Instantiate the prefab & initialize with preset settings
-        GameObject entityObj = UnityEngine.Object.Instantiate(prefab);
-        StageEntity newEntity = (StageEntity)entityObj.GetComponent(entityType);
-        if (newEntity != null)
-        {
-            newEntity.Initialize(settings);
-
-            // Register the entity
-            AddToRegistry(newEntity);
-        }
-        else
-        {
-            Debug.LogError($"{Prefix} Failed to get component of type {entityType} from instantiated prefab");
-            UnityEngine.Object.Destroy(entityObj);
-            return null;
-        }
-
-        return newEntity;
-    }
-
-    public static StageEntity CreateNewEntity(Type entityType, Vector3 position, EntitySettings customSettings = null)
-    {
-        StageEntity newEntity = CreateNewEntity(entityType, customSettings);
-        if (newEntity != null)
-        {
-            newEntity.transform.position = position;
-        }
-        return newEntity;
     }
 
     #endregion
@@ -152,30 +153,23 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         }
     }
 
-    public static EntityCollection GetEntityCollection(StageEntity.Class classType)
+    public static EntityCollection GetEntityCollection(StageEntity.Class entityClass)
     {
-        if (!_registry.ContainsKey(classType))
+        if (!_registry.ContainsKey(entityClass))
         {
-            _registry.Add(classType, new EntityCollection(classType));
+            _registry.Add(entityClass, new EntityCollection(entityClass));
         }
-        return _registry[classType];
+        return _registry[entityClass];
     }
-
-    public static EntityCollection GetEntityCollection(Type entityType)
-    {
-        StageEntity.Class classType = GetClassFromType(entityType);
-        return GetEntityCollection(classType);
-    }
-
     public static EntityCollection GetEntityCollection<T>() where T : StageEntity
     {
         StageEntity.Class classType = GetClassFromType<T>();
         return GetEntityCollection(classType);
     }
 
-    public static EntitySettings GetSettingsFromClass(StageEntity.Class classType)
+    public static EntitySettings GetDefaultSettingsForClass(StageEntity.Class entityClass)
     {
-        switch (classType)
+        switch (entityClass)
         {
             case StageEntity.Class.CLOUD:
                 return Instance._cloudSettings;
@@ -188,16 +182,10 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         }
     }
 
-    public static EntitySettings GetSettingsFromType(Type entityType)
-    {
-        StageEntity.Class classType = GetClassFromType(entityType);
-        return GetSettingsFromClass(classType);
-    }
-
     public static EntitySettings GetSettingsFromType<T>() where T : StageEntity
     {
         StageEntity.Class classType = GetClassFromType<T>();
-        return GetSettingsFromClass(classType);
+        return GetDefaultSettingsForClass(classType);
     }
 
     #endregion

@@ -32,10 +32,8 @@ public class StageEntity : MonoBehaviour
     public class Data
     {
         [Header("---- Identifiers ----")]
-        Type _entityType;
-        [SerializeField, ShowOnly] string _entityTypeName;
         [SerializeField] Class _entityClass = Class.NULL;
-        public Type entityType => GetType();
+        public Type entityType => EntityRegistry.GetTypeFromClass(_entityClass);
         public Class entityClass => _entityClass;
 
         [Header("---- Rules ----")]
@@ -67,8 +65,6 @@ public class StageEntity : MonoBehaviour
         public Data(Data originData)
         {
             _entityClass = originData.entityClass;
-            _entityType = EntityRegistry.GetTypeFromClass(_entityClass);
-            _entityTypeName = _entityType.Name;
 
             _respawnOnExit = originData.respawnOnExit;
             _colliderHeight = originData.colliderHeight;

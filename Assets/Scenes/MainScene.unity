@@ -364,9 +364,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cec5194381f19354b8bfe63007b2fd20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cloudPreset: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
-  _planePreset: {fileID: 11400000, guid: 3d41c8897302dd749a23a877dbc2800f, type: 2}
-  _blimpPreset: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
+  _cloudSettings: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
+  _planeSettings: {fileID: 11400000, guid: 3d41c8897302dd749a23a877dbc2800f, type: 2}
+  _blimpSettings: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
 --- !u!1 &295614066
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,7 +534,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 89.99999
+  field of view: 90
   orthographic: 0
   orthographic size: 1000
   m_Depth: -1
@@ -664,7 +664,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800653249}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 3e-45, y: -2299.9998, z: 8.514556e-22}
+  m_LocalPosition: {x: 0, y: -2300, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
