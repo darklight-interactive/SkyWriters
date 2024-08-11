@@ -232,8 +232,8 @@ MonoBehaviour:
   spawner_innerStage: {fileID: 295614068}
   spawner_middleStage: {fileID: 498359091}
   spawner_outerStage: {fileID: 2105311728}
-  _targetWindRotation: 0
-  _targetWindIntensity: 0
+  _targetWindRotation: 77
+  _targetWindIntensity: 150
   _curr_windDirection: 0
   _curr_windIntensity: 0
 --- !u!4 &277487365
@@ -428,7 +428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: fc936ffa973f473498da168828f331c7, type: 2}
   _active: 0
-  _tickSpeed: 2
+  _tickSpeed: 10
   _spawnDelay: 10
   _spawnPoint_defaultState: 1
   _primaryA:
@@ -456,7 +456,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &498359090
 Transform:
   m_ObjectHideFlags: 0

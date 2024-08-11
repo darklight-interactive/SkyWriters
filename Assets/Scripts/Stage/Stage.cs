@@ -70,7 +70,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public void Update()
     {
         // Update the wind direction
-        _curr_windDirection = Mathf.Lerp(_curr_windDirection, _targetWindRotation, Time.deltaTime);
+        _curr_windDirection = Mathf.Lerp(_curr_windDirection, _targetWindRotation, Time.deltaTime * 0.25f);
         _curr_windIntensity = Mathf.Lerp(_curr_windIntensity, _targetWindIntensity, Time.deltaTime);
     }
 
@@ -149,9 +149,10 @@ public class Stage : MonoBehaviourSingleton<Stage>
         {
             Debug.Log($"{Prefix} Changing wind direction and intensity");
             _targetWindRotation = Random.Range(0, 360);
-            _targetWindIntensity = Random.Range(0, 100);
+            _targetWindIntensity = Random.Range(25, 200);
 
-            yield return new WaitForSeconds(30f);
+            int duration = Random.Range(15, 30);
+            yield return new WaitForSeconds(duration);
         }
     }
 

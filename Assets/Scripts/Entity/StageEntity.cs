@@ -366,8 +366,8 @@ public class StageEntity : MonoBehaviour
         currSpeed = thrustVelocity.magnitude; // << Update the current speed
 
         // Calculate the current wind velocity
-        float windDirection = Stage.Settings.windDirection;
-        float windIntensity = Stage.Settings.windIntensity;
+        float windDirection = Stage.WindDirection;
+        float windIntensity = Stage.WindIntensity;
         float windResistance = data.windResistance;
 
         // Calculate the Quaternion for the wind direction
