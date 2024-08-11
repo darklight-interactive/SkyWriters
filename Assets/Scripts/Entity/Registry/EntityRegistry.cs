@@ -213,7 +213,10 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     // ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
     {
-
+        _registry.Clear();
+        _registry.Add(StageEntity.Class.CLOUD, new EntityCollection(StageEntity.Class.CLOUD), 999);
+        _registry.Add(StageEntity.Class.PLANE, new EntityCollection(StageEntity.Class.PLANE), 8);
+        _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP), 4);
     }
 
     void Update()

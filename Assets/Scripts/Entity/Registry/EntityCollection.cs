@@ -13,9 +13,10 @@ public class EntityCollection
     [SerializeField, ShowOnly] List<StageEntity> _entities = new();
 
     // ----------------- Constructor -------------------
-    public EntityCollection(StageEntity.Class entityClass, Transform parent = null)
+    public EntityCollection(StageEntity.Class entityClass, int maxLimit, Transform parent = null)
     {
         this._entityClass = entityClass;
+        this._entityLimit = maxLimit;
     }
 
     public void AddEntity(StageEntity entity)
