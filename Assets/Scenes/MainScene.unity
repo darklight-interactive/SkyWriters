@@ -371,16 +371,19 @@ MonoBehaviour:
   _cloudCollection:
     _entityClass: 2
     _entityLimit: 999
+    _entityCount: 0
     _entities: []
   _planeSettings: {fileID: 11400000, guid: 3d41c8897302dd749a23a877dbc2800f, type: 2}
   _planeCollection:
     _entityClass: 1
     _entityLimit: 8
+    _entityCount: 0
     _entities: []
   _blimpSettings: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
   _blimpCollection:
     _entityClass: 3
-    _entityLimit: 4
+    _entityLimit: 8
+    _entityCount: 0
     _entities: []
 --- !u!1 &295614066
 GameObject:
@@ -487,7 +490,7 @@ MonoBehaviour:
   _settings: {fileID: 11400000, guid: 4133f50685a47b3449eb13b447cdf2a9, type: 2}
   _active: 0
   _tickSpeed: 2
-  _spawnDelay: 5
+  _spawnDelay: 10
   _spawnPoint_defaultState: 1
   _primaryA:
     _index: 0
