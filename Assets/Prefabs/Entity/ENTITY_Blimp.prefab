@@ -47,11 +47,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a0c87ddb3ae1438cb590c4aa365cfee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentState: 0
-  _currSpeed: 0
-  _currSpeedMultiplier: 1
-  _curr_rotAngle: 0
-  _target_rotAngle: 0
+  currentColorDataObject: {fileID: 0}
+  currentState: 0
+  currSpeed: 0
+  currSpeedMultiplier: 1
+  curr_rotAngle: 0
+  target_rotAngle: 0
   _settings: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
 --- !u!136 &5669088686213857413
 CapsuleCollider:
@@ -72,8 +73,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 5
-  m_Height: 10
+  m_Radius: 35
+  m_Height: 200
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7586768240665509224

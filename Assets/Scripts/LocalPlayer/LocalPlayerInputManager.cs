@@ -143,6 +143,7 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
     public void RumbleGamepad(Gamepad gamepad, float intensity, float duration)
     {
         StartCoroutine(RumbleGamepadCoroutine(gamepad, intensity, duration));
+        Debug.Log($"Rumbling gamepad {gamepad.deviceId} with intensity {intensity} for {duration} seconds");
     }
 
     IEnumerator RumbleGamepadCoroutine(Gamepad gamepad, float intensity, float duration)
@@ -150,5 +151,21 @@ public class LocalPlayerInputManager : MonoBehaviourSingleton<LocalPlayerInputMa
         gamepad.SetMotorSpeeds(intensity, intensity);
         yield return new WaitForSeconds(duration);
         gamepad.SetMotorSpeeds(0, 0);
+    }
+
+    public void RumbleGamepadRepeated(Gamepad gamepad, float intensity, float interval, int repeatCount)
+    {
+        StartCoroutine(RumbleGamepadRepeatedCoroutine(gamepad, intensity, interval, repeatCount));
+    }
+
+    IEnumerator RumbleGamepadRepeatedCoroutine(Gamepad gamepad, float intensity, float duration, int repeatCount)
+    {
+        for (int i = 0; i < repeatCount; i++)
+        {
+            gamepad.SetMotorSpeeds(intensity, intensity);
+            yield return new WaitForSeconds(duration);
+            gamepad.SetMotorSpeeds(0, 0);
+            yield return new WaitForSeconds(duration);
+        }
     }
 }

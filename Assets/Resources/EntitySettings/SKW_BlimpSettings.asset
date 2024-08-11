@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefab: {fileID: 8834439335552323763, guid: ffd8c3e49c864434b85329848d826291, type: 3}
   _data:
-    _entityClass: 0
+    _entityClass: 3
     _respawnOnExit: 0
     _colliderHeight: 200
     _colliderRadius: 35
-    _moveSpeed: 10
+    _moveSpeed: 50
     _rotationSpeed: 1
     _windResistance: 0.75
     _lifeSpan: -1
+    _startColor: {fileID: 0}

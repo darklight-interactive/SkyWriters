@@ -106,6 +106,9 @@ public class Stage : MonoBehaviourSingleton<Stage>
         if (newPlane != null)
             newPlane.AssignPlayerInput(playerInputData);
 
+        if (playerInputData.device is Gamepad)
+            LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)playerInputData.device, 0.5f, 0.5f);
+
         _players.Add(playerInputData, newPlane);
         Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
     }

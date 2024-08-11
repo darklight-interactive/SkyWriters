@@ -11,6 +11,12 @@ using UnityEngine.InputSystem;
 
 public class PlaneEntity : StageEntity
 {
+    const int MAX_CONTRAIL_COLORS = 3;
+
+    VFX_ParticleSystemHandler _leftContrail;
+    VFX_ParticleSystemHandler _rightContrail;
+
+
     [Header("Local Player Input Data")]
     [SerializeField] LocalPlayerInputData _input;
 
@@ -35,9 +41,6 @@ public class PlaneEntity : StageEntity
 
     [Space(10)]
     [SerializeField] List<VFX_ColorDataObject> _contrailColors;
-    [SerializeField] Gradient _contrailGradient;
-    [SerializeField, ShowOnly] VFX_ParticleSystemHandler _leftContrail;
-    [SerializeField, ShowOnly] VFX_ParticleSystemHandler _rightContrail;
 
     public override void Initialize(EntitySettings settings)
     {
@@ -54,15 +57,14 @@ public class PlaneEntity : StageEntity
 
             ParticleSystem burstParticles = VFX_Manager.Instance.cloudBurstParticles;
             VFX_ParticleSystemHandler burstHandler = VFX_Manager.CreateParticleSystemHandler(burstParticles);
+
+            GenerateNewContrails();
         }
     }
 
     public override void ReloadSettings()
     {
         base.ReloadSettings();
-
-        RefreshGradient();
-
     }
 
     public void Update()
@@ -88,11 +90,6 @@ public class PlaneEntity : StageEntity
     {
         _input = inputData;
         this.name = $"({inputData.playerName}) : PlaneEntity";
-
-        if (inputData.device is Gamepad)
-        {
-            LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)inputData.device, 0.5f, 0.5f);
-        }
 
         DeactivateAutopilot();
     }
@@ -188,20 +185,20 @@ public class PlaneEntity : StageEntity
     #endregion
 
     #region ======================= [[ CONTRAILS ]] ============== 
-
     public void CollectNewColor(VFX_ColorDataObject newColor)
     {
+        if (_contrailColors.Count >= MAX_CONTRAIL_COLORS - 1)
+        {
+            // Remove after the max number of colors
+            _contrailColors.RemoveRange(MAX_CONTRAIL_COLORS - 1, 1);
+        }
+
+        // Add the new color to the front of the list
         _contrailColors.Insert(0, newColor);
-        _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
-        CreateContrails();
+        GenerateNewContrails();
     }
 
-    public void RefreshGradient()
-    {
-        _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
-    }
-
-    void CreateContrails()
+    void GenerateNewContrails()
     {
         // Calculate the positions of the contrails
         Vector3 planeCenter = transform.position;
@@ -219,6 +216,7 @@ public class PlaneEntity : StageEntity
         _rightContrail = VFX_Manager.CreateParticleSystemHandler(contrailParticles, rightContrailPos, transform);
 
         // Set the gradient for the contrails
+        Gradient _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
         _leftContrail.ApplyGradient(_contrailGradient);
         _rightContrail.ApplyGradient(_contrailGradient);
     }

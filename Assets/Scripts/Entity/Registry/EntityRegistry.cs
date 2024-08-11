@@ -4,6 +4,7 @@ using Darklight.UnityExt.Editor;
 using Darklight.UnityExt.Behaviour;
 using NaughtyAttributes;
 using System;
+using Unity.VisualScripting;
 
 public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
 {
@@ -106,7 +107,7 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         collection.AddEntity(entity);
     }
 
-    static void RemoveFromRegistry(StageEntity entity)
+    public static void RemoveFromRegistry(StageEntity entity)
     {
         EntityCollection collection = GetEntityCollection(entity.entityClass);
         collection.RemoveEntity(entity);
@@ -205,10 +206,21 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     [Expandable, SerializeField] PlaneEntitySettings _planeSettings;
     [Expandable, SerializeField] BlimpEntitySettings _blimpSettings;
 
+    [SerializeField, ShowOnly] EntityCollection _cloudCollection;
+    [SerializeField, ShowOnly] EntityCollection _planeCollection;
+    [SerializeField, ShowOnly] EntityCollection _blimpCollection;
+
     // ================= [[ UNITY METHODS ]] ================= >>
     public override void Initialize()
     {
 
+    }
+
+    void Update()
+    {
+        _cloudCollection = GetEntityCollection<CloudEntity>();
+        _planeCollection = GetEntityCollection<PlaneEntity>();
+        _blimpCollection = GetEntityCollection<BlimpEntity>();
     }
 
 }

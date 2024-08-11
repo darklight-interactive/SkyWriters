@@ -4,13 +4,6 @@ using UnityEngine;
 using Darklight.UnityExt.Behaviour;
 using System.Collections;
 using System;
-using Unity.VisualScripting;
-using FMODUnity;
-
-
-
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -272,7 +265,6 @@ public class StageEntity : MonoBehaviour
     // ==== Serialized Fields =================================== ))
     [Header("Live Data")]
     [SerializeField] protected VFX_ColorDataObject currentColorDataObject;
-    [SerializeField] protected VFX_GradientData currentGradientData;
     [SerializeField, ShowOnly] protected State currentState; // The current state of the entity
     [SerializeField, ShowOnly] protected float currSpeed; // The current speed of the entity
     [SerializeField, ShowOnly] protected float currSpeedMultiplier = 1; // The current speed multiplier of the entity
@@ -465,6 +457,7 @@ public class StageEntity : MonoBehaviour
         if (Application.isPlaying)
         {
             Debug.Log("Destroying " + gameObject.name);
+            EntityRegistry.RemoveFromRegistry(this);
             Destroy(gameObject);
         }
     }

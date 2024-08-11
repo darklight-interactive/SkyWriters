@@ -71,7 +71,6 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
     // ---------------- Serialized Fields ----------------
     [SerializeField, ShowOnly] bool _initialized;
     [SerializeField] ParticleSystem _particleSystem;
-    [SerializeField, Expandable] VFX_GradientData _gradientData;
     public new ParticleSystem particleSystem
     {
         get
@@ -165,7 +164,7 @@ public class VFX_ParticleSystemDataCustomEditor : Editor
             _script.Refresh();
         }
 
-        base.OnInspectorGUI();
+        DrawDefaultInspector();
 
         if (EditorGUI.EndChangeCheck())
         {
