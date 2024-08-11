@@ -142,18 +142,25 @@ public class PlaneEntity : StageEntity
 
     protected override void UpdateMovement()
     {
+        PlaneEntitySettings settings = (PlaneEntitySettings)base.settings;
+
         if (_input != null && !_isAutopilot)
         {
             Vector2 moveInput = GetMovementInput();
             ApplyMovementInput(moveInput);
+
+            // Rotate the plane body on the Z axis based on the current rotation
+            float horz_inputDirection = moveInput.x;
+            float newZRot = horz_inputDirection * -65;
+
+
+            //float zRot = Mathf.Lerp(currZRot, newZRot, settings.accelerationSpeed * Time.fixedDeltaTime);
+            _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, Quaternion.Euler(0, 0, newZRot), settings.accelerationSpeed * Time.fixedDeltaTime);
         }
 
         base.UpdateMovement();
-        PlaneEntitySettings settings = (PlaneEntitySettings)base.settings;
 
-        // Rotate the plane body on the Z axis based on the current rotation
-        Quaternion targetZRotation = Quaternion.Euler(0, 0, curr_rotAngle / 2);
-        _planeBody.localRotation = Quaternion.Slerp(_planeBody.localRotation, targetZRotation, settings.accelerationSpeed * Time.fixedDeltaTime);
+
     }
 
     protected override void ResetMovement()

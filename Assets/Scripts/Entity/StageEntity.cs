@@ -330,7 +330,7 @@ public class StageEntity : MonoBehaviour
 
             // Destroy this object after the lifespan
             if (data.lifeSpan > 0)
-                Destroy(gameObject, data.lifeSpan);
+                EntityRegistry.RemoveFromRegistryWithDelay(this, data.lifeSpan);
         }
     }
 

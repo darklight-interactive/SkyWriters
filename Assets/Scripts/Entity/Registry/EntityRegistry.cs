@@ -4,6 +4,8 @@ using Darklight.UnityExt.Editor;
 using Darklight.UnityExt.Behaviour;
 using NaughtyAttributes;
 using System;
+using System.Collections;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -104,12 +106,35 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
     {
         EntityCollection collection = GetEntityCollection(entity.entityClass);
         collection.AddEntity(entity);
+
+        ClearNullEntities();
     }
 
     public static void RemoveFromRegistry(StageEntity entity)
     {
         EntityCollection collection = GetEntityCollection(entity.entityClass);
         collection.RemoveEntity(entity);
+
+        ClearNullEntities();
+    }
+
+    public static void RemoveFromRegistryWithDelay(StageEntity entity, float delay)
+    {
+        Instance.StartCoroutine(Instance.RemoveFromRegistryWithDelayRoutine(entity, delay));
+    }
+
+    IEnumerator RemoveFromRegistryWithDelayRoutine(StageEntity entity, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        RemoveFromRegistry(entity);
+    }
+
+    static void ClearNullEntities()
+    {
+        foreach (KeyValuePair<StageEntity.Class, EntityCollection> pair in _registry)
+        {
+            pair.Value.entities.RemoveAll(entity => entity == null);
+        }
     }
 
     #endregion
@@ -219,7 +244,7 @@ public class EntityRegistry : MonoBehaviourSingleton<EntityRegistry>
         _registry.Clear();
         _registry.Add(StageEntity.Class.CLOUD, new EntityCollection(StageEntity.Class.CLOUD, 999));
         _registry.Add(StageEntity.Class.PLANE, new EntityCollection(StageEntity.Class.PLANE, 8));
-        _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP, 4));
+        _registry.Add(StageEntity.Class.BLIMP, new EntityCollection(StageEntity.Class.BLIMP, 2));
 
         UpdateCollections();
     }

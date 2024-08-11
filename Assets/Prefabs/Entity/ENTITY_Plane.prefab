@@ -151,37 +151,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _initialized: 1
   _particleSystem: {fileID: 8467061862694564897}
-  _gradientData:
-    _gradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
 --- !u!198 &8467061862694564897
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -5165,37 +5134,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentColorDataObject: {fileID: 0}
-  currentGradientData:
-    _gradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
   currentState: 0
   currSpeed: 0
   currSpeedMultiplier: 1
@@ -5213,8 +5151,6 @@ MonoBehaviour:
   _isAutopilot: 1
   _planeBody: {fileID: 5831562902396000746}
   _currSpeedPercentage: 0
-  _speedMultiplier_slow: 0.5
-  _speedMultiplier_fast: 1.5
   _humEvent:
     Guid:
       Data1: -1419789682
@@ -5228,38 +5164,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cca92f18653b07b4ba7ccefb45a9966a, type: 2}
   - {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
   - {fileID: 11400000, guid: 7df291c11b2daf34e9e60e69a84db6cd, type: 2}
-  _contrailGradient:
-    serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 0.75}
-    key2: {r: 1, g: 1, b: 1, a: 0.5}
-    key3: {r: 1, g: 1, b: 1, a: 0.25}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 21845
-    ctime2: 43690
-    ctime3: 65535
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 21845
-    atime2: 43690
-    atime3: 65535
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: -1
-    m_NumColorKeys: 4
-    m_NumAlphaKeys: 4
-  _leftContrail: {fileID: 2600495230874498202}
-  _rightContrail: {fileID: 6971694850390852374}
 --- !u!54 &783944964808446795
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5389,37 +5293,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _initialized: 1
   _particleSystem: {fileID: 6683462195707320860}
-  _gradientData:
-    _gradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
 --- !u!198 &6683462195707320860
 ParticleSystem:
   m_ObjectHideFlags: 0

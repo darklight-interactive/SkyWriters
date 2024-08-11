@@ -7,10 +7,12 @@ public class EntityCollection
 {
     // ----------------- Serialized Fields -------------------
     [SerializeField, ShowOnly] StageEntity.Class _entityClass;
-    [SerializeField, Range(1, 32)] int _entityLimit = 8;
+    [SerializeField, ShowOnly] int _entityLimit = 8;
+    [SerializeField, ShowOnly] int _entityCount = 0;
 
     // ----------------- Data -------------------
     [SerializeField, ShowOnly] List<StageEntity> _entities = new();
+    public List<StageEntity> entities => _entities;
 
     // ----------------- Constructor -------------------
     public EntityCollection(StageEntity.Class entityClass, int maxLimit, Transform parent = null)
@@ -28,11 +30,13 @@ public class EntityCollection
         }
 
         _entities.Add(entity);
+        _entityCount = _entities.Count;
     }
 
     public void RemoveEntity(StageEntity entity)
     {
         _entities.Remove(entity);
+        _entityCount = _entities.Count;
     }
 
     public bool Contains(StageEntity entity)
