@@ -21,8 +21,8 @@ MonoBehaviour:
     _moveSpeed: 100
     _rotationSpeed: 0.1
     _windResistance: 0.9
-    _lifeSpan: -1
+    _lifeSpan: 60
     _startColor: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
   _exhaustCloudSettings: {fileID: 11400000, guid: 115fcc434fbae4de9864eddf387ce019,
     type: 2}
-  _exhaustSpawnDelay: 2
+  _exhaustSpawnDelay: 4

@@ -29,7 +29,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public static float WindIntensity => Instance._curr_windIntensity;
 
     // -------------- Data ------------------------
-    Dictionary<LocalPlayerInputData, PlaneEntity> _players = new();
+    Dictionary<int, (LocalPlayerInputData, PlaneEntity)> _players = new();
 
 
     [Header("Data")]
@@ -120,7 +120,7 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public void AssignPlayerToPlane(LocalPlayerInputData playerInputData)
     {
         // If the player is already assigned to a plane, return
-        if (_players.ContainsKey(playerInputData)) return;
+        if (_players.ContainsKey(playerInputData.playerId)) return;
 
         // If no planes are available, spawn a new one
         PlaneEntity newPlane = spawner_innerStage.SpawnEntityAtRandomAvailablePoint<PlaneEntity>();
@@ -130,7 +130,8 @@ public class Stage : MonoBehaviourSingleton<Stage>
         if (playerInputData.device is Gamepad)
             LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)playerInputData.device, 0.5f, 0.5f);
 
-        _players.Add(playerInputData, newPlane);
+        _players.Add(playerInputData.playerId, (playerInputData, newPlane));
+
         Debug.Log($"{Prefix} Player {playerInputData.playerName} assigned to plane {newPlane.name}");
     }
 

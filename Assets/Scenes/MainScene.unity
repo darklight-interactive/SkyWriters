@@ -1028,7 +1028,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: 69e26797a5ce80c4bb51fd3105e6fb6f, type: 2}
   _active: 0
-  _tickSpeed: 10
+  _tickSpeed: 5
   _spawnDelay: 5
   _spawnPoint_defaultState: 1
   _primaryA:
