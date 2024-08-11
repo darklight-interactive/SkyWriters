@@ -263,8 +263,8 @@ public class StageEntity : MonoBehaviour
 
     // ==== Serialized Fields =================================== ))
     [Header("Live Data")]
-    [SerializeField] protected VFX_ColorData currentColor;
-    [SerializeField] protected VFX_GradientData currentGradient;
+    [SerializeField] protected VFX_ColorDataObject currentColor;
+    [SerializeField] protected VFX_GradientData currentGradientData;
     [SerializeField, ShowOnly] protected State currentState; // The current state of the entity
     [SerializeField, ShowOnly] protected float currSpeed; // The current speed of the entity
     [SerializeField, ShowOnly] protected float currSpeedMultiplier = 1; // The current speed multiplier of the entity

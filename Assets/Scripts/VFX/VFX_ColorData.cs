@@ -1,12 +1,8 @@
-using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-[CreateAssetMenu(menuName = "Darklight/VFX/ColorData")]
-public class VFX_ColorData : ScriptableObject
+[System.Serializable]
+public class VFX_ColorData
 {
     [SerializeField] string _name = "null";
     [SerializeField] Color _color = new Color(0, 0, 0, 0);
@@ -33,7 +29,6 @@ public class VFX_ColorData : ScriptableObject
     /// </summary>
     public void Refresh()
     {
-        _name = this.name;
         _color = new Color(_red, _green, _blue, _alpha);
     }
 
@@ -67,35 +62,25 @@ public class VFX_ColorData : ScriptableObject
 
         _color = new Color(_red, _green, _blue, _alpha);
     }
-}
 
-#if UNITY_EDITOR
-[CustomEditor(typeof(VFX_ColorData))]
-public class VFX_ColorDataCustomEditor : Editor
-{
-    SerializedObject _serializedObject;
-    VFX_ColorData _script;
-    private void OnEnable()
+    public Gradient ToGradient(float endAlpha = 0.75f)
     {
-        _serializedObject = new SerializedObject(target);
-        _script = (VFX_ColorData)target;
-    }
+        Gradient gradient = new Gradient();
 
-    public override void OnInspectorGUI()
-    {
-        _serializedObject.Update();
+        GradientColorKey[] colorKeys = new GradientColorKey[2];
+        colorKeys[0].color = _color;
+        colorKeys[0].time = 0.0f;
+        colorKeys[1].color = _color;
+        colorKeys[1].time = 1.0f;
 
-        EditorGUI.BeginChangeCheck();
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+        alphaKeys[0].alpha = 1.0f;
+        alphaKeys[0].time = 0.0f;
+        alphaKeys[1].alpha = endAlpha;
+        alphaKeys[1].time = 1.0f;
 
-        base.OnInspectorGUI();
+        gradient.SetKeys(colorKeys, alphaKeys);
 
-        serializedObject.ApplyModifiedProperties();
-
-        if (GUI.changed)
-        {
-            _script.Refresh();
-            EditorUtility.SetDirty(target);
-        }
+        return gradient;
     }
 }
-#endif

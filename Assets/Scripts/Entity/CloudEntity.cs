@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class CloudEntity : StageEntity
 {
-
     VFX_ParticleSystemHandler _cloudParticleHandler;
     VFX_ParticleSystemHandler _cloudBurstParticleHandler;
 
@@ -34,14 +33,10 @@ public class CloudEntity : StageEntity
         }
     }
 
-    Gradient GetCurrentGradient()
-    {
-        return VFX_Manager.Instance.defaultGradientData.CreateModifiedGradient(0, currentColor);
-    }
-
-    public void SetMainColor(VFX_ColorData colorData)
+    public void SetColor(VFX_ColorDataObject colorData)
     {
         currentColor = colorData;
+        currentGradientData = new VFX_GradientData(new VFX_ColorDataObject[] { colorData });
     }
 
     void CreateCloudParticles()
@@ -50,7 +45,7 @@ public class CloudEntity : StageEntity
 
         _cloudParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudParticles, transform);
 
-        _cloudParticleHandler.ApplyGradient(GetCurrentGradient());
+        _cloudParticleHandler.ApplyGradient(currentGradientData.gradient);
         _cloudParticleHandler.Play();
     }
 
@@ -61,7 +56,7 @@ public class CloudEntity : StageEntity
         ParticleSystem cloudBurstParticles = VFX_Manager.Instance.cloudBurstParticles;
         _cloudBurstParticleHandler = VFX_Manager.CreateParticleSystemHandler(cloudBurstParticles, null);
 
-        _cloudBurstParticleHandler.ApplyGradient(GetCurrentGradient());
+        _cloudBurstParticleHandler.ApplyGradient(currentGradientData.gradient);
         _cloudBurstParticleHandler.Play();
     }
 

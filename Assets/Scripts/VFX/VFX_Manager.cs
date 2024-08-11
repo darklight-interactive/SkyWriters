@@ -14,20 +14,13 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
     [SerializeField, Expandable] VFX_ColorPalette _colorPalette;
     public VFX_ColorPalette colorPalette { get => _colorPalette; set => _colorPalette = value; }
 
-
-
-
-
     [Header("Cloud VFX")]
-    [SerializeField] VFX_GradientData _defaultCloudGradient;
     [SerializeField] ParticleSystem _cloudParticles;
     [SerializeField] ParticleSystem _cloudBurstParticles;
     [SerializeField] ParticleSystem _cloudRingParticles;
-    public VFX_GradientData defaultGradientData => _defaultCloudGradient;
     public ParticleSystem cloudParticles => _cloudParticles;
     public ParticleSystem cloudBurstParticles => _cloudBurstParticles;
     public ParticleSystem cloudRingParticles => _cloudRingParticles;
-
 
     [Header("Plane VFX")]
     [SerializeField] ParticleSystem _contrailParticles;
@@ -100,24 +93,26 @@ public class VFX_Manager : MonoBehaviourSingleton<VFX_Manager>
         return gradient;
     }
 
-    /// <summary>
-    /// Create a new gradient from the given VFX_ColorData objects
-    /// </summary>
-    /// <param name="colors">
-    ///     The VFX_ColorData objects to create the gradient from
-    /// </param>
-    /// <returns>
-    ///     A new gradient with the given colors
-    /// </returns>
-    public static Gradient CreateGradient(VFX_ColorData[] colors)
+    public static Gradient CreateGradient(VFX_ColorData[] colorDatas)
     {
-        Color[] colorArray = new Color[colors.Length];
-        for (int i = 0; i < colors.Length; i++)
+        Color[] colors = new Color[colorDatas.Length];
+        for (int i = 0; i < colorDatas.Length; i++)
         {
-            colorArray[i] = colors[i].Color;
+            colors[i] = colorDatas[i].Color;
         }
 
-        return CreateGradient(colorArray);
+        return CreateGradient(colors);
+    }
+
+    public static Gradient CreateGradient(VFX_ColorDataObject[] colorDataObjs)
+    {
+        Color[] colors = new Color[colorDataObjs.Length];
+        for (int i = 0; i < colorDataObjs.Length; i++)
+        {
+            colors[i] = colorDataObjs[i].Color;
+        }
+
+        return CreateGradient(colors);
     }
     #endregion
 }

@@ -93,10 +93,6 @@ public class VFX_ParticleSystemHandler : MonoBehaviour
             Debug.LogError("Failed to load particle system modules", this);
             return;
         }
-
-        if (_gradientData == null)
-            _gradientData = VFX_Manager.Instance.defaultGradientData;
-        ApplyGradient(_gradientData.gradient);
     }
 
     public void Play() => _particleSystem.Play();

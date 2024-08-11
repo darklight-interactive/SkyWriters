@@ -34,7 +34,7 @@ public class PlaneEntity : StageEntity
     [SerializeField] float _contrailWingspan;
 
     [Space(10)]
-    [SerializeField] List<VFX_ColorData> _contrailColors;
+    [SerializeField] List<VFX_ColorDataObject> _contrailColors;
     [SerializeField] Gradient _contrailGradient;
     [SerializeField, ShowOnly] VFX_ParticleSystemHandler _leftContrail;
     [SerializeField, ShowOnly] VFX_ParticleSystemHandler _rightContrail;
@@ -42,8 +42,6 @@ public class PlaneEntity : StageEntity
     public override void Initialize(EntitySettings settings)
     {
         base.Initialize(settings);
-
-        ResetGradientToDefault();
 
         if (Application.isPlaying)
         {
@@ -191,7 +189,7 @@ public class PlaneEntity : StageEntity
 
     #region ======================= [[ CONTRAILS ]] ============== 
 
-    public void CollectNewColor(VFX_ColorData newColor)
+    public void CollectNewColor(VFX_ColorDataObject newColor)
     {
         _contrailColors.Insert(0, newColor);
         _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
@@ -202,17 +200,6 @@ public class PlaneEntity : StageEntity
     {
         _contrailGradient = VFX_Manager.CreateGradient(_contrailColors.ToArray());
     }
-
-    public void ResetGradientToDefault()
-    {
-        _contrailColors.Clear();
-        VFX_GradientData data = VFX_Manager.Instance.defaultGradientData;
-        _contrailGradient = data.gradient;
-        _contrailColors = data.colorDataKeys;
-        CreateContrails();
-    }
-
-
 
     void CreateContrails()
     {

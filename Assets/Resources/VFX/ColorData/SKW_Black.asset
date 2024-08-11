@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fca77c9f3c98ce447acd8f19bcdc7dbf, type: 3}
   m_Name: SKW_Black
   m_EditorClassIdentifier: 
-  _name: Black
-  _color: {r: 0, g: 0, b: 0, a: 1}
-  _red: 0
-  _green: 0
-  _blue: 0
-  _alpha: 1
+  _colorData:
+    _name: 
+    _color: {r: 0, g: 0, b: 0, a: 0}
+    _red: 0
+    _green: 0
+    _blue: 0
+    _alpha: 1

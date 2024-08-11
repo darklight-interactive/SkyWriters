@@ -6,17 +6,23 @@ using UnityEngine;
 public class VFX_ColorPalette : ScriptableObject
 {
     [Header("Greyscale")]
-    [Expandable] public VFX_ColorData whiteColor;
-    [Expandable] public VFX_ColorData blackColor;
+    [Expandable] public VFX_ColorDataObject transparentColor;
+    [Expandable] public VFX_ColorDataObject whiteColor;
+    [Expandable] public VFX_ColorDataObject blackColor;
 
     [Header("Primary Colors")]
-    [Expandable] public VFX_ColorData redColor;
-    [Expandable] public VFX_ColorData greenColor;
-    [Expandable] public VFX_ColorData blueColor;
+    [Expandable] public VFX_ColorDataObject redColor;
+    [Expandable] public VFX_ColorDataObject greenColor;
+    [Expandable] public VFX_ColorDataObject blueColor;
 
-    public List<VFX_ColorData> GetColorDataList()
+    [Header("Secondary Colors")]
+    [Expandable] public VFX_ColorDataObject yellowColor;
+    [Expandable] public VFX_ColorDataObject cyanColor;
+    [Expandable] public VFX_ColorDataObject magentaColor;
+
+    public List<VFX_ColorDataObject> GetColorDataList()
     {
-        List<VFX_ColorData> colorDataList = new List<VFX_ColorData>
+        List<VFX_ColorDataObject> colorDataList = new List<VFX_ColorDataObject>
         {
             whiteColor,
             blackColor,
@@ -28,9 +34,9 @@ public class VFX_ColorPalette : ScriptableObject
         return colorDataList;
     }
 
-    public VFX_ColorData GetRandomColorData()
+    public VFX_ColorDataObject GetRandomColorData()
     {
-        List<VFX_ColorData> colorDataList = GetColorDataList();
+        List<VFX_ColorDataObject> colorDataList = GetColorDataList();
         return colorDataList[Random.Range(0, colorDataList.Count)];
     }
 }

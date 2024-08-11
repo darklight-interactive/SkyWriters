@@ -7,10 +7,10 @@ using UnityEngine;
 public class CloudEntitySettings : EntitySettings
 {
     [Header("--- Cloud ---")]
-    public VFX_ColorData defaultColor;
-    public List<WeightedData<VFX_ColorData>> colorData;
+    public VFX_ColorDataObject defaultColor;
+    public List<WeightedData<VFX_ColorDataObject>> colorData;
 
-    public VFX_ColorData GetRandomColorFromWeights()
+    public VFX_ColorDataObject GetRandomColorFromWeights()
     {
         return WeightedDataSelector.SelectRandomWeightedItem(colorData);
     }
