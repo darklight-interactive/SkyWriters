@@ -53,7 +53,7 @@ public class PlaneEntity : StageEntity
             _humInstance.start();
 
             ParticleSystem burstParticles = VFX_Manager.Instance.cloudBurstParticles;
-            VFX_ParticleSystemHandler burstHandler = VFX_Manager.CreateParticleSystemHandler(burstParticles, transform);
+            VFX_ParticleSystemHandler burstHandler = VFX_Manager.CreateParticleSystemHandler(burstParticles);
         }
     }
 

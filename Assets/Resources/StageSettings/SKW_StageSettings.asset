@@ -16,4 +16,4 @@ MonoBehaviour:
   _stageRadius: 1200
   _spawnRadius: 1800
   _windDirection: 77
-  _windIntensity: 100
+  _windIntensity: 150

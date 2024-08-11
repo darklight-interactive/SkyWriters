@@ -16,17 +16,19 @@ MonoBehaviour:
   _data:
     _entityClass: 2
     _respawnOnExit: 1
-    _colliderHeight: 10
-    _colliderRadius: 5
-    _moveSpeed: 10
-    _rotationSpeed: 5
-    _windResistance: 0.2
+    _colliderHeight: 150
+    _colliderRadius: 150
+    _moveSpeed: 0
+    _rotationSpeed: 0
+    _windResistance: 0
     _lifeSpan: -1
-  defaultColor: {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
+    _startColor: {fileID: 0}
   colorData:
   - item: {fileID: 11400000, guid: f933a0363d0806a47b51de326aa21f70, type: 2}
-    weight: 0.25
+    weight: 0.1
   - item: {fileID: 11400000, guid: c280f28ec117bb84ca16b674783dbab8, type: 2}
-    weight: 0.25
+    weight: 0.1
   - item: {fileID: 11400000, guid: 7d73bf38972ee4e46b5f065b9c261214, type: 2}
-    weight: 0.25
+    weight: 0.1
+  - item: {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
+    weight: 0.75

@@ -342,8 +342,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorPalette: {fileID: 11400000, guid: 68cddfe82eaecfb44a3cf284dcb57886, type: 2}
-  _defaultCloudGradient: {fileID: 11400000, guid: 8369639ccdc1140419bbe0d46739a09e,
-    type: 2}
   _cloudParticles: {fileID: 316231922153566340, guid: 2fd8c4d61e5e93b4f868be9c33e501d5,
     type: 3}
   _cloudBurstParticles: {fileID: 316231922153566340, guid: aa27ab93e15f750418b724bb0320461d,
@@ -1014,7 +1012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _settings: {fileID: 11400000, guid: 69e26797a5ce80c4bb51fd3105e6fb6f, type: 2}
   _active: 0
-  _tickSpeed: 2
+  _tickSpeed: 10
   _spawnDelay: 5
   _spawnPoint_defaultState: 1
   _primaryA:
