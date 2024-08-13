@@ -120,12 +120,26 @@ public class Stage : MonoBehaviourSingleton<Stage>
     public void AssignPlayerToPlane(LocalPlayerInputData playerInputData)
     {
         // If the player is already assigned to a plane, return
-        if (_players.ContainsKey(playerInputData.playerId)) return;
+        if (_players.ContainsKey(playerInputData.playerId))
+        {
+            if (_players[playerInputData.playerId].Item2 != null)
+            {
+                Debug.LogError($"{Prefix} Player {playerInputData.playerName} is already assigned to a plane");
+                return;
+            }
+        }
 
         // If no planes are available, spawn a new one
-        PlaneEntity newPlane = spawner_innerStage.SpawnEntityAtRandomAvailablePoint<PlaneEntity>();
+        PlaneEntity newPlane = spawner_innerStage.SpawnEntityRandomlyInRadius(StageEntity.Class.PLANE, stageRadius / 4) as PlaneEntity;
         if (newPlane != null)
+        {
             newPlane.AssignPlayerInput(playerInputData);
+        }
+        else
+        {
+            Debug.LogError($"{Prefix} No planes available to assign player {playerInputData.playerName}");
+            return;
+        }
 
         if (playerInputData.device is Gamepad)
             LocalPlayerInputManager.Instance.RumbleGamepad((Gamepad)playerInputData.device, 0.5f, 0.5f);

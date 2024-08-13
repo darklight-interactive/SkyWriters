@@ -89,6 +89,20 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    public StageEntity SpawnEntity(StageEntity.Class entityClass, Vector3 position, EntitySettings customSettings = null)
+    {
+        StageEntity entity = EntityRegistry.CreateNewEntity(entityClass, customSettings);
+        if (entity == null)
+        {
+            Debug.LogWarning($"{PREFIX} EntityRegistry blocked new {entityClass}", this);
+            return null;
+        }
+
+        entity.transform.position = position;
+        guiConsole.Log($"{PREFIX} Spawned {entityClass} at {position}");
+        return entity;
+    }
+
     public StageEntity SpawnEntityAtPoint(StageEntity.Class entityClass, SpawnPoint spawnPoint, EntitySettings customSettings = null)
     {
         if (spawnPoint == null) return null;
@@ -116,6 +130,12 @@ public class Spawner : MonoBehaviour
     {
         SpawnPoint spawnPoint = GetSpawnPoint_RandomInState(SpawnPoint.State.AVAILABLE);
         return SpawnEntityAtPoint<T>(spawnPoint);
+    }
+
+    public StageEntity SpawnEntityRandomlyInRadius(StageEntity.Class entityClass, float radius)
+    {
+        Vector3 randomPosition = transform.position + UnityEngine.Random.insideUnitSphere * radius;
+        return SpawnEntity(entityClass, randomPosition);
     }
 
     #region --------- ( Handle Spawn Points ) ---------

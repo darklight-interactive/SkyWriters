@@ -47,6 +47,12 @@ public class LocalPlayerInputData
         _playerId = playerInput.playerIndex;
         _playerName = $"PLAYER{_playerId}";
 
+        if (playerInput.devices.Count == 0)
+        {
+            Debug.LogError($"<INPUT> {playerName} : No devices found!");
+            return;
+        }
+
         _device = playerInput.devices[0];
         _deviceID = device.deviceId;
         _deviceName = device.name;

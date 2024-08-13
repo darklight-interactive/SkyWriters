@@ -15,6 +15,6 @@ MonoBehaviour:
   _shape2DPreset: {fileID: 11400000, guid: c2f11b6109f2b5246b1f6cb5c68daa98, type: 2}
   _entityWeightedData:
   - item: {fileID: 11400000, guid: 7ed87909d3e7b534b9aeecfb509f527b, type: 2}
-    weight: 0.25
+    weight: 0.05
   - item: {fileID: 11400000, guid: fef3aa661b24eb74f95ae8000c3dfaf1, type: 2}
     weight: 0.75

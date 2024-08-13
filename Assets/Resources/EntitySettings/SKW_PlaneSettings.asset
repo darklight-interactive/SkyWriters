@@ -20,7 +20,7 @@ MonoBehaviour:
     _colliderRadius: 3
     _moveSpeed: 225
     _rotationSpeed: 1
-    _windResistance: 0.5
+    _windResistance: 0.9
     _lifeSpan: -1
     _startColor: {fileID: 11400000, guid: 22833c9a0fc2bd9478c31b9d9fb30ae2, type: 2}
   accelerationSpeed: 5

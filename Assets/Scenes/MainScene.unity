@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.26793307, g: 0.46431145, b: 0.6133213, a: 1}
+  m_IndirectSpecularColor: {r: 0.26792946, g: 0.463935, b: 0.61439043, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -552,7 +552,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 90
+  field of view: 80
   orthographic: 0
   orthographic size: 1000
   m_Depth: -1
@@ -664,16 +664,16 @@ MonoBehaviour:
   _focusTargetPosition: {x: 0, y: 0, z: 0}
   _focusTargetPositionOffset: {x: 0, y: 0, z: 0}
   _focusOffsetY: 0
-  _offsetPosition: {x: 0, y: -2300, z: 0}
+  _offsetPosition: {x: -100, y: -2300, z: 0}
   _positionLerpSpeed: 10
   _rotationLerpSpeed: 0
   _fovLerpSpeed: 10
-  _distanceX: 0
+  _distanceX: -100
   _distanceY: -2300
   _distanceZ: 0
-  _baseFOV: 90
+  _baseFOV: 80
   _offsetFOV: 0
-  _currentFOV: 90
+  _currentFOV: 80
 --- !u!4 &800653251
 Transform:
   m_ObjectHideFlags: 0
@@ -682,7 +682,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800653249}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -2300, z: 0}
+  m_LocalPosition: {x: -100, y: -2300, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

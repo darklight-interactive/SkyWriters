@@ -21,8 +21,10 @@ MonoBehaviour:
     _moveSpeed: 0
     _rotationSpeed: 0
     _windResistance: 0.95
-    _lifeSpan: 30
+    _lifeSpan: 20
     _startColor: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
   colorData:
   - item: {fileID: 11400000, guid: 484b92feb629836439c5e89b36edf6b5, type: 2}
-    weight: 1
+    weight: 0.5
+  - item: {fileID: 11400000, guid: f27e2e15d2cef394b9ca1af758706cd2, type: 2}
+    weight: 0.75
